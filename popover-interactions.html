@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="touch 专题 03：8 种 App 与小程序的高级感弹出交互。按钮菜单、卡片详情、确认弹窗、气泡提示、侧边抽屉、结算清单、分类展开、日期日历，附可复制 AI 提示词。">
+<title>浮上来，再退回去 · touch 专题 03</title>
+<style>
+:root{
+  --bg:#f5f3ee;--paper:#fbfaf7;--ink:#171614;--ink-soft:#403c36;--muted:#6d675e;--faint:#8f887c;
+  --line:rgba(23,22,20,.13);--line-soft:rgba(23,22,20,.075);--accent:#a65d46;--accent-soft:#f0d9d1;
+  --sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","STSong",serif;
+  --mono:"SFMono-Regular",ui-monospace,Consolas,"Liberation Mono",monospace;
+  --ease:cubic-bezier(.22,.8,.24,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:#f0ddd6;color:#3b1a11}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+input{font-family:inherit}
+h1,h2,h3,h4,p{margin:0}
+ul{padding:0;margin:0;list-style:none}
+svg{display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{width:min(1220px,calc(100% - 56px));margin-inline:auto}
+.mono{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.topbar{position:sticky;top:0;z-index:60;background:rgba(245,243,238,.84);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--line-soft)}
+.topbar__in{height:66px;display:flex;align-items:center;gap:24px}
+.brand{display:flex;align-items:center;gap:11px;flex:none}
+.brand__mark{width:29px;height:29px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:14px;line-height:1}
+.brand__name{font-size:13px;font-weight:600;letter-spacing:.02em}
+.brand__name span{color:var(--muted);font-weight:400}
+.topic-label{margin-left:12px;padding-left:18px;border-left:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
+.top-links{margin-left:auto;display:flex;align-items:center;gap:7px;flex:none}
+.pill-link{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--muted);font-size:11.5px;white-space:nowrap;transition:border-color .25s,color .25s,background .25s}
+.pill-link:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}
+.pill-link svg{width:11px;height:11px}
+.pill-link--solid{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.pill-link--solid:hover{background:#33302b;border-color:#33302b;color:#fff}
+.hero{padding:76px 0 0;overflow:hidden}
+.hero__top{display:flex;justify-content:space-between;gap:24px;color:var(--muted)}
+.hero__top span:last-child{text-align:right}
+.hero__main{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(36px,8vw,110px);align-items:end;margin-top:36px;padding-bottom:46px}
+.hero h1{font-size:clamp(54px,9vw,122px);line-height:.94;letter-spacing:-.065em;font-weight:600}
+.hero h1 em{display:block;font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.045em;color:var(--accent);white-space:nowrap}
+.hero__lead{font-size:clamp(17px,1.95vw,23px);line-height:1.55;letter-spacing:-.015em;max-width:23em;margin-top:27px;color:var(--ink-soft)}
+.hero__lead span{color:var(--muted)}
+.hero__aside{padding-bottom:4px;font-size:12.5px;line-height:1.8;color:var(--muted)}
+.hero__aside strong{display:block;color:var(--ink);font-size:12px;font-weight:500;letter-spacing:.02em;margin-bottom:8px}
+.hero__aside a{display:inline-flex;align-items:center;gap:5px;margin-top:13px;font-size:11px;border-bottom:1px solid var(--line);padding-bottom:2px;transition:border-color .2s,color .2s}
+.hero__aside a:hover{color:var(--ink);border-color:var(--ink)}
+.hero__meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.hero__meta div{padding:18px 0 20px;border-right:1px solid var(--line-soft)}
+.hero__meta div:last-child{border-right:0}
+.hero__meta div:not(:first-child){padding-left:clamp(14px,2.4vw,30px)}
+.hero__meta b{display:block;font-family:var(--serif);font-size:27px;line-height:1.1;font-weight:400;letter-spacing:-.02em}
+.hero__meta span{display:block;margin-top:5px;color:var(--muted);font-size:11px}
+.lab{padding:70px 0 82px;border-top:1px solid var(--line);scroll-margin-top:66px}
+.lab__head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin-bottom:24px;flex-wrap:wrap}
+.lab__kicker{color:var(--accent);margin-bottom:8px}
+.lab h2{font-size:clamp(32px,4vw,50px);line-height:1.08;letter-spacing:-.045em;font-weight:600}
+.lab h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--faint);letter-spacing:-.02em}
+.lab-h2-tail{white-space:nowrap}
+.lab__note{max-width:34em;font-size:12.5px;line-height:1.8;color:var(--muted);margin-bottom:4px}
+.pop-modes{display:flex;gap:5px;padding:0 0 16px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.pop-modes::-webkit-scrollbar{display:none}
+.mode-btn{flex:none;display:flex;align-items:baseline;gap:6px;padding:8px 11px;border-radius:99px;color:var(--muted);font-size:11px;white-space:nowrap;transition:background .2s,color .2s}
+.mode-btn b{font-family:var(--mono);font-size:8px;font-weight:400;letter-spacing:.04em;color:var(--faint);transition:color .2s}
+.mode-btn:hover{background:rgba(23,22,20,.055);color:var(--ink)}
+.mode-btn.is-active{background:var(--ink);color:var(--paper)}
+.mode-btn.is-active b{color:#e9b2a1}
+.pop-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(34px,5vw,74px);align-items:start;padding-top:34px}
+.pop-copy{padding-top:4px}
+.pop-copy__no{font-family:var(--serif);font-style:italic;font-size:clamp(38px,4.4vw,54px);line-height:1;color:var(--accent);letter-spacing:-.03em}
+.pop-copy__en{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;margin-top:7px}
+.pop-copy h3{font-size:clamp(28px,3.2vw,40px);line-height:1.18;letter-spacing:-.04em;font-weight:600;margin-top:12px}
+.pop-desc{font-size:14.5px;line-height:1.85;color:var(--ink-soft);margin-top:16px;max-width:34em}
+.pop-why{display:flex;gap:13px;border-top:1px solid var(--line-soft);padding-top:15px;margin-top:22px;margin-bottom:22px}
+.pop-why b{flex:none;font-family:var(--mono);font-size:8.5px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding-top:3px}
+.pop-why p{font-size:12px;line-height:1.75;color:var(--muted)}
+.pop-prompt{background:#1c1a17;color:#f7f3ec;border-radius:17px;padding:16px 17px 15px;position:relative;overflow:hidden}
+.pop-prompt::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,.08);pointer-events:none}
+.pop-prompt__top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px}
+.pop-prompt__label{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:#9c9488;text-transform:uppercase}
+.pop-prompt__label i{display:inline-block;width:4px;height:4px;border-radius:50%;background:#e9b2a1;margin-right:6px;vertical-align:2px}
+.pop-prompt h4{font-size:17px;line-height:1.3;letter-spacing:-.03em;font-weight:500;margin-top:2px}
+.copy-prompt{display:inline-flex;align-items:center;gap:5px;flex:none;border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:5px 9px;color:#d8d2c6;font-size:9px;transition:background .2s,color .2s,border-color .2s}
+.copy-prompt:hover{background:rgba(255,255,255,.1);color:#fff}
+.copy-prompt.is-done{color:#f0c5b8;border-color:#b27b6a}
+.copy-prompt svg{width:10px;height:10px}
+.pop-prompt p{font-size:12.5px;line-height:1.8;color:#eee9df;margin-top:10px}
+.pop-prompt__hint{display:block;margin-top:11px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);font-family:var(--mono);font-size:7.5px;letter-spacing:.03em;color:#948c7f}
+.pop-stage{position:relative;min-height:664px;border:1px solid var(--line);border-radius:26px;display:grid;place-items:center;padding:34px 22px 40px;overflow:hidden;--tint:#e9e4dc;background:var(--tint)}
+.pop-stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(23,22,20,.14) .6px,transparent .6px);background-size:17px 17px;opacity:.27;-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 10%,transparent 74%);mask-image:radial-gradient(ellipse at 50% 40%,#000 10%,transparent 74%);pointer-events:none}
+.stage-tag{position:absolute;top:15px;left:18px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;letter-spacing:.12em;color:rgba(23,22,20,.48);text-transform:uppercase}
+.stage-tag::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent)}
+.stage-hint{position:absolute;bottom:13px;left:50%;transform:translateX(-50%);font-size:9.5px;color:rgba(23,22,20,.52);letter-spacing:.02em;white-space:nowrap}
+.pop-phone{position:relative;z-index:2;width:min(320px,100%);height:560px;padding:8px;border-radius:42px;background:#121110;box-shadow:0 36px 54px -34px rgba(23,22,20,.58),0 0 0 1px rgba(255,255,255,.06) inset}
+.pop-screen{position:relative;height:100%;border-radius:35px;overflow:hidden;background:#151412;display:flex;flex-direction:column;color:#f4efe4}
+.pop-notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);z-index:50;width:70px;height:18px;border-radius:12px;background:#0c0c0b}
+.pop-page{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg-page,#151412)}
+.pop-page.is-active{display:flex}
+.pop-status{position:relative;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:10px 17px 0;font-family:var(--mono);font-size:8px;letter-spacing:.02em;color:#d6cec0;flex:none}
+.pop-status__icons{display:flex;gap:3px}.pop-status__icons i{width:9px;height:5px;border-radius:1px;background:currentColor;opacity:.8}.pop-status__icons i:nth-child(2){width:6px}.pop-status__icons i:nth-child(3){width:12px;border-radius:3px}
+.app-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 17px 8px;flex:none}
+.app-kicker{font-family:var(--mono);font-size:6.5px;letter-spacing:.11em;color:#8f867a;text-transform:uppercase}
+.app-head h3{font-size:23px;line-height:1.08;letter-spacing:-.04em;font-weight:500;margin-top:3px;color:#f6f1e8}
+.round-icon{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:#22201c;color:#e8e1d5;display:grid;place-items:center;flex:none;transition:background .2s}
+.round-icon:hover{background:#2f2c26}
+.round-icon svg{width:15px;height:15px}
+.pop-scrim{position:absolute;inset:0;z-index:22;background:rgba(4,4,4,.5);border:0;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .25s,visibility 0s .25s;backdrop-filter:blur(1px)}
+.pop-scrim.is-open{opacity:1;pointer-events:auto;visibility:visible;transition:opacity .25s}
+.pop-toast{position:absolute;left:50%;bottom:18px;z-index:80;transform:translate(-50%,8px);padding:6px 10px;border-radius:99px;background:#f6f1e7;color:#1a1815;font-size:8px;opacity:0;pointer-events:none;transition:opacity .2s,transform .3s var(--ease);white-space:nowrap}
+.pop-toast.is-on{opacity:1;transform:translate(-50%,0)}
+/* library */
+.library{padding:56px 0 70px;border-top:1px solid var(--line)}
+.library__head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding-bottom:16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.library__head h3{font-size:25px;letter-spacing:-.035em;font-weight:600}
+.library__head p{font-size:11.5px;color:var(--muted);margin-top:4px}
+.copy-all{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--ink);border-radius:999px;padding:9px 14px;font-size:11px;transition:background .2s,color .2s}
+.copy-all:hover{background:var(--ink);color:var(--paper)}
+.copy-all svg{width:12px;height:12px}
+.prompt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding-top:18px}
+.prompt-card{border:1px solid var(--line);border-radius:15px;padding:15px;background:rgba(251,250,247,.7);display:flex;flex-direction:column;gap:8px}
+.prompt-card:hover{background:var(--paper);border-color:rgba(23,22,20,.26)}
+.prompt-card__top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.prompt-card__no{font-family:var(--mono);font-size:8px;color:var(--faint);letter-spacing:.06em}
+.prompt-card h4{font-size:13px;font-weight:500;margin-top:1px}
+.prompt-card p{font-size:11.5px;line-height:1.75;color:var(--muted);flex:1}
+.prompt-card button{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:99px;padding:4px 8px;font-size:9px;color:var(--muted);transition:color .2s,border-color .2s}
+.prompt-card button:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}
+.prompt-card button.is-done{color:var(--accent)}
+.src-tag{font-family:var(--mono);font-size:7px;color:#9f9688;letter-spacing:.05em;text-transform:uppercase}
+.next{padding:44px 0;border-top:1px solid var(--line)}
+.next__inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.next p{font-family:var(--mono);font-size:8px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;margin-bottom:7px}
+.next h3{font-size:22px;letter-spacing:-.03em;font-weight:500}
+.next h3 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--muted)}
+.next a{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:99px;padding:9px 14px;font-size:11px;color:var(--muted);transition:border-color .2s,color .2s}
+.next a:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}
+.footer{border-top:1px solid var(--line);padding:46px 0 38px}
+.footer__grid{display:flex;justify-content:space-between;gap:36px;flex-wrap:wrap}
+.footer__title{font-family:var(--serif);font-size:clamp(22px,3vw,32px);line-height:1.25;letter-spacing:-.025em}
+.footer__title em{font-style:italic}
+.footer__meta{display:grid;gap:10px;max-width:390px;font-size:11px;color:var(--muted)}
+.footer__meta a{width:fit-content;border-bottom:1px solid var(--line);padding-bottom:2px;transition:color .2s,border-color .2s}
+.footer__meta a:hover{color:var(--ink);border-color:var(--ink)}
+.footer__base{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:32px;padding-top:15px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.toast{position:fixed;left:50%;bottom:26px;z-index:100;transform:translate(-50%,12px);background:var(--ink);color:var(--paper);border-radius:999px;padding:10px 17px;font-size:11.5px;opacity:0;pointer-events:none;transition:opacity .25s,transform .3s var(--ease);box-shadow:0 16px 32px -16px rgba(0,0,0,.5);white-space:nowrap}
+.toast::before{content:"";display:inline-block;width:5px;height:5px;margin-right:7px;border-radius:50%;background:var(--accent-soft);vertical-align:1px}
+.toast.is-on{opacity:1;transform:translate(-50%,0)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in-view{opacity:1;transform:none}
+@media (max-width:900px){
+  .hero__main{grid-template-columns:1fr;gap:26px}
+  .pop-grid{grid-template-columns:1fr;gap:28px}
+  .pop-copy{max-width:620px}
+  .pop-stage{min-height:640px;order:-1}
+  .pop-grid{display:flex;flex-direction:column;align-items:stretch}
+  .pop-stage{width:100%}
+}
+@media (max-width:760px){
+  .wrap{width:calc(100% - 36px)}
+  .topbar__in{height:58px;gap:10px}
+  .brand__name{display:none}.topic-label{display:none}
+  .pill-link{padding:6px 9px;font-size:10px}.pill-link span{display:none}
+  .hero{padding-top:48px}
+  .hero__top{font-size:8px;letter-spacing:.08em}
+  .hero h1{font-size:clamp(46px,14.4vw,74px)}
+  .hero__lead{font-size:16.5px;margin-top:20px}
+  .hero__meta{grid-template-columns:1fr 1fr}
+  .hero__meta div{padding:15px 0}
+  .hero__meta div:nth-child(2){border-right:0}
+  .hero__meta div:nth-child(3){border-top:1px solid var(--line-soft)}
+  .hero__meta div:nth-child(4){border-top:1px solid var(--line-soft)}
+  .hero__meta div:not(:first-child){padding-left:0}
+  .hero__meta div:nth-child(even){padding-left:14px}
+  .hero__meta b{font-size:23px}
+  .lab{padding:50px 0 56px}
+  .lab h2{font-size:34px}
+  .pop-modes{padding-bottom:12px}
+  .mode-btn{padding:7px 9px;font-size:10px}
+  .pop-grid{padding-top:24px}
+  .pop-stage{min-height:600px;padding:28px 12px 36px;border-radius:20px}
+  .pop-phone{height:540px;width:min(310px,100%)}
+  .stage-hint{font-size:8.5px;bottom:11px}
+  .prompt-grid{grid-template-columns:1fr}
+  .library{padding:44px 0 50px}
+  .library__head h3{font-size:21px}
+  .footer{padding:36px 0 30px}
+  .footer__grid{flex-direction:column;gap:20px}
+}
+@media (max-width:380px){
+  .wrap{width:calc(100% - 28px)}
+  .hero h1{font-size:clamp(42px,13.8vw,58px)}
+  .pop-stage{padding-inline:8px}
+  .pop-phone{height:520px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+/* ---------- shared dark app details ---------- */
+.pop-page{--pop:#c8b6ff;--pop-ink:#2a2140}
+.app-head .head-dot,.head-dot{width:8px;height:8px;border-radius:50%;background:#d8d0c2;box-shadow:0 0 0 4px rgba(255,255,255,.04);flex:none;margin-top:14px}
+.head-dot--amber{background:#e39b45}.head-dot--cyan{background:#63b9d6}.head-dot--lime{background:#cfe477}
+.field-label{font-family:var(--mono);font-size:6px;letter-spacing:.11em;color:#8f867a;text-transform:uppercase}
+.pop-page::-webkit-scrollbar,.project-list::-webkit-scrollbar,.draft-list::-webkit-scrollbar,.food-grid::-webkit-scrollbar,.booking-form::-webkit-scrollbar,.tab-grid::-webkit-scrollbar{width:0}
+.pop-page button{color:inherit}
+
+/* 01 menu */
+.pop-menu{--pop:#c8b6ff;--pop-ink:#2a2140}
+.project-list{flex:1;min-height:0;overflow-y:auto;padding:2px 16px 20px}
+.project-row{display:flex;align-items:center;gap:9px;width:100%;margin-bottom:7px;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.065);background:#201e1a;text-align:left;transition:background .2s,border-color .2s}
+.project-row:hover{background:#29261f;border-color:rgba(255,255,255,.12)}
+.project-ico{width:28px;height:28px;border-radius:8px;background:var(--c);flex:none;opacity:.9}
+.project-row b{display:block;font-size:9.5px;font-weight:500;color:#f2ede3}
+.project-row small{display:block;margin-top:1px;font-size:7px;color:#8e8578}
+.project-row>i{margin-left:auto;font-style:normal;color:#746d61;font-size:12px}
+.pop-menu-panel{position:absolute;top:70px;right:16px;z-index:24;width:188px;padding:5px;border:1px solid rgba(255,255,255,.13);border-radius:12px;background:#25221c;box-shadow:0 24px 40px -20px rgba(0,0,0,.85);opacity:0;pointer-events:none;visibility:hidden;transform:translateY(-4px) scale(.94);transform-origin:top right;transition:opacity .18s,transform .28s var(--ease),visibility 0s .2s}
+#popMenuPanel.is-open{opacity:1;pointer-events:auto;visibility:visible;transform:none;transition:opacity .18s,transform .28s var(--ease)}
+#popMenuPanel button{display:flex;align-items:center;gap:8px;width:100%;padding:8px;border-radius:7px;font-size:8.5px;color:#d9d2c5;text-align:left;opacity:0;transform:translateY(-3px);transition:background .15s,color .15s,opacity .2s,transform .2s}
+#popMenuPanel.is-open button{opacity:1;transform:none}
+#popMenuPanel.is-open button:nth-child(2){transition-delay:.025s}#popMenuPanel.is-open button:nth-child(3){transition-delay:.05s}#popMenuPanel.is-open button:nth-child(4){transition-delay:.075s}#popMenuPanel.is-open button:nth-child(5){transition-delay:.1s}#popMenuPanel.is-open button:nth-child(7){transition-delay:.125s}
+#popMenuPanel button:hover{background:rgba(255,255,255,.075);color:#fff}
+#popMenuPanel button i{width:17px;height:17px;border-radius:5px;background:#332f27;display:grid;place-items:center;font-style:normal;font-size:9px;color:#bbb2a5;flex:none}
+#popMenuPanel button small{margin-left:auto;font-family:var(--mono);font-size:5.5px;color:#756d61}
+#popMenuPanel button.is-danger{color:#eda498}
+#popMenuPanel button.is-danger i{background:#3a2622;color:#eda498}
+.menu-divider{display:block;height:1px;background:rgba(255,255,255,.08);margin:4px 3px}
+.pop-scrim{z-index:22}
+.pop-menu-panel{z-index:24}
+
+/* 02 card to modal */
+.explore-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start;flex:1;min-height:0;overflow-y:auto;padding:3px 16px 18px}
+.explore-card{position:relative;height:157px;padding:7px;border:1px solid rgba(255,255,255,.07);border-radius:13px;background:#201e1a;text-align:left;overflow:hidden;transition:border-color .2s,background .2s}
+.explore-card:hover{border-color:rgba(255,255,255,.16);background:#28251f}
+.explore-card--accent{background:#2c1c16;border-color:rgba(255,114,84,.22)}
+.explore-art{display:block;height:105px;border-radius:9px;overflow:hidden;margin-bottom:7px}
+.explore-card b{display:block;font-size:9.5px;font-weight:500;color:#f3eee5}
+.explore-card small{display:block;margin-top:1px;font-size:7px;color:#91887b}
+.card-art--city{background:linear-gradient(160deg,#384d56 0%,#197b93 48%,#0e2f3b 100%)}
+.card-art--trip{background:linear-gradient(160deg,#ff8b69,#e05c39 58%,#49251c)}
+.card-art--lake{background:linear-gradient(160deg,#809da2,#3c5e63 60%,#1d3336)}
+.card-art--market{background:linear-gradient(160deg,#e2bf76,#9d693f 60%,#3a2920)}
+.card-backdrop{position:absolute;inset:0;z-index:30;background:rgba(7,7,6,.56);border:0;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .3s,visibility 0s .3s;backdrop-filter:blur(2px)}
+.card-backdrop.is-open{opacity:1;pointer-events:auto;visibility:visible;transition:opacity .3s}
+.card-detail{position:absolute;z-index:32;display:none;flex-direction:column;border-radius:16px;background:#211f1b;border:1px solid rgba(255,255,255,.1);overflow:hidden;box-shadow:0 24px 44px -24px rgba(0,0,0,.85);visibility:hidden;opacity:0;transition:top .45s var(--ease),left .45s var(--ease),width .45s var(--ease),height .45s var(--ease),border-radius .3s,opacity .2s}
+.card-detail.is-open{visibility:visible;opacity:1}
+.detail-art{height:44%;flex:none;border-radius:0;transition:height .2s}
+.detail-close{position:absolute;top:10px;right:10px;z-index:3;width:27px;height:27px;border-radius:50%;background:rgba(18,18,16,.66);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:14px;display:grid;place-items:center;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.detail-body{flex:1;min-height:0;padding:13px 15px 15px;display:flex;flex-direction:column;opacity:0;transform:translateY(4px);transition:opacity .25s,transform .3s}
+.card-detail.is-open .detail-body{opacity:1;transform:none;transition-delay:.2s}
+.detail-body h4{font-size:22px;line-height:1.08;letter-spacing:-.04em;font-weight:600;margin-top:3px;color:#f6f1e8}
+.detail-body p{font-size:8.5px;line-height:1.7;color:#a59b8d;margin-top:6px;max-width:28em}
+.detail-meta{margin-top:8px;font-family:var(--mono);font-size:6.5px;letter-spacing:.04em;color:#d08c7e;text-transform:uppercase}
+.detail-action{display:flex;align-items:center;justify-content:space-between;margin-top:auto;height:34px;padding:0 12px;border-radius:99px;background:#f3eee4;color:#25211b;font-size:8.5px}
+.card-detail .detail-action{color:#25211b}
+.detail-action span{font-size:13px}
+
+/* 03 alert dialog */
+.pop-dialog{--pop:#e1a25c}
+.draft-count{font-family:var(--mono);font-size:6.5px;color:#8f867a;margin-top:15px}
+.draft-list{flex:1;min-height:0;overflow-y:auto;padding:2px 16px 12px}
+.draft-row{display:flex;align-items:center;gap:9px;padding:11px;margin-bottom:6px;border-radius:11px;background:#1f1d19;border:1px solid rgba(255,255,255,.05)}
+.draft-ico{width:26px;height:26px;border-radius:7px;background:#2b2822;border:1px solid rgba(255,255,255,.07);flex:none;position:relative}
+.draft-ico::before,.draft-ico::after{content:"";position:absolute;left:7px;right:7px;height:1px;background:rgba(255,255,255,.18)}
+.draft-ico::before{top:10px}.draft-ico::after{top:15px}
+.draft-row b{display:block;font-size:9px;font-weight:500;color:#eae4d8}
+.draft-row small{display:block;font-size:6.5px;color:#8f8678;margin-top:1px}
+.draft-row>i{margin-left:auto;font-style:normal;color:#756d61;font-size:11px}
+.delete-draft{flex:none;margin:0 16px 16px;height:36px;border-radius:99px;background:#2c1c18;color:#e7a99d;border:1px solid rgba(231,169,157,.16);font-size:8.5px}
+.dialog-backdrop{position:absolute;inset:0;z-index:30;background:rgba(5,5,5,.5);border:0;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .25s,visibility 0s .25s;backdrop-filter:blur(2px)}
+.dialog-backdrop.is-open{opacity:1;pointer-events:auto;visibility:visible;transition:opacity .25s}
+.alert-dialog{position:absolute;left:26px;right:26px;top:32%;z-index:32;padding:19px 16px 15px;border-radius:17px;background:#24211c;border:1px solid rgba(255,255,255,.1);text-align:center;visibility:hidden;opacity:0;transform:scale(.84);transition:opacity .2s,transform .3s}
+.alert-dialog.is-open{visibility:visible;opacity:1;transform:none;animation:alertBounce .44s cubic-bezier(.2,1.25,.4,1)}
+@keyframes alertBounce{0%{transform:scale(.84)}55%{transform:scale(1.025)}100%{transform:scale(1)}}
+.alert-icon{width:34px;height:34px;border-radius:50%;background:#3a2a1c;color:#e6ad72;border:1px solid rgba(230,173,114,.28);display:grid;place-items:center;margin:0 auto;font-family:var(--serif);font-size:18px}
+.alert-dialog h4{font-size:16px;letter-spacing:-.03em;font-weight:500;margin-top:10px;color:#f5f0e6}
+.alert-dialog p{font-size:8px;line-height:1.6;color:#a79d8f;margin-top:6px}
+.alert-actions{display:flex;gap:7px;margin-top:15px}
+.alert-actions button{flex:1;height:32px;border-radius:99px;font-size:8px;background:#302c25;color:#cfc6b8}
+.alert-actions button.is-danger{background:#e1a25c;color:#291d11}
+.alert-state--done{display:none;padding:4px 0 5px}
+.done-check{width:36px;height:36px;border-radius:50%;background:#2b3b31;border:1px solid rgba(149,202,161,.3);color:#a5d7ad;display:grid;place-items:center;margin:0 auto;font-size:16px}
+.alert-dialog.is-done .alert-state--default{display:none}
+.alert-dialog.is-done .alert-state--done{display:block}
+.alert-dialog.is-done{animation:none}
+
+/* 04 tooltip */
+.pop-tooltip{--pop:#77b6e6}
+.settings-list{flex:1;min-height:0;overflow-y:auto;padding:2px 16px 18px}
+.setting{display:flex;align-items:center;gap:8px;padding:11px 11px;margin-bottom:6px;border-radius:11px;background:#1f1d19;border:1px solid rgba(255,255,255,.05);position:relative}
+.setting b{display:block;font-size:9px;font-weight:500;color:#eae4d8}
+.setting small{display:block;font-size:6.5px;color:#8d8477;margin-top:1px}
+.mini-switch{width:29px;height:17px;border-radius:99px;background:#3a352c;padding:2px;margin-left:auto;flex:none;transition:background .2s}
+.mini-switch i{display:block;width:13px;height:13px;border-radius:50%;background:#91887a;transition:transform .2s,background .2s}
+.mini-switch.is-on{background:#77b6e6}
+.mini-switch.is-on i{transform:translateX(12px);background:#fff}
+.help-btn{width:17px;height:17px;border-radius:50%;border:1px solid rgba(119,182,230,.36);background:rgba(119,182,230,.1);color:#9ac8eb;font-size:8px;display:grid;place-items:center;flex:none;margin-left:auto}
+.setting--sync .mini-switch{margin-left:0}
+.tooltip{position:absolute;right:4px;bottom:38px;z-index:8;width:172px;padding:8px 9px;border-radius:9px;background:#f1ece2;color:#332e27;font-size:7.5px;line-height:1.6;box-shadow:0 12px 26px -10px rgba(0,0,0,.55);opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .18s,transform .25s var(--ease)}
+.tooltip.is-open{opacity:1;transform:none}
+.tooltip-arrow{position:absolute;right:14px;bottom:-4px;width:8px;height:8px;background:#f1ece2;transform:rotate(45deg)}
+
+/* 05 push drawer */
+.pop-drawer{--pop:#67b7a1}
+.drawer-stage{position:relative;flex:1;min-height:0;overflow:hidden;background:#141312}
+.drawer-main{position:absolute;inset:0;z-index:3;background:#151412;padding:0 16px;overflow:hidden;transform-origin:left center;transition:transform .45s var(--ease),filter .4s,border-radius .4s}
+.drawer{position:absolute;left:0;top:0;bottom:0;width:78%;z-index:6;padding:19px 15px 16px;background:#20302a;display:flex;flex-direction:column;transform:translateX(-102%);transition:transform .45s var(--ease);box-shadow:22px 0 45px -20px rgba(0,0,0,.7)}
+.pop-drawer.is-open .drawer{transform:none}
+.pop-drawer.is-open .drawer-main{transform:translateX(62px) scale(.92);border-radius:18px;filter:brightness(.62)}
+.drawer-hit{position:absolute;inset:0;z-index:5;border:0;background:transparent;display:none}
+.pop-drawer.is-open .drawer-hit{display:block}
+.drawer-profile{display:flex;align-items:center;gap:9px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.11)}
+.drawer-avatar{width:34px;height:34px;border-radius:50%;background:#d9efe4;color:#1e332b;display:grid;place-items:center;font-family:var(--mono);font-size:8px;flex:none}
+.drawer-profile b{display:block;font-size:10px;font-weight:500;color:#f3f7f2}
+.drawer-profile small{display:block;font-size:7px;color:rgba(230,240,235,.55);margin-top:1px}
+.drawer-nav{display:grid;gap:3px;margin-top:17px}
+.drawer-nav button{display:flex;align-items:center;gap:9px;height:35px;padding:0 10px;border-radius:8px;color:rgba(235,243,238,.68);font-size:9.5px;text-align:left;transition:background .2s,color .2s}
+.drawer-nav button:hover{background:rgba(255,255,255,.06)}
+.drawer-nav button.is-active{background:rgba(255,255,255,.1);color:#f4faf5}
+.drawer-nav button i{width:16px;font-style:normal;color:#84cbb5;text-align:center}
+.drawer-nav button small{margin-left:auto;font-family:var(--mono);font-size:6px;color:#93c8b8}
+.drawer-foot{display:grid;gap:9px;margin-top:auto;padding-top:15px;border-top:1px solid rgba(255,255,255,.1);font-size:8.5px;color:rgba(235,243,238,.5)}
+.drawer-foot button{text-align:left;color:inherit}
+.drawer-foot span{margin-top:5px;font-family:var(--mono);font-size:6px;letter-spacing:.06em;color:rgba(235,243,238,.25)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;height:44px;color:#f0ebe1;font-size:10px;letter-spacing:.01em}
+.drawer-menu-btn,.drawer-plus{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;color:#c9c1b4}
+.drawer-menu-btn svg{width:15px;height:15px}
+.drawer-plus{font-size:14px;line-height:1}
+.drawer-focus{position:relative;height:121px;margin-top:4px;border-radius:14px;background:#20584d;padding:14px;overflow:hidden;color:#eef7f2}
+.drawer-focus p{font-family:var(--mono);font-size:6.5px;letter-spacing:.1em;color:rgba(238,247,242,.55);text-transform:uppercase}
+.drawer-focus h4{font-size:23px;line-height:1;letter-spacing:-.045em;font-weight:500;margin-top:11px}
+.drawer-focus span{position:absolute;left:14px;bottom:13px;font-size:7.5px;color:rgba(238,247,242,.65)}
+.drawer-focus i{position:absolute;right:-16px;bottom:-18px;width:86px;height:86px;border-radius:50%;border:1px solid rgba(255,255,255,.17)}
+.drawer-focus i::before,.drawer-focus i::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.1)}
+.drawer-focus i::before{inset:13px}.drawer-focus i::after{inset:28px}
+.drawer-list{margin-top:10px;display:grid}
+.drawer-list article{display:flex;align-items:center;gap:9px;padding:10px 1px;border-bottom:1px solid rgba(255,255,255,.07)}
+.drawer-list article>span{font-family:var(--mono);font-size:6.5px;color:#938a7d;width:32px;flex:none}
+.drawer-list b{display:block;font-size:9px;font-weight:500;color:#e9e3d8}
+.drawer-list small{display:block;margin-top:1px;font-size:6.5px;color:#8f8678}
+.drawer-list article>i{margin-left:auto;font-style:normal;color:#797166;font-size:11px}
+
+/* 06 cart sheet */
+.food-art{display:block;height:68px;border-radius:8px;margin-bottom:6px}
+.food-art--latte{background:radial-gradient(circle at 50% 40%,#e6d5ba 0 28%,#9d7a55 29% 52%,#29231d 53% 100%)}
+.food-art--mocha{background:radial-gradient(circle at 50% 45%,#b98a62 0 30%,#5c3c2b 31% 54%,#241c17 55% 100%)}
+.food-art--matcha{background:radial-gradient(circle at 50% 44%,#a9c894 0 30%,#587c50 31% 55%,#1e2b1b 56% 100%)}
+.food-art--scone{background:radial-gradient(circle at 50% 48%,#e3cba8 0 34%,#a58259 35% 56%,#30261c 57% 100%)}
+.food-art--tart{background:radial-gradient(circle at 50% 48%,#df8c7f 0 26%,#b85d54 27% 50%,#3a2722 51% 100%)}
+.food-art--bagel{background:radial-gradient(circle at 50% 48%,#302a23 0 18%,#c39f70 19% 41%,#79603f 42% 55%,#28231d 56% 100%)}
+.pop-cart{--pop:#e39b45}
+.food-grid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start;padding:3px 16px 82px}
+.food-card{position:relative;height:126px;padding:7px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:#201e1a;text-align:left;transition:border-color .2s,background .2s}
+.food-card:hover{border-color:rgba(227,155,69,.35);background:#28231c}
+.food-card b{display:block;font-size:9px;font-weight:500;color:#f1ece2}
+.food-card small{display:block;margin-top:1px;font-size:6.5px;color:#8f8678}
+.food-card em{position:absolute;right:7px;bottom:7px;width:18px;height:18px;border-radius:50%;background:#e39b45;color:#2a1c0e;font-style:normal;font-size:10px;display:grid;place-items:center;line-height:1}
+.cart-sheet{position:absolute;left:14px;right:14px;bottom:68px;z-index:11;padding:12px 14px;border:1px solid rgba(255,255,255,.11);border-radius:16px;background:#24211a;box-shadow:0 24px 44px -24px rgba(0,0,0,.85);opacity:0;pointer-events:none;transform:translateY(10px) scale(.98);transform-origin:bottom;transition:opacity .2s,transform .3s var(--ease)}
+.pop-cart.is-open .cart-sheet{opacity:1;pointer-events:auto;transform:none}
+.cart-sheet__head{display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08);font-family:var(--mono);font-size:6.5px;letter-spacing:.05em;color:#a69c8d;text-transform:uppercase}
+.cart-sheet__head span:last-child{color:#e39b45}
+.cart-line{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.055);font-size:8px;color:#c9c0b2}
+.cart-line b{font-weight:500;color:#f0e9dc}
+.cart-sub{display:flex;justify-content:space-between;padding-top:8px;font-size:8px;color:#a79d8e}
+.cart-sub b{font-family:var(--serif);font-size:14px;font-weight:400;color:#fff}
+.cart-bar{position:absolute;left:14px;right:14px;bottom:12px;z-index:12;height:47px;display:flex;align-items:center;gap:8px;padding:0 7px 0 9px;border-radius:99px;background:#e39b45;color:#2b1c0e;font-size:8.5px;text-align:left;box-shadow:0 15px 28px -14px rgba(120,60,10,.65)}
+.cart-badge{width:24px;height:24px;border-radius:50%;background:#2a1c0e;color:#f6eadb;display:grid;place-items:center;font-family:var(--mono);font-size:7px;flex:none}
+.cart-bar>svg{width:12px;height:12px;margin-left:auto;transition:transform .3s}
+.pop-cart.is-open .cart-bar>svg{transform:rotate(180deg)}
+.cart-next{padding:6px 10px;border-radius:99px;background:#1f180f;color:#f7ecdc;font-size:8px;flex:none}
+
+/* 07 expandable tabs */
+.pop-tabs{--pop:#63b9d6}
+.tabs-head{display:flex;align-items:center;gap:7px;padding:4px 16px 8px;flex:none;position:relative;z-index:14}
+.cat-scroller{display:flex;gap:4px;min-width:0;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;flex:1}
+.cat-scroller::-webkit-scrollbar{display:none}
+.cat-chip{flex:none;height:26px;padding:0 10px;border-radius:99px;background:#201e1a;border:1px solid rgba(255,255,255,.07);color:#a49b8d;font-size:8px;transition:background .2s,color .2s,border-color .2s}
+.cat-chip.is-active{background:#63b9d6;border-color:transparent;color:#0e2227}
+.cat-toggle{flex:none;width:26px;height:26px;border-radius:50%;background:#201e1a;border:1px solid rgba(255,255,255,.1);color:#aaa093;display:grid;place-items:center}
+.cat-toggle svg{width:11px;height:11px;transition:transform .25s}
+.cat-toggle[aria-expanded="true"] svg{transform:rotate(180deg)}
+.cat-panel{position:absolute;left:16px;right:16px;top:84px;z-index:13;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:#24211c;box-shadow:0 20px 36px -20px rgba(0,0,0,.75);opacity:0;pointer-events:none;visibility:hidden;transform:translateY(-4px) scale(.985);transform-origin:top;transition:opacity .2s,transform .28s var(--ease),visibility 0s .2s}
+.cat-panel.is-open{opacity:1;pointer-events:auto;visibility:visible;transform:none;transition:opacity .2s,transform .28s var(--ease)}
+.cat-panel>p{font-family:var(--mono);font-size:6px;letter-spacing:.1em;color:#8f867a;text-transform:uppercase;margin-bottom:8px}
+.cat-panel__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.cat-panel__grid button{height:28px;border-radius:7px;background:#2a2721;color:#b6ac9d;font-size:7.5px;border:1px solid transparent}
+.cat-panel__grid button:hover{background:#332f28;color:#f0e9dd}
+.cat-panel__grid button.is-active{background:#63b9d6;color:#10292f;border-color:#7bcbe5}
+.tab-caption{display:flex;justify-content:space-between;padding:4px 17px 5px;font-family:var(--mono);font-size:6px;letter-spacing:.05em;color:#8e8578;text-transform:uppercase;flex:none}
+.tab-caption span:last-child{color:#6f685d}
+.tab-grid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start;padding:2px 16px 16px}
+.tab-item{position:relative;height:130px;padding:7px;border-radius:12px;background:#201e1a;border:1px solid rgba(255,255,255,.06);text-align:left;transition:border-color .2s,background .2s}
+.tab-item:hover{border-color:rgba(99,185,214,.3)}
+.tab-item--accent{background:#1a2c33;border-color:rgba(99,185,214,.3)}
+.tab-item b{display:block;font-size:9px;font-weight:500;color:#f0ebe1}
+.tab-item small{display:block;font-size:6.5px;color:#8e8578;margin-top:1px}
+
+/* 08 date popover */
+.pop-date{--pop:#cfe477}
+.booking-form{flex:1;min-height:0;overflow-y:auto;padding:2px 16px 16px}
+.booking-dates{display:flex;gap:8px;margin-bottom:10px}
+.booking-dates>div{flex:1;min-width:0}
+.date-chip{display:flex;align-items:center;gap:5px;width:100%;height:32px;padding:0 9px;border-radius:9px;background:#211f1a;border:1px solid rgba(255,255,255,.09);color:#eee8dc;font-size:8.5px;text-align:left;transition:border-color .2s,background .2s}
+.date-chip:hover{border-color:rgba(207,228,119,.35)}
+.date-dot{width:6px;height:6px;border-radius:50%;background:#cfe477;flex:none}
+.date-chip.is-static{background:#1d1b17;color:#a79d8e}
+.book-field{display:block;margin-top:11px}
+.book-field input,.book-field textarea{width:100%;margin-top:5px;border:1px solid rgba(255,255,255,.075);border-radius:9px;background:#1f1d19;color:#e9e3d7;font-size:8.5px;padding:9px 10px;outline:none;resize:none}
+.book-field input:focus,.book-field textarea:focus{border-color:rgba(207,228,119,.4)}
+.guest-line{display:flex;align-items:center;gap:7px;height:34px;margin-top:5px;padding:0 8px;border-radius:9px;background:#1f1d19;border:1px solid rgba(255,255,255,.075);font-size:8.5px;color:#d6cec1}
+.guest-line span{margin-right:auto}
+.guest-line button{width:22px;height:22px;border-radius:6px;background:#2c2922;color:#cfc6b8;font-size:11px;display:grid;place-items:center}
+.guest-line b{width:16px;text-align:center;font-family:var(--mono);font-size:8px;color:#f2ede2}
+.booking-summary{display:flex;align-items:center;gap:10px;padding:10px;margin-top:12px;border-radius:10px;background:#cfe477;color:#2d3213}
+.booking-summary b{display:block;font-size:9px;font-weight:600}
+.booking-summary span{display:block;font-size:7px;color:rgba(45,50,19,.7);margin-top:2px}
+.booking-summary i{font-style:normal}
+.table-pill{margin-left:auto;padding:4px 7px;border-radius:99px;background:#2d3213;color:#e9f3b4;font-size:6.5px;flex:none}
+.confirm-booking{width:100%;height:34px;margin-top:12px;border-radius:99px;background:#cfe477;color:#2b3112;font-size:8.5px;font-weight:500}
+.date-scrim{position:absolute;inset:0;z-index:17;border:0;background:rgba(4,4,4,.22);display:none}
+.pop-date.is-open .date-scrim{display:block}
+.date-pop{position:absolute;left:14px;right:14px;top:112px;z-index:19;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:#24211b;box-shadow:0 24px 42px -22px rgba(0,0,0,.8);opacity:0;pointer-events:none;visibility:hidden;transform:translateY(-6px) scale(.98);transform-origin:top;transition:opacity .2s,transform .3s var(--ease),visibility 0s .25s}
+.pop-date.is-open .date-pop{opacity:1;pointer-events:auto;visibility:visible;transform:none;transition:opacity .2s,transform .3s var(--ease)}
+.dp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:9px;color:#f0ebe0}
+.dp-head b{font-weight:500}
+.dp-head button{width:24px;height:24px;border-radius:50%;background:#302c25;color:#c9c0b2;font-size:12px;display:grid;place-items:center}
+.dp-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:10px;font-family:var(--mono);font-size:6px;color:#8f8678;text-align:center}
+.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:5px}
+.dp-day{height:26px;border-radius:50%;font-size:7.5px;color:#cfc6b8}
+.dp-day:hover{background:#343027;color:#fff}
+.dp-day.is-muted{color:#5f594f}
+.dp-day.is-selected{background:#cfe477;color:#2b3112}
+.dp-day.is-today{box-shadow:inset 0 0 0 1px rgba(207,228,119,.5)}
+.dp-gap{height:26px}
+
+@media (max-width:760px){
+  .pop-modes{gap:3px}
+  .pop-phone{height:540px}
+  .explore-card{height:146px}
+  .explore-art{height:96px}
+  .food-card{height:119px}
+  .tab-item{height:124px}
+  .alert-dialog{top:30%}
+  .drawer-focus{height:112px}
+}
+@media (max-width:380px){
+  .pop-phone{height:520px}
+  .project-row{padding:8px}
+  .explore-card{height:136px}
+  .explore-art{height:87px}
+  .food-card{height:110px}
+  .food-art{height:58px}
+  .tab-item{height:112px}
+  .booking-form{padding-inline:13px}
+  .date-pop{left:10px;right:10px}
+  .drawer-main{padding-inline:13px}
+  .drawer-focus{height:102px}
+  .drawer-focus h4{font-size:21px}
+}
+</style>
+</head>
+<body>
+<a class="sr-only" href="#lab">跳到 Popover Lab</a>
+<header class="topbar">
+  <div class="wrap topbar__in">
+    <a class="brand" href="library.html" aria-label="点触 · 返回专题库">
+      <span class="brand__mark">t</span>
+      <span class="brand__name">点触 <span>/ touch</span></span>
+    </a>
+    <span class="topic-label">Library 03 · Popover Interactions</span>
+    <div class="top-links">
+      <a class="pill-link" href="library.html"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg><span>专题库</span></a>
+      <a class="pill-link pill-link--solid" href="#sources"><span>来源</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M8 3v9M3.7 8.2 8 12.5l4.3-4.3"/></svg></a>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero__top mono"><span>Touch Library / Topic 03</span><span>8 popover moves · 1 episode</span></div>
+      <div class="hero__main">
+        <div>
+          <h1>浮上来，<em>再退回去</em></h1>
+          <p class="hero__lead">8 种让 App 和小程序更有层次感的弹出交互。<br><span>真正高级的浮层，不是盖住页面，<br>而是知道什么时候离开。</span></p>
+        </div>
+        <aside class="hero__aside">
+          <strong>关于这个专题</strong>
+          整理自抖音 @叨叨AI「交互/设计/动效」第 10 集。按钮菜单、卡片、对话框、气泡、抽屉、清单、分类和日历——它们从哪儿出现，又该怎么回去。演示为重新实现，不是视频截屏。
+          <br><a href="#lab">进入 Popover Lab <span aria-hidden="true">↓</span></a>
+        </aside>
+      </div>
+      <div class="hero__meta">
+        <div><b>08</b><span>弹出交互</span></div>
+        <div><b>01</b><span>原视频来源</span></div>
+        <div><b>08</b><span>可复制提示词</span></div>
+        <div><b>100%</b><span>可上手演示</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="lab" id="lab">
+    <div class="wrap">
+      <div class="lab__head reveal">
+        <div><p class="lab__kicker mono">Popover Lab · 08 moves</p><h2>出现，是为了<span class="lab-h2-tail"><em>退回去</em>。</span></h2></div>
+        <p class="lab__note">选一种弹出方式，在同一块手机画布里试。出现的原点、进入的路径、离开的方式，都会改变页面的层次。</p>
+      </div>
+      <div class="pop-modes" aria-label="弹出交互方法">
+        <button class="mode-btn is-active" type="button" data-mode="menu"><b>01</b><span>按钮弹出菜单</span></button>
+        <button class="mode-btn" type="button" data-mode="card"><b>02</b><span>卡片弹出详情</span></button>
+        <button class="mode-btn" type="button" data-mode="dialog"><b>03</b><span>确认弹窗</span></button>
+        <button class="mode-btn" type="button" data-mode="tooltip"><b>04</b><span>气泡提示</span></button>
+        <button class="mode-btn" type="button" data-mode="drawer"><b>05</b><span>侧边抽屉</span></button>
+        <button class="mode-btn" type="button" data-mode="cart"><b>06</b><span>底栏弹出清单</span></button>
+        <button class="mode-btn" type="button" data-mode="tabs"><b>07</b><span>全部分类展开</span></button>
+        <button class="mode-btn" type="button" data-mode="date"><b>08</b><span>日期弹出日历</span></button>
+      </div>
+      <div class="pop-grid">
+        <div class="pop-copy reveal">
+          <div class="pop-copy__no" id="popNo">01</div>
+          <div class="pop-copy__en" id="popEn">Popover menu</div>
+          <h3 id="popTitle">按钮弹出菜单</h3>
+          <p class="pop-desc" id="popDesc">点击按钮，菜单从按钮位置展开，点击空白处收回。</p>
+          <div class="pop-why"><b>Why it works</b><p id="popWhy">从一个按钮长出来，向同一处收回去。浮层和触发点保持同一条因果线。</p></div>
+          <div class="pop-prompt">
+            <div class="pop-prompt__top">
+              <div><p class="pop-prompt__label"><i></i>跟 AI 说 <span>/ Episode 10</span></p><h4 id="popPromptTitle">按钮弹出菜单</h4></div>
+              <button class="copy-prompt" id="copyCurrent" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg><span>复制</span></button>
+            </div>
+            <p id="popPrompt">做一个按钮弹出菜单（Popover Menu），以按钮为原点展开，点击外部原路收回。</p>
+            <span class="pop-prompt__hint" id="popHint">点右上角 ···，再点空白处收回。</span>
+          </div>
+        </div>
+        <div class="pop-stage reveal" id="popStage">
+          <span class="stage-tag" id="stageTag">Popover menu</span>
+          <div class="pop-phone">
+            <span class="pop-notch" aria-hidden="true"></span>
+            <div class="pop-screen" id="popScreen">
+              <div class="pop-page pop-menu is-active" data-demo="menu">
+                <div class="pop-status"><span>9:41</span><span class="pop-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="app-head">
+                  <div><p class="app-kicker">Workspace</p><h3>Projects</h3></div>
+                  <button class="round-icon" id="projectMenuBtn" type="button" aria-label="项目操作菜单" aria-expanded="false"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><circle cx="4" cy="10" r="1.3"/><circle cx="10" cy="10" r="1.3"/><circle cx="16" cy="10" r="1.3"/></svg></button>
+                </div>
+                <div class="project-list">
+                  <button class="project-row" type="button"><span class="project-ico" style="--c:#c8b6ff"></span><div><b>Brand kit</b><small>12 files</small></div><i>›</i></button>
+                  <button class="project-row" type="button"><span class="project-ico" style="--c:#efb58f"></span><div><b>Landing page</b><small>Edited 2h ago</small></div><i>›</i></button>
+                  <button class="project-row" type="button"><span class="project-ico" style="--c:#a5d5c7"></span><div><b>Onboarding</b><small>8 screens</small></div><i>›</i></button>
+                  <button class="project-row" type="button"><span class="project-ico" style="--c:#8dc3df"></span><div><b>Icon set</b><small>64 icons</small></div><i>›</i></button>
+                  <button class="project-row" type="button"><span class="project-ico" style="--c:#e4cd7d"></span><div><b>Newsletter</b><small>Draft</small></div><i>›</i></button>
+                  <button class="project-row" type="button"><span class="project-ico" style="--c:#e4a4a0"></span><div><b>Launch</b><small>Due Friday</small></div><i>›</i></button>
+                </div>
+                <button class="pop-scrim" id="menuScrim" type="button" aria-label="收起菜单"></button>
+                <div class="pop-menu-panel" id="popMenuPanel" aria-hidden="true">
+                  <button type="button" data-menu-action="New project"><i>＋</i>New project<small>⌘ N</small></button>
+                  <button type="button" data-menu-action="Rename project"><i>✎</i>Rename<small>⌘ R</small></button>
+                  <button type="button" data-menu-action="Duplicate"><i>⧉</i>Duplicate</button>
+                  <button type="button" data-menu-action="Archive"><i>▣</i>Archive</button>
+                  <span class="menu-divider"></span>
+                  <button class="is-danger" type="button" data-menu-action="Delete project"><i>×</i>Delete project</button>
+                </div>
+              </div>
+
+              <div class="pop-page pop-cards" data-demo="card">
+                <div class="pop-status"><span>9:41</span><span class="pop-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="app-head"><div><p class="app-kicker">Nearby · 4 places</p><h3>Explore</h3></div><span class="head-dot" aria-hidden="true"></span></div>
+                <div class="explore-grid" id="exploreGrid">
+                  <button class="explore-card" type="button" data-card data-title="City Walk" data-meta="2h route · easy" data-art="city" data-desc="A slow loop through the old streets, one bakery, and the long way back along the water."><span class="explore-art card-art--city"></span><b>City Walk</b><small>2h route</small></button>
+                  <button class="explore-card explore-card--accent" type="button" data-card data-title="Weekend Trip" data-meta="3 days · coast" data-art="trip" data-desc="Three unhurried days by the water. Leave one afternoon completely empty on purpose."><span class="explore-art card-art--trip"></span><b>Weekend Trip</b><small>3 days</small></button>
+                  <button class="explore-card" type="button" data-card data-title="Lake House" data-meta="Cabin stay · 2 nights" data-art="lake" data-desc="A cabin with one good chair, a window, and no plans after breakfast."><span class="explore-art card-art--lake"></span><b>Lake House</b><small>Cabin stay</small></button>
+                  <button class="explore-card" type="button" data-card data-title="Night Market" data-meta="Food tour · 1.5h" data-art="market" data-desc="Follow the warm light and the longest queue. Share everything you order."><span class="explore-art card-art--market"></span><b>Night Market</b><small>Food tour</small></button>
+                </div>
+                <button class="card-backdrop" id="cardBackdrop" type="button" aria-label="关闭详情"></button>
+                <article class="card-detail" id="cardDetail" aria-hidden="true">
+                  <span class="detail-art" id="detailArt"></span>
+                  <button class="detail-close" id="cardDetailClose" type="button" aria-label="关闭详情">×</button>
+                  <div class="detail-body">
+                    <p class="app-kicker">Saved place</p>
+                    <h4 id="detailTitle">City Walk</h4>
+                    <p id="detailDesc">A slow loop through the old streets.</p>
+                    <div class="detail-meta" id="detailMeta">2h route · easy</div>
+                    <button class="detail-action" type="button">Add to trip <span>＋</span></button>
+                  </div>
+                </article>
+              </div>
+
+              <div class="pop-page pop-dialog" data-demo="dialog">
+                <div class="pop-status"><span>9:41</span><span class="pop-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="app-head"><div><p class="app-kicker">Library</p><h3>Drafts</h3></div><span class="draft-count">6 drafts</span></div>
+                <div class="draft-list" id="draftList">
+                  <div class="draft-row"><span class="draft-ico"></span><div><b>Draft 01</b><small>Yesterday</small></div><i>›</i></div>
+                  <div class="draft-row"><span class="draft-ico"></span><div><b>Draft 03</b><small>Last week</small></div><i>›</i></div>
+                  <div class="draft-row"><span class="draft-ico"></span><div><b>Draft 04</b><small>Last week</small></div><i>›</i></div>
+                  <div class="draft-row"><span class="draft-ico"></span><div><b>Draft 05</b><small>Aug 30</small></div><i>›</i></div>
+                  <div class="draft-row"><span class="draft-ico"></span><div><b>Draft 06</b><small>Aug 21</small></div><i>›</i></div>
+                </div>
+                <button class="delete-draft" id="openDialog" type="button">Delete last draft</button>
+                <button class="dialog-backdrop" id="dialogBackdrop" type="button" aria-label="关闭对话框"></button>
+                <div class="alert-dialog" id="alertDialog" role="alertdialog" aria-modal="true" aria-labelledby="alertTitle" aria-hidden="true">
+                  <div class="alert-state alert-state--default">
+                    <span class="alert-icon">!</span>
+                    <h4 id="alertTitle">Delete this draft?</h4>
+                    <p>“Draft 06” will be removed from this device. This cannot be undone.</p>
+                    <div class="alert-actions">
+                      <button type="button" id="dialogCancel">Cancel</button>
+                      <button type="button" class="is-danger" id="dialogDelete">Delete</button>
+                    </div>
+                  </div>
+                  <div class="alert-state alert-state--done">
+                    <span class="done-check">✓</span>
+                    <h4>Draft deleted</h4>
+                    <p>One less thing on the desk.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pop-page pop-tooltip" data-demo="tooltip">
+                <div class="pop-status"><span>9:41</span><span class="pop-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="app-head"><div><p class="app-kicker">Preferences</p><h3>Settings</h3></div><span class="head-dot" aria-hidden="true"></span></div>
+                <div class="settings-list">
+                  <div class="setting"><div><b>Dark mode</b><small>Follow system</small></div><button class="mini-switch is-on" type="button" aria-label="深色模式" aria-pressed="true"><i></i></button></div>
+                  <div class="setting setting--sync">
+                    <div><b>Auto sync</b><small>Every hour</small></div>
+                    <button class="help-btn" id="helpBtn" type="button" aria-label="自动同步说明" aria-describedby="syncTooltip">?</button>
+                    <div class="tooltip" id="syncTooltip" role="tooltip" aria-hidden="true">Syncs on Wi-Fi every hour. No mobile data used.<span class="tooltip-arrow" aria-hidden="true"></span></div>
+                    <button class="mini-switch is-on" type="button" aria-label="自动同步" aria-pressed="true"><i></i></button>
+                  </div>
+                  <div class="setting"><div><b>Offline files</b><small>Off</small></div><button class="mini-switch" type="button" aria-label="离线文件" aria-pressed="false"><i></i></button></div>
+                  <div class="setting"><div><b>Sounds</b><small>Soft</small></div><button class="mini-switch is-on" type="button" aria-label="声音" aria-pressed="true"><i></i></button></div>
+                  <div class="setting"><div><b>Widgets</b><small>2 active</small></div><button class="mini-switch is-on" type="button" aria-label="小组件" aria-pressed="true"><i></i></button></div>
+                  <div class="setting"><div><b>Focus mode</b><small>Weekdays</small></div><button class="mini-switch is-on" type="button" aria-label="专注模式" aria-pressed="true"><i></i></button></div>
+                </div>
+              </div>
+
+              <div class="pop-page pop-drawer" data-demo="drawer">
+                <div class="pop-status"><span>9:41</span><span class="pop-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="drawer-stage" id="drawerStage">
+                  <aside class="drawer" id="drawer" aria-hidden="true">
+                    <div class="drawer-profile"><span class="drawer-avatar">KF</span><div><b>Kofi F.</b><small>kofi@fieldnotes.co</small></div></div>
+                    <nav class="drawer-nav" aria-label="抽屉菜单">
+                      <button type="button" class="is-active"><i>◉</i>Today<small>6</small></button>
+                      <button type="button"><i>▤</i>Projects</button>
+                      <button type="button"><i>▦</i>Calendar</button>
+                      <button type="button"><i>♧</i>Saved</button>
+                    </nav>
+                    <div class="drawer-foot"><button type="button">Settings</button><button type="button">Sign out</button><span>v 2.4</span></div>
+                  </aside>
+                  <div class="drawer-main" id="drawerMain">
+                    <div class="drawer-head">
+                      <button class="drawer-menu-btn" id="drawerOpen" type="button" aria-label="打开菜单"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h8"/></svg></button>
+                      <span>Today</span>
+                      <button class="drawer-plus" type="button" aria-label="新建">＋</button>
+                    </div>
+                    <div class="drawer-focus"><p>Focus · 25 min</p><h4>Morning<br>focus.</h4><span>One thing at a time.</span><i aria-hidden="true"></i></div>
+                    <div class="drawer-list">
+                      <article><span>09:30</span><div><b>Standup</b><small>Team room</small></div><i>›</i></article>
+                      <article><span>11:00</span><div><b>Design review</b><small>Bring the quiet version</small></div><i>›</i></article>
+                      <article><span>12:30</span><div><b>Lunch</b><small>Somewhere outside</small></div><i>›</i></article>
+                      <article><span>15:00</span><div><b>Write-up</b><small>45 min block</small></div><i>›</i></article>
+                    </div>
+                    <button class="drawer-hit" id="drawerHit" type="button" aria-label="关闭侧边抽屉"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pop-page pop-cart" data-demo="cart">
+                <div class="pop-status"><span>9:41</span><span class="pop-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="app-head"><div><p class="app-kicker">Harbor Kitchen</p><h3>Menu</h3></div><span class="head-dot head-dot--amber" aria-hidden="true"></span></div>
+                <div class="food-grid">
+                  <button class="food-card" type="button"><span class="food-art food-art--latte"></span><b>Latte</b><small>Hot · Oat</small><em>＋</em></button>
+                  <button class="food-card" type="button"><span class="food-art food-art--mocha"></span><b>Mocha</b><small>Iced</small><em>＋</em></button>
+                  <button class="food-card food-card--wide" type="button"><span class="food-art food-art--matcha"></span><b>Matcha</b><small>Hot</small><em>＋</em></button>
+                  <button class="food-card" type="button"><span class="food-art food-art--scone"></span><b>Scone</b><small>Butter</small><em>＋</em></button>
+                  <button class="food-card" type="button"><span class="food-art food-art--tart"></span><b>Tart</b><small>Berry</small><em>＋</em></button>
+                  <button class="food-card" type="button"><span class="food-art food-art--bagel"></span><b>Bagel</b><small>Sesame</small><em>＋</em></button>
+                </div>
+                <div class="cart-sheet" id="cartSheet" aria-hidden="true">
+                  <div class="cart-sheet__head"><span>Your order</span><span>4 items</span></div>
+                  <div class="cart-line"><span>Latte · Oat</span><b>$5</b></div>
+                  <div class="cart-line"><span>Matcha · Hot</span><b>$6</b></div>
+                  <div class="cart-line"><span>Scone · Butter</span><b>$4</b></div>
+                  <div class="cart-line"><span>Bagel · Sesame</span><b>$5</b></div>
+                  <div class="cart-sub"><span>Subtotal</span><b>$20</b></div>
+                </div>
+                <button class="cart-bar" id="cartBar" type="button" aria-expanded="false">
+                  <span class="cart-badge">4</span><span>4 items · $20</span>
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3.5 6 4.5 4.5L12.5 6"/></svg>
+                  <span class="cart-next">Next</span>
+                </button>
+              </div>
+
+              <div class="pop-page pop-tabs" data-demo="tabs">
+                <div class="pop-status"><span>9:41</span><span class="pop-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="app-head"><div><p class="app-kicker">Filter the menu</p><h3>Menu</h3></div><span class="head-dot head-dot--cyan" aria-hidden="true"></span></div>
+                <div class="tabs-head">
+                  <div class="cat-scroller" id="catScroller">
+                    <button class="cat-chip is-active" type="button" data-cat="All">All</button>
+                    <button class="cat-chip" type="button" data-cat="Coffee">Coffee</button>
+                    <button class="cat-chip" type="button" data-cat="Tea">Tea</button>
+                    <button class="cat-chip" type="button" data-cat="Juice">Juice</button>
+                    <button class="cat-chip" type="button" data-cat="Dessert">Dessert</button>
+                    <button class="cat-chip" type="button" data-cat="Snacks">Snacks</button>
+                    <button class="cat-chip" type="button" data-cat="Hot">Hot</button>
+                    <button class="cat-chip" type="button" data-cat="Cold">Cold</button>
+                  </div>
+                  <button class="cat-toggle" id="catToggle" type="button" aria-expanded="false" aria-label="展开全部分类"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3.5 6 4.5 4.5L12.5 6"/></svg></button>
+                </div>
+                <div class="cat-panel" id="catPanel" aria-hidden="true">
+                  <p>All categories</p>
+                  <div class="cat-panel__grid">
+                    <button type="button" data-cat="All" class="is-active">All</button><button type="button" data-cat="Coffee">Coffee</button><button type="button" data-cat="Tea">Tea</button><button type="button" data-cat="Juice">Juice</button><button type="button" data-cat="Dessert">Dessert</button><button type="button" data-cat="Snacks">Snacks</button><button type="button" data-cat="Hot">Hot</button><button type="button" data-cat="Cold">Cold</button>
+                  </div>
+                </div>
+                <div class="tab-caption"><span id="tabCaption">Showing everything</span><span>06 items</span></div>
+                <div class="tab-grid">
+                  <button class="tab-item" type="button"><span class="food-art food-art--latte"></span><b>Flat White</b><small>Coffee</small></button>
+                  <button class="tab-item tab-item--accent" type="button"><span class="food-art food-art--mocha"></span><b>Cold Brew</b><small>Coffee</small></button>
+                  <button class="tab-item" type="button"><span class="food-art food-art--matcha"></span><b>Chai</b><small>Tea</small></button>
+                  <button class="tab-item" type="button"><span class="food-art food-art--scone"></span><b>Cocoa</b><small>Drinks</small></button>
+                  <button class="tab-item" type="button"><span class="food-art food-art--tart"></span><b>Lemonade</b><small>Juice</small></button>
+                  <button class="tab-item" type="button"><span class="food-art food-art--bagel"></span><b>Espresso</b><small>Coffee</small></button>
+                </div>
+              </div>
+
+              <div class="pop-page pop-date" data-demo="date">
+                <div class="pop-status"><span>9:41</span><span class="pop-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="app-head"><div><p class="app-kicker">Harbor Kitchen</p><h3>New booking</h3></div><span class="head-dot head-dot--lime" aria-hidden="true"></span></div>
+                <div class="booking-form">
+                  <div class="booking-dates">
+                    <div><span class="field-label">Date</span><button class="date-chip" id="dateChip" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="date-dot"></span>Sep 27</button></div>
+                    <div><span class="field-label">Time</span><button class="date-chip is-static" type="button">10:30</button></div>
+                  </div>
+                  <label class="book-field"><span class="field-label">Place</span><input type="text" value="Harbor Kitchen" aria-label="地点"></label>
+                  <div class="book-field"><span class="field-label">Guests</span><div class="guest-line"><span>Adults</span><button type="button" id="guestMinus" aria-label="减少人数">−</button><b id="guestCount">2</b><button type="button" id="guestPlus" aria-label="增加人数">＋</button></div></div>
+                  <label class="book-field"><span class="field-label">Note</span><textarea rows="2" aria-label="备注">Window seat, please.</textarea></label>
+                  <div class="booking-summary"><div><b>Harbor Kitchen</b><span><i id="summaryGuests">2 guests</i> · Indoor</span></div><span class="table-pill">Table 12</span></div>
+                  <button class="confirm-booking" type="button" id="confirmBooking">Confirm booking</button>
+                </div>
+                <button class="date-scrim" id="dateScrim" type="button" aria-label="关闭日历"></button>
+                <div class="date-pop" id="datePop" role="dialog" aria-label="选择日期" aria-hidden="true">
+                  <div class="dp-head"><button type="button" id="dpPrev" aria-label="上个月">‹</button><b>September 2026</b><button type="button" id="dpNext" aria-label="下个月">›</button></div>
+                  <div class="dp-weekdays" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+                  <div class="dp-grid" id="dpGrid"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="stage-hint" id="stageHint">点右上角 ···，菜单从按钮位置展开</p>
+        </div>
+      </div>
+      <div class="library reveal">
+        <div class="library__head">
+          <div><h3>全部 8 条提示词</h3><p>按原视频顺序排列，可直接复制搬运。</p></div>
+          <button class="copy-all" id="copyAll" type="button"><span>复制全部 8 条</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg></button>
+        </div>
+        <div class="prompt-grid" id="promptGrid"></div>
+      </div>
+    </div>
+  </section>
+  <section class="next">
+    <div class="wrap next__inner">
+      <div><p>More in the touch library</p><h3>十个专题，<em>系列收齐</em>。</h3></div>
+      <a href="library.html">浏览 01—06 专题 <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+</main>
+<footer class="footer" id="sources">
+  <div class="wrap">
+    <div class="footer__grid">
+      <p class="footer__title">浮层，也有<em>分寸</em>。</p>
+      <div class="footer__meta">
+        <span>内容来源：抖音 @叨叨AI「交互/设计/动效」第 10 集（2026-09-26）。</span>
+        <a href="https://www.douyin.com/video/7689791165818588657" target="_blank" rel="noopener noreferrer">第 10 集 · 弹出交互 ↗</a>
+        <span>8 条提示词按视频画面逐条整理；演示为按原意重新实现的交互样例。</span>
+      </div>
+    </div>
+    <div class="footer__base"><span>Touch Library · Topic 03 · 8 popover moves</span><span>Made with restraint · 2026</span></div>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const screen = $('#popScreen');
+  const pages = $$('.pop-page');
+  const modeButtons = $$('.mode-btn');
+  const stage = $('#popStage');
+  const toast = $('#toast');
+  let toastTimer;
+  let currentMode = 'menu';
+  let demoToken = 0;
+
+  const modes = {
+    menu: {
+      no: '01', en: 'Popover menu', title: '按钮弹出菜单', tag: 'Popover menu', tint: '#e9e3da',
+      desc: '点击按钮，菜单从按钮位置展开，点击空白处收回。',
+      why: '从一个按钮长出来，向同一处收回去。浮层和触发点保持同一条因果线。',
+      prompt: '做一个按钮弹出菜单（Popover Menu），以按钮为原点展开，点击外部原路收回。',
+      hint: '点右上角 ···，再点空白处收回。'
+    },
+    card: {
+      no: '02', en: 'Card to modal', title: '卡片弹出详情', tag: 'Card to modal', tint: '#e9e2d9',
+      desc: '点击卡片，卡片从原位放大成居中面板；关闭时缩回原来的位置。',
+      why: '空间连续，用户知道详情页从哪里来。关闭时也要把这份空间关系还回去。',
+      prompt: '做一个卡片弹出详情（Card to Modal），从原位放大为居中面板，关闭时缩回。',
+      hint: '点任意一张卡片，关闭时看它缩回原位。'
+    },
+    dialog: {
+      no: '03', en: 'Alert dialog', title: '确认弹窗', tag: 'Alert dialog', tint: '#eae5dc',
+      desc: '点击删除，弹窗弹出并轻微回弹；确认后，在原地切换为完成状态。',
+      why: '确认是一次打断，所以要短、要清楚，也要有一个明确的结束。',
+      prompt: '做一个确认弹窗（Alert Dialog），弹出轻微回弹，确认后原地切换为完成状态。',
+      hint: '点 Delete last draft，再确认。'
+    },
+    tooltip: {
+      no: '04', en: 'Tooltip', title: '气泡提示', tag: 'Tooltip', tint: '#e4e9e8',
+      desc: '点击小问号，气泡从图标上方冒出，带指向箭头，数秒后自动收回。',
+      why: '只回答一个问题，几秒后让位。提示应该轻到不打断阅读。',
+      prompt: '做一个气泡提示（Tooltip），带指向箭头，数秒后自动收回。',
+      hint: '点 Auto sync 旁的小问号。'
+    },
+    drawer: {
+      no: '05', en: 'Push drawer', title: '侧边抽屉', tag: 'Push drawer', tint: '#e6e9e2',
+      desc: '点击菜单，面板从左侧滑出，主页面右移缩小；点击主页面复原。',
+      why: '进来时主页面往后退，层级在空间里发生。用户始终知道自己还在原地。',
+      prompt: '做一个侧边抽屉（Push Drawer），面板从左侧滑入，主页面右移缩小，点击主页面复原。',
+      hint: '点左上角菜单；点主页面复原。'
+    },
+    cart: {
+      no: '06', en: 'Cart sheet', title: '底栏弹出清单', tag: 'Cart sheet', tint: '#ece3d7',
+      desc: '点击底部结算栏，已选清单从栏上方展开；再点一次收回。',
+      why: '结算信息从栏上展开，像把手边的篮子提起来。过程可以看，也可以随时放下。',
+      prompt: '做一个结算栏弹出清单（Cart Sheet），点击后从栏上方展开，再点收回。',
+      hint: '点底部橙色结算栏展开，再点收回。'
+    },
+    tabs: {
+      no: '07', en: 'Expandable tabs', title: '全部分类展开', tag: 'Expandable tabs', tint: '#e2e8e8',
+      desc: '点击分类标签，单行展开为网格；选中后收回，并把选中的标签居中。',
+      why: '收放之间，分类变成一个临时展开的抽屉。选择完成后，它安静地回到一行。',
+      prompt: '做一个分类标签展开面板（Expandable Tabs），单行展开为网格，选中后收回并居中。',
+      hint: '点分类行右侧的箭头，展开全部再选一个。'
+    },
+    date: {
+      no: '08', en: 'Date popover', title: '日期弹出日历', tag: 'Date popover', tint: '#e9e7da',
+      desc: '点击日期标签，日历从标签下方展开；选好一天收回，标签文字同步更新。',
+      why: '选择日期时，日历贴着日期长出来。选中的那天，留在原来的标签里。',
+      prompt: '做一个日期弹出日历（Date Popover），从标签下方展开，选中后收回并更新文字。',
+      hint: '点 Sep 27，在日历里换一天。'
+    }
+  };
+  const order = ['menu', 'card', 'dialog', 'tooltip', 'drawer', 'cart', 'tabs', 'date'];
+
+  function showToast(message) {
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add('is-on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-on'), 1900);
+  }
+  async function copyText(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; }
+      throw new Error('clipboard');
+    } catch (err) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand('copy'); ta.remove(); return ok;
+      } catch (fallback) { return false; }
+    }
+  }
+  function escapeHtml(value) {
+    return value.replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  }
+
+  const popNo = $('#popNo');
+  const popEn = $('#popEn');
+  const popTitle = $('#popTitle');
+  const popDesc = $('#popDesc');
+  const popWhy = $('#popWhy');
+  const popPrompt = $('#popPrompt');
+  const popPromptTitle = $('#popPromptTitle');
+  const popHint = $('#popHint');
+  const stageTag = $('#stageTag');
+  const stageHint = $('#stageHint');
+  const copyCurrent = $('#copyCurrent');
+  const modeRail = $('.pop-modes');
+
+  /* ---------- 01 menu ---------- */
+  const menuPage = $('[data-demo="menu"]');
+  const projectMenuBtn = $('#projectMenuBtn');
+  const projectPanel = $('#popMenuPanel');
+  const menuScrim = $('#menuScrim');
+  let menuOpen = false;
+  function setMenuOpen(next, focus = true) {
+    menuOpen = next;
+    menuPage.classList.toggle('is-menu-open', next);
+    projectPanel.classList.toggle('is-open', next);
+    projectPanel.setAttribute('aria-hidden', String(!next));
+    projectMenuBtn.setAttribute('aria-expanded', String(next));
+    menuScrim.classList.toggle('is-open', next);
+    if (next && focus) {
+      setTimeout(() => $('button', projectPanel)?.focus({ preventScroll: true }), 80);
+    } else if (!next && focus) {
+      projectMenuBtn.focus({ preventScroll: true });
+    }
+  }
+  projectMenuBtn.addEventListener('click', () => setMenuOpen(!menuOpen));
+  menuScrim.addEventListener('click', () => setMenuOpen(false));
+  $$('.pop-menu-panel button', menuPage).forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.menuAction;
+      setMenuOpen(false);
+      showToast(`${action} · 菜单已收回`);
+    });
+  });
+  $$('.project-row', menuPage).forEach(row => {
+    row.addEventListener('click', () => showToast(`${row.querySelector('b').textContent} · 打开项目`));
+  });
+
+  /* ---------- 02 card to modal ---------- */
+  const cardPage = $('[data-demo="card"]');
+  const cardDetail = $('#cardDetail');
+  const detailArt = $('#detailArt');
+  const detailTitle = $('#detailTitle');
+  const detailDesc = $('#detailDesc');
+  const detailMeta = $('#detailMeta');
+  const detailBody = $('.detail-body', cardDetail);
+  const cardBackdrop = $('#cardBackdrop');
+  const cardDetailClose = $('#cardDetailClose');
+  let activeCard = null;
+  let cardBusy = false;
+  function cardTargets(card) {
+    const sr = screen.getBoundingClientRect();
+    const cr = card.getBoundingClientRect();
+    return {
+      start: { left: cr.left - sr.left, top: cr.top - sr.top, width: cr.width, height: cr.height },
+      end: { left: 14, top: 48, width: sr.width - 28, height: sr.height - 92 }
+    };
+  }
+  function openCard(card) {
+    if (cardBusy) return;
+    cardBusy = true;
+    activeCard = card;
+    const { start, end } = cardTargets(card);
+    detailArt.className = `detail-art card-art--${card.dataset.art}`;
+    detailTitle.textContent = card.dataset.title;
+    detailDesc.textContent = card.dataset.desc;
+    detailMeta.textContent = card.dataset.meta;
+    detailBody.style.opacity = '';
+    cardDetail.style.display = 'flex';
+    cardDetail.style.transition = 'none';
+    cardDetail.style.left = `${start.left}px`;
+    cardDetail.style.top = `${start.top}px`;
+    cardDetail.style.width = `${start.width}px`;
+    cardDetail.style.height = `${start.height}px`;
+    cardDetail.style.borderRadius = '13px';
+    cardDetail.classList.add('is-open');
+    cardDetail.setAttribute('aria-hidden', 'false');
+    cardBackdrop.classList.add('is-open');
+    void cardDetail.offsetWidth;
+    cardDetail.style.transition = 'left .45s var(--ease),top .45s var(--ease),width .45s var(--ease),height .45s var(--ease),border-radius .3s,opacity .2s';
+    cardDetail.style.left = `${end.left}px`;
+    cardDetail.style.top = `${end.top}px`;
+    cardDetail.style.width = `${end.width}px`;
+    cardDetail.style.height = `${end.height}px`;
+    cardDetail.style.borderRadius = '16px';
+    setTimeout(() => {
+      if (activeCard === card) {
+        cardBusy = false;
+        cardDetailClose.focus({ preventScroll: true });
+      }
+    }, reduceMotion ? 20 : 460);
+  }
+  function closeCard() {
+    if (!activeCard || cardBusy) return;
+    cardBusy = true;
+    const card = activeCard;
+    const { start } = cardTargets(card);
+    detailBody.style.opacity = '0';
+    cardBackdrop.classList.remove('is-open');
+    cardDetail.style.transition = 'left .42s var(--ease),top .42s var(--ease),width .42s var(--ease),height .42s var(--ease),border-radius .3s,opacity .2s';
+    cardDetail.style.left = `${start.left}px`;
+    cardDetail.style.top = `${start.top}px`;
+    cardDetail.style.width = `${start.width}px`;
+    cardDetail.style.height = `${start.height}px`;
+    cardDetail.style.borderRadius = '13px';
+    setTimeout(() => {
+      if (activeCard !== card) return;
+      cardDetail.classList.remove('is-open');
+      cardDetail.setAttribute('aria-hidden', 'true');
+      cardDetail.style.display = 'none';
+      cardDetail.style.transition = '';
+      cardDetail.style.left = cardDetail.style.top = cardDetail.style.width = cardDetail.style.height = '';
+      activeCard = null;
+      cardBusy = false;
+      detailBody.style.opacity = '';
+      card.focus({ preventScroll: true });
+    }, reduceMotion ? 20 : 430);
+  }
+  $$('[data-card]', cardPage).forEach(card => {
+    card.addEventListener('click', () => openCard(card));
+  });
+  cardDetailClose.addEventListener('click', closeCard);
+  cardBackdrop.addEventListener('click', closeCard);
+
+  /* ---------- 03 alert dialog ---------- */
+  const dialogPage = $('[data-demo="dialog"]');
+  const alertDialog = $('#alertDialog');
+  const dialogBackdrop = $('#dialogBackdrop');
+  const openDialogBtn = $('#openDialog');
+  const dialogCancel = $('#dialogCancel');
+  const dialogDelete = $('#dialogDelete');
+  let dialogOpen = false;
+  let dialogDoneTimer;
+  function setDialogOpen(next, focus = true) {
+    dialogOpen = next;
+    alertDialog.classList.toggle('is-open', next);
+    alertDialog.setAttribute('aria-hidden', String(!next));
+    dialogBackdrop.classList.toggle('is-open', next);
+    if (next) {
+      alertDialog.classList.remove('is-done');
+      if (!reduceMotion) alertDialog.style.animation = '';
+      if (focus) setTimeout(() => dialogCancel.focus({ preventScroll: true }), 120);
+    } else {
+      clearTimeout(dialogDoneTimer);
+      if (focus) openDialogBtn.focus({ preventScroll: true });
+    }
+  }
+  openDialogBtn.addEventListener('click', () => setDialogOpen(true));
+  dialogCancel.addEventListener('click', () => setDialogOpen(false));
+  dialogBackdrop.addEventListener('click', () => setDialogOpen(false));
+  dialogDelete.addEventListener('click', () => {
+    alertDialog.classList.add('is-done');
+    showToast('Draft 06 deleted');
+    dialogDoneTimer = setTimeout(() => {
+      const rows = $$('.draft-row', dialogPage);
+      if (rows.length) rows[rows.length - 1].remove();
+      dialogPage.classList.add('is-done-flash');
+      setDialogOpen(false, false);
+    }, 950);
+  });
+
+  /* ---------- 04 tooltip ---------- */
+  const tooltipPage = $('[data-demo="tooltip"]');
+  const helpBtn = $('#helpBtn');
+  const tooltip = $('#syncTooltip');
+  let tooltipOpen = false;
+  let tooltipTimer;
+  function setTooltipOpen(next) {
+    tooltipOpen = next;
+    tooltip.classList.toggle('is-open', next);
+    tooltip.setAttribute('aria-hidden', String(!next));
+    helpBtn.setAttribute('aria-expanded', String(next));
+    clearTimeout(tooltipTimer);
+    if (next) tooltipTimer = setTimeout(() => setTooltipOpen(false), 3000);
+  }
+  helpBtn.addEventListener('click', event => {
+    event.stopPropagation();
+    setTooltipOpen(!tooltipOpen);
+  });
+  tooltipPage.addEventListener('click', event => {
+    if (tooltipOpen && !event.target.closest('.setting--sync')) setTooltipOpen(false);
+  });
+  $$('.mini-switch', tooltipPage).forEach(btn => {
+    btn.addEventListener('click', () => {
+      const on = btn.classList.toggle('is-on');
+      btn.setAttribute('aria-pressed', String(on));
+    });
+  });
+
+  /* ---------- 05 push drawer ---------- */
+  const drawerPage = $('[data-demo="drawer"]');
+  const drawer = $('#drawer');
+  const drawerOpenBtn = $('#drawerOpen');
+  const drawerHit = $('#drawerHit');
+  drawer.setAttribute('aria-hidden', 'true');
+  drawer.setAttribute('inert', '');
+  function setDrawerOpen(next, focus = true) {
+    drawerPage.classList.toggle('is-open', next);
+    drawer.setAttribute('aria-hidden', String(!next));
+    drawer.toggleAttribute('inert', !next);
+    if (next && focus) {
+      setTimeout(() => $('.drawer-nav button', drawer)?.focus({ preventScroll: true }), 300);
+    } else if (!next && focus) {
+      drawerOpenBtn.focus({ preventScroll: true });
+    }
+  }
+  drawerOpenBtn.addEventListener('click', () => setDrawerOpen(true));
+  drawerHit.addEventListener('click', () => setDrawerOpen(false));
+  $$('.drawer-nav button', drawer).forEach(btn => {
+    btn.addEventListener('click', () => showToast(`${btn.textContent.trim()} · 已切换`));
+  });
+  drawer.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setDrawerOpen(false);
+  });
+
+  /* ---------- 06 cart sheet ---------- */
+  const cartPage = $('[data-demo="cart"]');
+  const cartBar = $('#cartBar');
+  const cartSheet = $('#cartSheet');
+  const cartNext = $('.cart-next', cartBar);
+  function setCartOpen(next) {
+    cartPage.classList.toggle('is-open', next);
+    cartSheet.setAttribute('aria-hidden', String(!next));
+    cartBar.setAttribute('aria-expanded', String(next));
+  }
+  cartBar.addEventListener('click', () => setCartOpen(!cartPage.classList.contains('is-open')));
+  cartNext.addEventListener('click', event => {
+    event.stopPropagation();
+    showToast('4 items · Next step');
+  });
+  $$('.food-card', cartPage).forEach(card => {
+    card.addEventListener('click', () => showToast(`${card.querySelector('b').textContent} added`));
+  });
+
+  /* ---------- 07 expandable tabs ---------- */
+  const tabsPage = $('[data-demo="tabs"]');
+  const catToggle = $('#catToggle');
+  const catPanel = $('#catPanel');
+  const catScroller = $('#catScroller');
+  const rowChips = $$('.cat-chip', catScroller);
+  const panelChips = $$('.cat-panel__grid button', catPanel);
+  const tabCaption = $('#tabCaption');
+  let catPanelOpen = false;
+  function setCatPanel(next, focus = true) {
+    catPanelOpen = next;
+    catPanel.classList.toggle('is-open', next);
+    catPanel.setAttribute('aria-hidden', String(!next));
+    catToggle.setAttribute('aria-expanded', String(next));
+    if (next && focus) setTimeout(() => $('button', catPanel)?.focus({ preventScroll: true }), 150);
+  }
+  function centerChip(chip) {
+    if (!chip) return;
+    const left = chip.offsetLeft - (catScroller.clientWidth - chip.offsetWidth) / 2;
+    catScroller.scrollTo({ left: Math.max(0, left), behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+  function selectCategory(cat, focus = true) {
+    rowChips.forEach(chip => chip.classList.toggle('is-active', chip.dataset.cat === cat));
+    panelChips.forEach(chip => chip.classList.toggle('is-active', chip.dataset.cat === cat));
+    tabCaption.textContent = cat === 'All' ? 'Showing everything' : `Showing ${cat.toLowerCase()}`;
+    setCatPanel(false, false);
+    const activeChip = rowChips.find(chip => chip.dataset.cat === cat);
+    centerChip(activeChip);
+    if (focus && activeChip) activeChip.focus({ preventScroll: true });
+  }
+  catToggle.addEventListener('click', () => setCatPanel(!catPanelOpen));
+  rowChips.forEach(chip => chip.addEventListener('click', () => selectCategory(chip.dataset.cat)));
+  panelChips.forEach(chip => chip.addEventListener('click', () => selectCategory(chip.dataset.cat)));
+  tabsPage.addEventListener('click', event => {
+    if (catPanelOpen && !event.target.closest('.tabs-head') && !event.target.closest('.cat-panel')) setCatPanel(false);
+  });
+
+  /* ---------- 08 date popover ---------- */
+  const datePage = $('[data-demo="date"]');
+  const dateChip = $('#dateChip');
+  const dateScrim = $('#dateScrim');
+  const datePop = $('#datePop');
+  const dpGrid = $('#dpGrid');
+  const dpPrev = $('#dpPrev');
+  const dpNext = $('#dpNext');
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const monthShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  let calYear = 2026;
+  let calMonth = 8;
+  let selectedDay = 27;
+  let dateOpen = false;
+  function buildCalendar() {
+    $('.dp-head b', datePop).textContent = `${monthNames[calMonth]} ${calYear}`;
+    dpGrid.innerHTML = '';
+    const first = new Date(calYear, calMonth, 1).getDay();
+    const offset = (first + 6) % 7;
+    const days = new Date(calYear, calMonth + 1, 0).getDate();
+    for (let i = 0; i < offset; i += 1) {
+      const gap = document.createElement('span');
+      gap.className = 'dp-gap';
+      dpGrid.appendChild(gap);
+    }
+    for (let day = 1; day <= days; day += 1) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'dp-day';
+      btn.dataset.day = String(day);
+      btn.textContent = String(day);
+      btn.setAttribute('aria-label', `${monthNames[calMonth]} ${day}, ${calYear}`);
+      if (calYear === 2026 && calMonth === 8 && day === selectedDay) {
+        btn.classList.add('is-selected');
+        btn.setAttribute('aria-pressed', 'true');
+      }
+      btn.addEventListener('click', () => chooseDate(day));
+      dpGrid.appendChild(btn);
+    }
+    const total = offset + days;
+    for (let i = total; i % 7 !== 0; i += 1) {
+      const gap = document.createElement('span');
+      gap.className = 'dp-gap';
+      dpGrid.appendChild(gap);
+    }
+  }
+  function updateDateChip() {
+    dateChip.innerHTML = `<span class="date-dot"></span>${monthShort[calMonth]} ${selectedDay}`;
+  }
+  function setDateOpen(next, focus = true) {
+    dateOpen = next;
+    datePage.classList.toggle('is-open', next);
+    datePop.classList.toggle('is-open', next);
+    datePop.setAttribute('aria-hidden', String(!next));
+    dateChip.setAttribute('aria-expanded', String(next));
+    if (next) {
+      buildCalendar();
+      if (focus) {
+        setTimeout(() => {
+          const selected = $('.dp-day.is-selected', dpGrid) || $('.dp-day', dpGrid);
+          selected?.focus({ preventScroll: true });
+        }, 160);
+      }
+    } else if (focus) {
+      dateChip.focus({ preventScroll: true });
+    }
+  }
+  function chooseDate(day) {
+    selectedDay = day;
+    updateDateChip();
+    showToast(`${monthShort[calMonth]} ${day}, ${calYear} · selected`);
+    setDateOpen(false);
+  }
+  dateChip.addEventListener('click', () => setDateOpen(!dateOpen));
+  dateScrim.addEventListener('click', () => setDateOpen(false));
+  dpPrev.addEventListener('click', () => {
+    calMonth -= 1;
+    if (calMonth < 0) { calMonth = 11; calYear -= 1; }
+    buildCalendar();
+    const first = $('.dp-day', dpGrid); first?.focus({ preventScroll: true });
+  });
+  dpNext.addEventListener('click', () => {
+    calMonth += 1;
+    if (calMonth > 11) { calMonth = 0; calYear += 1; }
+    buildCalendar();
+    const first = $('.dp-day', dpGrid); first?.focus({ preventScroll: true });
+  });
+  const guestCount = $('#guestCount');
+  const summaryGuests = $('#summaryGuests');
+  let guests = 2;
+  function setGuests(value) {
+    guests = Math.min(8, Math.max(1, value));
+    guestCount.textContent = String(guests);
+    summaryGuests.textContent = `${guests} ${guests === 1 ? 'guest' : 'guests'}`;
+  }
+  $('#guestMinus').addEventListener('click', () => setGuests(guests - 1));
+  $('#guestPlus').addEventListener('click', () => setGuests(guests + 1));
+  $('#confirmBooking').addEventListener('click', () => showToast(`Booked · ${monthShort[calMonth]} ${selectedDay} · ${guests} guests`));
+
+  /* ---------- mode switching + resets ---------- */
+  function hideCardNow() {
+    activeCard = null;
+    cardBusy = false;
+    cardDetail.classList.remove('is-open');
+    cardDetail.setAttribute('aria-hidden', 'true');
+    cardDetail.style.display = 'none';
+    cardDetail.style.transition = '';
+    cardDetail.style.left = cardDetail.style.top = cardDetail.style.width = cardDetail.style.height = '';
+    cardBackdrop.classList.remove('is-open');
+    detailBody.style.opacity = '';
+  }
+  function resetInteractions() {
+    setMenuOpen(false, false);
+    hideCardNow();
+    setDialogOpen(false, false);
+    alertDialog.classList.remove('is-done');
+    setTooltipOpen(false);
+    setDrawerOpen(false, false);
+    setCartOpen(false);
+    setCatPanel(false, false);
+    setDateOpen(false, false);
+    clearTimeout(dialogDoneTimer);
+    clearTimeout(tooltipTimer);
+  }
+  function runAutoDemo(id, token) {
+    setTimeout(() => {
+      if (token !== demoToken || currentMode !== id) return;
+      if (id === 'menu') setMenuOpen(true);
+      if (id === 'card') {
+        const first = $('[data-card]', cardPage);
+        if (first) openCard(first);
+      }
+      if (id === 'dialog') setDialogOpen(true);
+      if (id === 'tooltip') setTooltipOpen(true);
+      if (id === 'drawer') setDrawerOpen(true);
+      if (id === 'cart') setCartOpen(true);
+      if (id === 'tabs') setCatPanel(true);
+      if (id === 'date') setDateOpen(true);
+    }, 280);
+  }
+  function setMode(id, auto = true) {
+    if (!modes[id]) return;
+    currentMode = id;
+    demoToken += 1;
+    const token = demoToken;
+    pages.forEach(page => page.classList.toggle('is-active', page.dataset.demo === id));
+    modeButtons.forEach(btn => {
+      const on = btn.dataset.mode === id;
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-pressed', String(on));
+      if (on && modeRail.scrollWidth > modeRail.clientWidth) {
+        const left = btn.offsetLeft - modeRail.clientWidth / 2 + btn.offsetWidth / 2;
+        modeRail.scrollTo({ left: Math.max(0, left), behavior: reduceMotion ? 'auto' : 'smooth' });
+      }
+    });
+    const mode = modes[id];
+    popNo.textContent = mode.no;
+    popEn.textContent = mode.en;
+    popTitle.textContent = mode.title;
+    popDesc.textContent = mode.desc;
+    popWhy.textContent = mode.why;
+    popPrompt.textContent = mode.prompt;
+    popPromptTitle.textContent = mode.title;
+    popHint.textContent = mode.hint;
+    stageTag.textContent = mode.tag;
+    stageHint.textContent = mode.hint;
+    stage.style.setProperty('--tint', mode.tint);
+    resetInteractions();
+    if (auto) runAutoDemo(id, token);
+  }
+  modeButtons.forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode, true)));
+
+  /* ---------- copy + library ---------- */
+  copyCurrent.addEventListener('click', async () => {
+    const ok = await copyText(modes[currentMode].prompt);
+    const label = copyCurrent.querySelector('span');
+    if (!ok) { showToast('复制失败，请检查浏览器权限'); return; }
+    copyCurrent.classList.add('is-done');
+    label.textContent = '已复制';
+    showToast('提示词已复制');
+    setTimeout(() => { copyCurrent.classList.remove('is-done'); label.textContent = '复制'; }, 1500);
+  });
+  const promptGrid = $('#promptGrid');
+  promptGrid.innerHTML = order.map(id => {
+    const m = modes[id];
+    return `<article class="prompt-card"><div class="prompt-card__top"><span class="prompt-card__no">${m.no}</span><span class="src-tag">Ep. 10</span></div><h4>${m.title}</h4><p>${escapeHtml(m.prompt)}</p><button type="button" data-copy-mode="${id}"><svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg><span>复制</span></button></article>`;
+  }).join('');
+  $$('[data-copy-mode]', promptGrid).forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const ok = await copyText(modes[btn.dataset.copyMode].prompt);
+      if (!ok) { showToast('复制失败，请检查浏览器权限'); return; }
+      const label = btn.querySelector('span');
+      btn.classList.add('is-done');
+      label.textContent = '已复制';
+      showToast('提示词已复制');
+      setTimeout(() => { btn.classList.remove('is-done'); label.textContent = '复制'; }, 1500);
+    });
+  });
+  $('#copyAll').addEventListener('click', async () => {
+    const text = order.map((id, i) => `${i + 1}. ${modes[id].title}\n${modes[id].prompt}`).join('\n\n');
+    const ok = await copyText(text);
+    if (!ok) { showToast('复制失败，请检查浏览器权限'); return; }
+    showToast('8 条提示词已全部复制');
+    const label = $('#copyAll span');
+    const original = label.textContent;
+    label.textContent = '已复制全部 8 条';
+    setTimeout(() => { label.textContent = original; }, 1700);
+  });
+
+  /* ---------- keyboard + reveal + init ---------- */
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    if (menuOpen) setMenuOpen(false);
+    if (activeCard) closeCard();
+    if (dialogOpen) setDialogOpen(false);
+    if (tooltipOpen) setTooltipOpen(false);
+    if (drawerPage.classList.contains('is-open')) setDrawerOpen(false);
+    if (cartPage.classList.contains('is-open')) setCartOpen(false);
+    if (catPanelOpen) setCatPanel(false);
+    if (dateOpen) setDateOpen(false);
+  });
+  const reveals = $$('.reveal');
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .08, rootMargin: '0px 0px -5% 0px' });
+    reveals.forEach(item => observer.observe(item));
+  } else {
+    reveals.forEach(item => item.classList.add('in-view'));
+  }
+  buildCalendar();
+  setGuests(2);
+  setMode('menu', false);
+})();
+</script>
+</body>
+</html>

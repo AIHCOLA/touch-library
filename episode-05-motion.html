@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="touch Episode 05：8 种让 App 质感拉满的交互动效，全部可操作，附可复制的 AI 提示词。">
+<title>动效不是装饰，是反馈 · touch Ep.05</title>
+<style>
+:root{--bg:#f5f3ee;--paper:#fbfaf7;--ink:#171614;--ink-soft:#403c36;--muted:#6d675e;--faint:#8f887c;--line:rgba(23,22,20,.13);--line-soft:rgba(23,22,20,.075);--accent:#a4653b;--accent-soft:#f1e6db;--accent-deep:#7e4a28;--sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","STSong",serif;--mono:"SFMono-Regular",ui-monospace,Consolas,"Liberation Mono",monospace;--ease:cubic-bezier(.22,.8,.24,1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}body.is-locked{overflow:hidden}::selection{background:#eedbca;color:#3d2416}a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}h1,h2,h3,h4,p,ul{margin:0}ul{padding:0;list-style:none}svg{display:block}:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.wrap{width:min(1180px,calc(100% - 56px));margin-inline:auto}.mono{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,243,238,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--line-soft)}.topbar__in{height:66px;display:flex;align-items:center;gap:22px}.brand{display:flex;align-items:center;gap:11px}.brand__mark{width:29px;height:29px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:14px}.brand__name{font-size:13px;font-weight:600}.brand__name span{color:var(--muted);font-weight:400}.top-label{padding-left:18px;border-left:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}.top-actions{margin-left:auto;display:flex;gap:8px}.pill-link,.pill-dark{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 12px;font-size:11.5px;white-space:nowrap}.pill-link{border:1px solid var(--line);color:var(--muted)}.pill-link:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}.pill-dark{background:var(--ink);color:var(--paper);border:1px solid var(--ink);padding:8px 15px}.pill-link svg,.pill-dark svg{width:11px;height:11px;flex:none}
+.hero{padding:76px 0 0;overflow:hidden}.hero__top{display:flex;justify-content:space-between;gap:24px;color:var(--muted)}.hero h1{margin-top:30px;font-size:clamp(48px,8.8vw,112px);line-height:.95;letter-spacing:-.065em;font-weight:600}.hero h1 em{display:block;font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent);letter-spacing:-.05em;white-space:nowrap}.hero__lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(34px,8vw,110px);align-items:end;margin-top:36px;padding-bottom:38px}.hero__lead{font-size:clamp(17px,2vw,23px);line-height:1.55;letter-spacing:-.015em;max-width:27em;color:var(--ink-soft)}.hero__lead span{color:var(--muted)}.hero__aside{color:var(--muted);font-size:12.5px;line-height:1.85;padding-bottom:3px}.hero__aside strong{display:block;color:var(--ink);font-weight:500;font-size:12px;margin-bottom:7px}.hero__aside a{display:inline-flex;margin-top:9px;border-bottom:1px solid var(--line);padding-bottom:1px;color:var(--ink-soft)}.hero__meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}.hero__meta div{padding:17px 0 20px;border-right:1px solid var(--line-soft)}.hero__meta div:last-child{border-right:0}.hero__meta div:not(:first-child){padding-left:clamp(14px,2.4vw,30px)}.hero__meta b{display:block;font-family:var(--serif);font-size:26px;line-height:1.1;font-weight:400}.hero__meta span{display:block;margin-top:5px;font-size:11px;color:var(--muted)}
+.toc{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:30px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.toc a{display:inline-flex;gap:5px;align-items:baseline;padding:5px 8px;border-radius:999px;font-size:10px;color:var(--muted)}.toc a:hover{background:rgba(23,22,20,.05);color:var(--ink)}.toc a b{font-family:var(--mono);font-size:7px;color:var(--faint);font-weight:400}.toc .note{margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.components{padding-top:44px}.comp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-top:1px solid var(--line);padding-top:20px}.comp-head h2{font-size:clamp(28px,3.4vw,42px);line-height:1.08;letter-spacing:-.045em}.comp-head h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--muted)}.comp-head p{margin-top:6px;font-size:12px;color:var(--muted);max-width:42em}.comp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}.comp{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:19px;background:var(--paper);overflow:hidden;transition:border-color .2s}.comp:hover{border-color:rgba(23,22,20,.26)}.comp__head{display:flex;align-items:flex-start;gap:11px;padding:16px 18px 12px}.comp__no{font-family:var(--mono);font-size:9px;color:var(--accent);padding-top:2px}.comp__title{flex:1;min-width:0}.comp__title h3{font-size:16px;line-height:1.25;letter-spacing:-.03em;font-weight:600}.comp__title h3 em{font-family:var(--serif);font-style:italic;font-weight:400;font-size:11px;color:var(--muted);margin-left:4px}.comp__title p{margin-top:3px;font-size:10.5px;line-height:1.6;color:var(--muted)}.comp__src{font-family:var(--mono);font-size:7px;color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:4px 7px}.stage{position:relative;margin:0 10px;min-height:270px;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:16px;overflow:hidden;isolation:isolate}.stage--linen{background:linear-gradient(145deg,#efe9dd,#f7f2e8 58%,#eae3d5)}.stage--pine{background:linear-gradient(145deg,#e1e9e1,#eff2e9 58%,#e4e6d8)}.stage--dark{background:radial-gradient(115% 110% at 18% 0,#2f312c,#1b1c18 62%);color:#f4efe4}.stage--shell{background:linear-gradient(145deg,#ece6dc,#f6f1e8 58%,#e8e1d4)}.stage--peach{background:linear-gradient(145deg,#f0e2d5,#f7efe5 58%,#ecdccd)}.stage--sage{background:linear-gradient(145deg,#e4ebe2,#eff2e9 58%,#e5e6d7)}.comp__foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px 15px;margin-top:auto}.comp__hint{font-size:10px;line-height:1.5;color:var(--muted)}.prompt-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:9.5px;color:var(--ink-soft);flex:none}.prompt-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}.prompt-btn svg{width:8px;height:8px}
+.tiny-label{font-family:var(--mono);font-size:5px;letter-spacing:.09em;text-transform:uppercase;color:#9a9080}
+.mini-btn{border:1px solid var(--line);border-radius:99px;padding:5px 9px;font-size:8px;color:#5d5548;background:#fbf8f0}.mini-btn:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+/* 1 magnet */
+.magnet-panel{width:min(100%,282px);border-radius:14px;background:#fbf9f2;border:1px solid rgba(23,22,20,.09);padding:13px;box-shadow:0 20px 30px -26px rgba(23,22,20,.45)}
+.magnet-head{display:flex;align-items:center;justify-content:space-between}
+.magnet-head b{font-size:11px;letter-spacing:-.025em}
+.magnet-head span{font-family:var(--mono);font-size:4.8px;color:#9a9080}
+.magnet-rail{position:relative;height:100px;margin-top:12px;border-radius:10px;background:#f2ece1;border:1px solid rgba(23,22,20,.05);touch-action:none;overflow:hidden}
+.magnet-target{position:absolute;top:14px;width:42px;text-align:center;font-family:var(--mono);font-size:4.8px;color:#9a9080;transform:translateX(-50%);transition:color .2s}
+.magnet-target i{display:grid;place-items:center;width:27px;height:27px;margin:0 auto 5px;border-radius:50%;border:1px solid #d5c7b5;background:#fbf7ee;font-style:normal;font-size:8px;color:#8d806c;transition:transform .25s var(--ease),background .25s,border-color .25s,color .25s}
+.magnet-target.is-near i{background:#f0dfce;border-color:#c6936a}
+.magnet-target.is-lock i{background:#a4653b;border-color:#a4653b;color:#fff8ed;transform:scale(1.16)}
+.magnet-target.is-lock{color:#7a4b2e}
+.magnet-puck{position:absolute;top:54px;left:50%;width:28px;height:28px;border-radius:50%;background:#a4653b;border:3px solid #fbf9f2;box-shadow:0 8px 14px -8px rgba(70,40,20,.65);transform:translateX(-50%);touch-action:none;cursor:grab;will-change:left;z-index:2}
+.magnet-puck:active{cursor:grabbing}
+.magnet-force{position:absolute;left:9px;bottom:7px;right:9px;height:3px;border-radius:99px;background:rgba(23,22,20,.06);overflow:hidden}
+.magnet-force i{display:block;height:100%;background:#a4653b;width:0%;transition:width .08s linear}
+.magnet-caption{font-size:6.2px;line-height:1.6;color:#9a9080;margin-top:8px}
+/* 2 liquid */
+.liquid-panel{width:min(100%,270px);border-radius:14px;background:#fbf9f2;border:1px solid rgba(23,22,20,.09);padding:12px;box-shadow:0 20px 30px -26px rgba(23,22,20,.45)}
+.liquid-head{display:flex;align-items:center;justify-content:space-between}
+.liquid-head b{font-size:11px;letter-spacing:-.025em}
+.liquid-head span{font-family:var(--mono);font-size:4.8px;color:#9a9080}
+.liquid-area{position:relative;height:146px;margin-top:10px;border-radius:10px;background:linear-gradient(145deg,#e5ede6,#f1f3ec);overflow:hidden;touch-action:none;border:1px solid rgba(23,22,20,.05)}
+.liquid-area::before{content:"";position:absolute;left:16px;top:14px;width:52px;height:52px;border-radius:50%;border:1px dashed #c9d4c8}
+.liquid-area::after{content:"";position:absolute;right:18px;bottom:16px;width:38px;height:38px;border-radius:9px;border:1px dashed #c9d4c8}
+.liquid-card{position:absolute;left:50%;top:50%;width:118px;height:72px;border-radius:14px;background:linear-gradient(135deg,#324b3c,#1f3028);color:#eff3e8;padding:10px;transform:translate(-50%,-50%);cursor:grab;touch-action:none;will-change:transform;box-shadow:0 18px 26px -18px rgba(20,40,28,.6);z-index:2}
+.liquid-card:active{cursor:grabbing}
+.liquid-card .tiny-label{color:#c4d2bf}
+.liquid-card b{display:block;font-family:var(--serif);font-size:18px;font-weight:400;line-height:1.1;margin-top:14px}
+.liquid-card i{position:absolute;right:9px;top:10px;font-family:var(--mono);font-size:4.5px;color:#c4d2bf;font-style:normal}
+.liquid-caption{font-family:var(--mono);font-size:4.8px;color:#9a9080;margin-top:7px;line-height:1.5}
+/* 3 parallax */
+.parallax-card{position:relative;width:min(100%,246px);height:212px;border-radius:16px;background:linear-gradient(145deg,#27332b,#171d19);border:1px solid rgba(255,255,255,.12);box-shadow:0 28px 40px -30px rgba(0,0,0,.7);overflow:hidden;perspective:700px;transform-style:preserve-3d;touch-action:none}
+.p-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:22px 22px}
+.p-glow{position:absolute;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(197,163,77,.42),transparent 68%);left:10px;top:18px;filter:blur(4px)}
+.p-title{position:absolute;left:14px;top:30px;color:#eef2e5;font-family:var(--serif);font-size:34px;line-height:1;letter-spacing:-.04em;text-shadow:0 8px 18px rgba(0,0,0,.35)}
+.p-sub{position:absolute;left:15px;top:72px;font-family:var(--mono);font-size:4.8px;letter-spacing:.09em;color:#b6c0af}
+.p-badge{position:absolute;right:12px;top:12px;border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:3px 6px;font-family:var(--mono);font-size:4.5px;color:#d6c08a;background:rgba(255,255,255,.03)}
+.p-chart{position:absolute;left:14px;right:14px;bottom:40px;display:flex;align-items:flex-end;gap:5px;height:52px;border-bottom:1px solid rgba(255,255,255,.14);padding-bottom:2px}
+.p-chart i{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(180deg,#cfb26f,#8d7b48);height:var(--h);opacity:.85}
+.p-foot{position:absolute;left:14px;right:14px;bottom:12px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:4.6px;color:#9eaa97}
+.p-readout{font-family:var(--mono);font-size:4.6px;color:#9eaa97;text-align:center;margin-top:8px;letter-spacing:.06em}
+/* 4 focus */
+.focus-phone{position:relative;width:min(100%,208px);height:268px;border-radius:22px;background:#fbf7ef;border:1px solid rgba(23,22,20,.16);overflow:hidden;box-shadow:0 24px 38px -28px rgba(23,22,20,.55)}
+.focus-head{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 11px;font-size:7px;color:#5f5548;border-bottom:1px solid rgba(23,22,20,.06);position:relative;z-index:2;background:#fbf7ef}
+.focus-head span{font-family:var(--mono);font-size:4.5px;color:#a19583}
+.focus-guide{position:absolute;left:7px;right:7px;top:50%;height:1px;background:linear-gradient(90deg,transparent,#c9b89f,transparent);z-index:1;pointer-events:none}
+.focus-scroll{height:calc(100% - 30px);overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;padding:0 9px;touch-action:pan-y}
+.focus-scroll::-webkit-scrollbar{display:none}
+.focus-spacer{height:97px}
+.focus-row{display:flex;align-items:center;gap:8px;height:42px;border-radius:8px;background:#f2ece1;border:1px solid rgba(23,22,20,.05);padding:0 9px;margin-bottom:5px;transform-origin:center;transition:background .25s,border-color .25s,box-shadow .25s;will-change:transform}
+.focus-row i{width:18px;height:18px;border-radius:5px;background:#d9c8b2;flex:none;font-style:normal;font-family:var(--mono);font-size:4.5px;color:#7c6c57;display:grid;place-items:center}
+.focus-row b{font-size:7px;font-weight:500;color:#564e41}
+.focus-row span{margin-left:auto;font-family:var(--mono);font-size:4.5px;color:#a19583}
+.focus-row.is-center{background:#fbf7ee;border-color:#c9a98c;box-shadow:0 7px 12px -10px rgba(70,50,30,.4)}
+/* 5 fluid tab */
+.fluid-phone{position:relative;width:min(100%,212px);height:268px;border-radius:22px;background:#fbf7ef;border:1px solid rgba(23,22,20,.16);overflow:hidden;box-shadow:0 24px 38px -28px rgba(23,22,20,.55)}
+.fluid-page{padding:14px 12px 0;color:#322c24}
+.fluid-page .tiny-label{color:#9a9080}
+.fluid-page h4{font-family:var(--serif);font-size:23px;font-weight:400;letter-spacing:-.03em;margin-top:2px}
+.fluid-art{height:86px;border-radius:10px;margin-top:9px;background:linear-gradient(135deg,#e2b37c,#c27d47 58%,#8d522f);position:relative;overflow:hidden}
+.fluid-art::after{content:"";position:absolute;left:12px;right:12px;bottom:12px;height:26px;border-radius:4px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25)}
+.fluid-lines{display:grid;gap:5px;margin-top:9px}
+.fluid-lines span{display:block;height:5px;border-radius:99px;background:#e9e1d4}
+.fluid-lines span:nth-child(2){width:72%}.fluid-lines span:nth-child(3){width:86%}
+.fluid-tabbar{position:absolute;left:9px;right:9px;bottom:9px;height:36px;border-radius:99px;background:#efe8dc;display:flex;padding:3px;isolation:isolate}
+.fluid-blob{position:absolute;left:3px;top:3px;height:30px;width:46px;border-radius:99px;background:#a4653b;z-index:0;will-change:left,width}
+.fluid-tabbar button{position:relative;z-index:1;flex:1;height:30px;border-radius:99px;font-size:6.5px;color:#8d8271;transition:color .2s}
+.fluid-tabbar button.is-on{color:#fff8ed;font-weight:500}
+.fluid-note{position:absolute;left:11px;right:11px;bottom:49px;text-align:center;font-family:var(--mono);font-size:4.4px;color:#a19583;letter-spacing:.05em}
+/* 6 image expand */
+.img-phone{position:relative;width:min(100%,208px);height:268px;border-radius:22px;background:#fbf7ef;border:1px solid rgba(23,22,20,.16);overflow:hidden;box-shadow:0 24px 38px -28px rgba(23,22,20,.55)}
+.img-head{display:flex;align-items:center;justify-content:space-between;padding:11px 11px 7px;font-size:8px;color:#493f33}
+.img-head span{font-family:var(--mono);font-size:4.5px;color:#a19583}
+.img-thumb{display:block;width:calc(100% - 22px);margin:0 11px;border-radius:9px;overflow:hidden;position:relative;background:none;text-align:left}
+.img-art{height:87px;background:
+radial-gradient(80% 120% at 18% 20%,rgba(255,240,210,.8),transparent 52%),
+linear-gradient(135deg,#c69d76,#8f664b 48%,#57473a);position:relative;overflow:hidden}
+.img-art::before{content:"";position:absolute;left:-10%;right:-10%;top:32px;height:66px;border:1px solid rgba(255,255,255,.35);border-radius:50%}
+.img-art::after{content:"";position:absolute;left:24%;right:24%;top:52px;height:44px;border:1px solid rgba(255,255,255,.26);border-radius:50%}
+.img-thumb span{position:absolute;left:8px;bottom:7px;font-family:var(--mono);font-size:4.5px;color:rgba(255,255,255,.8);letter-spacing:.05em}
+.img-lines{display:grid;gap:5px;margin:10px 11px;padding-bottom:15px}
+.img-lines span{height:5px;border-radius:99px;background:#e9e1d4}
+.img-lines span:nth-child(2){width:76%}
+.img-lines span:nth-child(3){width:55%}
+.img-overlay{position:absolute;inset:0;z-index:5;pointer-events:none;background:rgba(21,18,14,.3);opacity:0}
+.img-overlay.is-open{pointer-events:auto}
+.img-full{position:absolute;left:0;top:0;width:100%;height:100%;background:
+radial-gradient(80% 120% at 18% 20%,rgba(255,240,210,.8),transparent 52%),
+linear-gradient(135deg,#c69d76,#8f664b 48%,#57473a);clip-path:inset(40px 11px 160px 11px round 9px);will-change:clip-path}
+.img-full::before{content:"";position:absolute;left:-10%;right:-10%;top:78px;height:170px;border:1px solid rgba(255,255,255,.35);border-radius:50%}
+.img-full::after{content:"";position:absolute;left:18%;right:18%;top:122px;height:120px;border:1px solid rgba(255,255,255,.26);border-radius:50%}
+.img-full span{position:absolute;right:12px;bottom:16px;font-family:var(--mono);font-size:5px;color:rgba(255,255,255,.8);letter-spacing:.08em}
+.img-close{position:absolute;right:10px;top:10px;z-index:6;border-radius:99px;padding:4px 8px;background:rgba(251,247,239,.9);color:#3c342a;font-size:6px}
+/* 7 gesture transition */
+.gesture-phone{position:relative;width:min(100%,210px);height:268px;border-radius:22px;background:#fbf7ef;border:1px solid rgba(23,22,20,.18);overflow:hidden;touch-action:none;user-select:none;box-shadow:0 24px 38px -28px rgba(23,22,20,.55)}
+.gp-page{position:absolute;inset:0;padding:12px 11px;color:#322c24;will-change:transform}
+.gp-a{background:#fbf7ef;z-index:2}
+.gp-b{background:#eef1e8;z-index:1}
+.gp-page .tiny-label{color:#9a9080}
+.gp-page h4{font-family:var(--serif);font-size:20px;font-weight:400;letter-spacing:-.03em;margin-top:2px}
+.gp-art{height:72px;border-radius:9px;margin-top:8px;background:linear-gradient(135deg,#d5b186,#a27351 55%,#71513d);position:relative}
+.gp-art::before{content:"";position:absolute;left:10px;right:10px;top:20px;height:26px;border-radius:6px;border:1px solid rgba(255,255,255,.35)}
+.gp-lines{display:grid;gap:5px;margin-top:9px}
+.gp-lines span{height:5px;border-radius:99px;background:#e9e1d4}.gp-lines span:nth-child(2){width:72%}.gp-lines span:nth-child(3){width:86%}
+.gp-card{margin-top:10px;border-radius:8px;background:#f1ebdf;padding:8px;font-size:6px;color:#786f5f;line-height:1.6}
+.gp-b .gp-art{background:linear-gradient(135deg,#8ba294,#52705f 55%,#30483b)}
+.gp-b .gp-lines span{background:#dbe3d7}
+.gp-close{position:absolute;right:10px;top:9px;border-radius:99px;border:1px solid rgba(23,22,20,.12);padding:3px 7px;font-size:6px;color:#5e5547;background:#f7f2e9}
+.gp-readout{position:absolute;left:9px;right:9px;bottom:8px;display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:4.6px;color:#9a9080;z-index:4;background:rgba(251,247,239,.82);border-radius:5px;padding:3px 5px;pointer-events:none}
+.gp-hint{position:absolute;left:0;right:0;bottom:30px;text-align:center;font-family:var(--mono);font-size:4.5px;color:#9a9080;z-index:3;pointer-events:none}
+/* 8 physics */
+.physics-panel{width:min(100%,284px);border-radius:14px;background:#fbf9f2;border:1px solid rgba(23,22,20,.09);padding:13px;box-shadow:0 20px 30px -26px rgba(23,22,20,.45)}
+.physics-head{display:flex;align-items:center;justify-content:space-between}
+.physics-head b{font-size:11px;letter-spacing:-.025em}
+.physics-head span{font-family:var(--mono);font-size:4.5px;color:#9a9080}
+.physics-track{position:relative;height:114px;margin-top:12px;border-radius:9px;background:
+linear-gradient(180deg,rgba(23,22,20,.02),rgba(23,22,20,.06)),#f2ece1;border:1px solid rgba(23,22,20,.06);overflow:hidden;touch-action:none}
+.physics-track::before{content:"";position:absolute;left:0;right:0;top:78px;height:1px;background:#ddd3c3}
+.ball{position:absolute;bottom:13px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:4.2px;color:rgba(255,255,255,.85);will-change:transform;box-shadow:inset 0 -6px 10px rgba(0,0,0,.15)}
+.ball--1{width:30px;height:30px;background:linear-gradient(135deg,#b67344,#8a4f2a)}
+.ball--2{width:23px;height:23px;background:linear-gradient(135deg,#728974,#4b6351)}
+.ball--3{width:38px;height:38px;background:linear-gradient(135deg,#554f43,#2f2b24)}
+.physics-mass{position:absolute;left:8px;top:7px;display:flex;gap:8px;font-family:var(--mono);font-size:4.4px;color:#9a9080}
+.physics-mass b{font-weight:400;color:#655a49}
+.physics-actions{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.physics-actions span{font-size:6px;color:#9a9080;line-height:1.5;max-width:16em}
+.physics-launch{border-radius:99px;background:#25312a;color:#f4efe4;padding:6px 10px;font-size:6.5px}
+/* dialog/toast */
+dialog.prompt-dialog{width:min(520px,calc(100% - 32px));border:1px solid rgba(23,22,20,.15);border-radius:17px;padding:22px;background:var(--paper);color:var(--ink);box-shadow:0 30px 70px -30px rgba(23,22,20,.45)}dialog::backdrop{background:rgba(18,17,15,.45);backdrop-filter:blur(3px)}.dialog-top{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:7px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}.dialog-close{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:14px;color:var(--muted)}.prompt-dialog h3{font-size:22px;line-height:1.2;letter-spacing:-.035em;margin-top:14px}.prompt-dialog h3 em{font-family:var(--serif);font-style:italic;font-weight:400;font-size:13px;color:var(--muted);margin-left:5px}.prompt-dialog p{margin-top:12px;padding:12px 14px;background:var(--accent-soft);border-radius:9px;font-size:12px;line-height:1.75;color:var(--ink-soft)}.dialog-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}.dialog-foot span{font-family:var(--mono);font-size:7px;color:var(--faint)}.dialog-copy{display:inline-flex;gap:6px;align-items:center;border-radius:999px;background:var(--ink);color:var(--paper);padding:8px 12px;font-size:10px}.toast{position:fixed;left:50%;bottom:28px;z-index:120;transform:translate(-50%,12px);background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 15px;font-size:11px;opacity:0;visibility:hidden;transition:opacity .25s,transform .3s,visibility .25s;pointer-events:none}.toast.is-open{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.next{border-top:1px solid var(--line);padding:32px 0;margin-top:54px}.next__inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}.next p{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}.next h3{margin-top:8px;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.035em}.next h3 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}.next a{border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:10.5px;color:var(--muted)}.footer{border-top:1px solid var(--line);padding:48px 0 36px}.footer__grid{display:flex;justify-content:space-between;gap:34px;flex-wrap:wrap}.footer__title{font-family:var(--serif);font-size:clamp(23px,3vw,31px);line-height:1.25}.footer__title em{font-style:italic}.footer__meta{display:grid;gap:9px;font-size:11px;color:var(--muted);max-width:450px}.footer__meta a{border-bottom:1px solid var(--line);width:fit-content;padding-bottom:2px}.footer__base{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:30px;padding-top:14px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+@media(max-width:900px){.hero__lower{grid-template-columns:1fr;gap:24px}.comp-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.wrap{width:calc(100% - 36px)}.topbar__in{height:58px;gap:10px}.brand__name,.top-label{display:none}.pill-link{padding:6px 10px;font-size:10px}.pill-dark{padding:7px 11px;font-size:10px}.pill-dark svg{display:none}.hero{padding-top:48px}.hero__top{font-size:8px}.hero h1{font-size:clamp(42px,12vw,60px)}.hero h1 em{white-space:normal}.hero__lower{margin-top:26px;padding-bottom:30px}.hero__lead{font-size:16px}.hero__meta{grid-template-columns:1fr 1fr}.hero__meta div{padding:14px 0}.hero__meta div:nth-child(2){border-right:0}.hero__meta div:nth-child(3),.hero__meta div:nth-child(4){border-top:1px solid var(--line-soft)}.hero__meta div:not(:first-child){padding-left:0}.hero__meta div:nth-child(even){padding-left:14px}.hero__meta b{font-size:22px}.toc{gap:2px;margin-top:22px}.toc a{font-size:9px;padding:4px 6px}.toc .note{width:100%;margin-left:0;margin-top:4px}.components{padding-top:34px}.comp-head{display:block}.comp-head p{font-size:11px}.comp-grid{gap:10px;margin-top:16px}.comp{border-radius:16px}.comp__head{padding:14px 15px 10px}.comp__title h3{font-size:15px}.comp__title p{font-size:10px}.comp__src{display:none}.stage{margin:0 8px;min-height:270px;padding:13px;border-radius:12px}.comp__foot{padding:10px 15px 14px}.prompt-btn{font-size:9px}.comp__hint{font-size:9px}.next,.footer{padding:30px 0}.footer__grid{flex-direction:column;gap:20px}}
+@media(max-width:380px){.stage{padding:10px}.focus-phone,.fluid-phone,.img-phone,.gesture-phone{width:198px}.magnet-panel{padding:10px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="sr-only" href="#components">跳到动效</a>
+<header class="topbar"><div class="wrap topbar__in"><a class="brand" href="library.html"><span class="brand__mark">t</span><span class="brand__name">点触 <span>/ touch</span></span></a><span class="top-label">Episode 05 · Motion craft</span><div class="top-actions"><a class="pill-link" href="library.html"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 8H3M7 4 3 8l4 4"/></svg><span>专题库</span></a><button class="pill-dark" type="button" id="copyAll"><span>复制 8 条</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg></button></div></div></header>
+<main>
+  <section class="hero"><div class="wrap">
+    <div class="hero__top mono"><span>Touch Library / Episode 05</span><span>8 motions · 01 Episode</span></div>
+    <h1>动效不是装饰，<em>是反馈。</em></h1>
+    <div class="hero__lower"><p class="hero__lead">第 5 集 · 8 种交互动效。<br><span>磁吸、形变、视差、手势转场、物理碰撞……<br>每一种动效背后，都有一套清晰的设计逻辑。</span></p><aside class="hero__aside"><strong>关于这一页</strong>整理自抖音 @叨叨AI「交互/设计/动效」第 5 集（2026-09-02）。原片实际出现 8 段动效，章节索引漏掉了「滚动聚焦」，这里按画面补入；原片未出提示词卡，提示词依据原片动作与标注还原。<br><a href="library.html">返回专题库 ↗</a></aside></div>
+    <div class="hero__meta"><div><b>08</b><span>动效样片</span></div><div><b>01</b><span>原视频来源</span></div><div><b>08</b><span>可复制提示词</span></div><div><b>100%</b><span>可真实操作</span></div></div>
+    <nav class="toc" aria-label="动效索引"><a href="#m1"><b>01</b>磁吸</a><a href="#m2"><b>02</b>液态形变</a><a href="#m3"><b>03</b>3D 视差</a><a href="#m4"><b>04</b>滚动聚焦</a><a href="#m5"><b>05</b>流体 Tab</a><a href="#m6"><b>06</b>图片展开</a><a href="#m7"><b>07</b>手势驱动转场</a><a href="#m8"><b>08</b>物理碰撞</a><span class="note">Ep.05 · 8 motions</span></nav>
+  </div></section>
+  <section class="wrap components" id="components">
+    <div class="comp-head"><div><h2>运动规律，<em>比参数更像设计</em></h2><p>八个样片都能直接操作；注意看物件靠近、变形、穿行、碰撞时的节奏与回馈。</p></div></div>
+    <div class="comp-grid">
+      <article class="comp" id="m1"><div class="comp__head"><span class="comp__no">01</span><div class="comp__title"><h3>磁吸 <em>Magnetic snap</em></h3><p>先阻力，后贴合；距离越近，吸力越明显。</p></div><span class="comp__src">Ep.05</span></div>
+        <div class="stage stage--linen"><div class="magnet-panel"><div class="magnet-head"><b>底部导航磁吸</b><span id="magnetReadout">FORCE 0.00</span></div><div class="magnet-rail" id="magnetRail"><div class="magnet-target" data-x="26"><i>◉</i>今天</div><div class="magnet-target" data-x="102"><i>◉</i>本周</div><div class="magnet-target" data-x="178"><i>◉</i>本季</div><div class="magnet-target" data-x="254"><i>◉</i>全部</div><button class="magnet-puck" type="button" id="magnetPuck" aria-label="拖动磁吸圆点"></button><div class="magnet-force"><i id="magnetForce"></i></div></div><p class="magnet-caption">拖动橙色圆点靠近任意 Tab；吸力条会先满，再贴合。</p></div></div>
+        <div class="comp__foot"><span class="comp__hint">拖动圆点靠近「本周」，再松手</span><button class="prompt-btn" data-prompt="0">提示词</button></div></article>
+
+      <article class="comp" id="m2"><div class="comp__head"><span class="comp__no">02</span><div class="comp__title"><h3>液态形变 <em>Liquid morph</em></h3><p>形变跟着运动状态走，停下来就复原。</p></div><span class="comp__src">Ep.05</span></div>
+        <div class="stage stage--pine"><div class="liquid-panel"><div class="liquid-head"><b>拖住这张卡片</b><span id="liquidReadout">VELOCITY 0.00</span></div><div class="liquid-area" id="liquidArea"><div class="liquid-card" id="liquidCard"><span class="tiny-label">DAY 3 · 周三</span><b>冰川段</b><i>9.6 KM</i></div></div><p class="liquid-caption">快速拖动 → 横向拉伸；松手 → 软回弹。形变和运动方向有关。</p></div></div>
+        <div class="comp__foot"><span class="comp__hint">按住卡片快速拖动，观察拉伸与回弹</span><button class="prompt-btn" data-prompt="1">提示词</button></div></article>
+
+      <article class="comp" id="m3"><div class="comp__head"><span class="comp__no">03</span><div class="comp__title"><h3>3D 视差 <em>3D parallax</em></h3><p>不同层级的位移速度，让平面产生空间感。</p></div><span class="comp__src">Ep.05</span></div>
+        <div class="stage stage--dark"><div><div class="parallax-card" id="parallaxCard"><div class="p-grid"></div><div class="p-glow" data-depth="8"></div><div class="p-title" data-depth="16">1 642</div><div class="p-sub" data-depth="10">今日进山人次 / 上限 2 400</div><div class="p-badge" data-depth="22">+ 8.4%</div><div class="p-chart" data-depth="6"><i style="--h:24px"></i><i style="--h:34px"></i><i style="--h:28px"></i><i style="--h:45px"></i><i style="--h:38px"></i><i style="--h:52px"></i><i style="--h:20px"></i></div><div class="p-foot" data-depth="12"><span>WEEK TOTAL 50.0 km</span><span>LIVE</span></div></div><p class="p-readout" id="parallaxReadout">DEPTH 0.0 · 0.0 · 悬停或拖动看层差</p></div></div>
+        <div class="comp__foot"><span class="comp__hint">在卡片上移动鼠标或手指，观察层差</span><button class="prompt-btn" data-prompt="2">提示词</button></div></article>
+
+      <article class="comp" id="m4"><div class="comp__head"><span class="comp__no">04</span><div class="comp__title"><h3>滚动聚焦 <em>Scroll focus</em></h3><p>越靠近中心越突出，滚动有惯性，最后吸附居中。</p></div><span class="comp__src">Ep.05</span></div>
+        <div class="stage stage--linen"><div class="focus-phone"><div class="focus-head">今日提醒<span id="focusReadout">CENTER 01</span></div><div class="focus-guide"></div><div class="focus-scroll" id="focusScroll"><div class="focus-spacer"></div><div class="focus-row"><i>01</i><b>装备清点</b><span>5 / 5</span></div><div class="focus-row"><i>02</i><b>天气窗口</b><span>09:00</span></div><div class="focus-row"><i>03</i><b>冰川段开放</b><span>08:00</span></div><div class="focus-row"><i>04</i><b>补给点 B</b><span>2 处</span></div><div class="focus-row"><i>05</i><b>林线段封闭</b><span>17:00</span></div><div class="focus-row"><i>06</i><b>营地名额</b><span>余 8</span></div><div class="focus-row"><i>07</i><b>区间提醒</b><span>12:30</span></div><div class="focus-spacer"></div></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">上下滚动列表，注意中心行的放大</span><button class="prompt-btn" data-prompt="3">提示词</button></div></article>
+
+      <article class="comp" id="m5"><div class="comp__head"><span class="comp__no">05</span><div class="comp__title"><h3>流体 Tab <em>Fluid tab</em></h3><p>前缘快、后沿慢，中间被拉长，再回弹。</p></div><span class="comp__src">Ep.05</span></div>
+        <div class="stage stage--shell"><div class="fluid-phone"><div class="fluid-page"><span class="tiny-label" id="fluidEyebrow">TODAY · 今天</span><h4 id="fluidTitle">冰川段</h4><div class="fluid-art"></div><div class="fluid-lines"><span></span><span></span><span></span></div></div><div class="fluid-note" id="fluidNote">LEAD 0.20 / TAIL 0.105</div><div class="fluid-tabbar" id="fluidTabbar"><span class="fluid-blob" id="fluidBlob"></span><button class="is-on" type="button">概览</button><button type="button">路线</button><button type="button">数据</button><button type="button">设置</button></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">连续切换 Tab，看色块被拉长再收束</span><button class="prompt-btn" data-prompt="4">提示词</button></div></article>
+
+      <article class="comp" id="m6"><div class="comp__head"><span class="comp__no">06</span><div class="comp__title"><h3>图片展开 <em>Image expand</em></h3><p>同一张图，只变裁切范围，从局部到全屏。</p></div><span class="comp__src">Ep.05</span></div>
+        <div class="stage stage--pine"><div class="img-phone"><div class="img-head">Ridge Ops<span>LIVE PHOTO</span></div><button class="img-thumb" type="button" id="imgThumb" aria-label="展开图片"><div class="img-art"></div><span>点击展开</span></button><div class="img-lines"><span></span><span></span><span></span></div><div class="img-overlay" id="imgOverlay"><div class="img-full" id="imgFull"><span>GLACIER · 9.6 KM</span></div><button class="img-close" type="button" id="imgClose">关闭</button></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点缩略图，看裁切区从局部长到全屏</span><button class="prompt-btn" data-prompt="5">提示词</button></div></article>
+
+      <article class="comp" id="m7"><div class="comp__head"><span class="comp__no">07</span><div class="comp__title"><h3>手势驱动转场 <em>Gesture drive</em></h3><p>指尖位置就是进度；松手看阈值，过 55% 完成。</p></div><span class="comp__src">Ep.05</span></div>
+        <div class="stage stage--dark"><div class="gesture-phone" id="gesturePhone"><div class="gp-page gp-b" id="gpB"><button class="gp-close" type="button" id="gpClose">← 返回</button><span class="tiny-label">DETAIL · 详情</span><h4>冰川段</h4><div class="gp-art"></div><div class="gp-lines"><span></span><span></span><span></span></div><div class="gp-card">9.6 km · 爬升 620 m<br>预计用时 3:40 · 补给 2 处</div></div><div class="gp-page gp-a" id="gpA"><span class="tiny-label">LIST · 本周路线</span><h4>冰川段</h4><div class="gp-art"></div><div class="gp-lines"><span></span><span></span><span></span></div><div class="gp-card">向左拖动卡片，进入详情</div></div><div class="gp-hint">← 向左拖动</div><div class="gp-readout"><span id="gpX">X 0</span><span id="gpProgress">0%</span><span id="gpState">回弹</span></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">向左拖过一半以上再松手；不到会弹回</span><button class="prompt-btn" data-prompt="6">提示词</button></div></article>
+
+      <article class="comp" id="m8"><div class="comp__head"><span class="comp__no">08</span><div class="comp__title"><h3>物理碰撞 <em>Physics bounce</em></h3><p>同一套物理规则，质量不同，弹开的距离不同。</p></div><span class="comp__src">Ep.05</span></div>
+        <div class="stage stage--dark"><div class="physics-panel"><div class="physics-head"><b>质量与动量</b><span>MASS 1.0 · 0.55 · 1.6</span></div><div class="physics-track" id="physicsTrack"><div class="physics-mass"><span>1.0 <b>kg</b></span><span>0.55 <b>kg</b></span><span>1.6 <b>kg</b></span></div><div class="ball ball--1" data-mass="1">1.0</div><div class="ball ball--2" data-mass="0.55">.55</div><div class="ball ball--3" data-mass="1.6">1.6</div></div><div class="physics-actions"><span id="physReadout">按「发射」让最左的球撞过去</span><button class="physics-launch" type="button" id="physLaunch">发射 →</button></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">发射一次，观察重的推不动、轻的弹得远</span><button class="prompt-btn" data-prompt="7">提示词</button></div></article>
+    </div>
+  </section>
+</main>
+<section class="next"><div class="wrap next__inner"><div><p>Episode 05 complete</p><h3>下一集：<em>10 个图表控件</em></h3></div><a href="episode-06-charts.html">打开 Ep.06 图表专题 <span aria-hidden="true">↗</span></a></div></section>
+<footer class="footer"><div class="wrap"><div class="footer__grid"><p class="footer__title">动效不是装饰，<br>是<em>听得见的回馈</em>。</p><div class="footer__meta"><span>内容来源：抖音 @叨叨AI「交互/设计/动效」第 5 集（8 种交互动效，2026-09-02）。原片画面出现 8 段动效，章节索引遗漏「滚动聚焦」。</span><a href="https://www.douyin.com/video/7680772480919567985" target="_blank" rel="noopener noreferrer">查看原片 ↗</a><span>页面中的演示为按原意重新实现的交互样例；原片未出提示词卡，提示词依据原片动作与标注还原。</span></div></div><div class="footer__base"><span>Touch Library · Episode 05</span><span>Made with restraint · 2026</span></div></div></footer>
+<dialog class="prompt-dialog" id="promptDialog"><div class="dialog-top"><span id="dialogSource">EP.05 / 01</span><button class="dialog-close" type="button" id="dialogClose" aria-label="关闭">×</button></div><h3 id="dialogTitle">磁吸 <em>Magnetic snap</em></h3><p id="dialogText"></p><div class="dialog-foot"><span>依据原片动作与标注还原</span><button class="dialog-copy" type="button" id="dialogCopy"><svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg><span>复制提示词</span></button></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const prompts = [
+    { title: '磁吸', en: 'Magnetic snap', text: '做一个底部导航磁吸：拖动一个悬浮圆点靠近 Tab 时先产生阻力，越近吸力越强，进入吸附范围后快速贴合，离开则回弹。' },
+    { title: '液态形变', en: 'Liquid morph', text: '做一个液态形变卡片：按住拖动时根据速度和方向做横向拉伸、轻微旋转与圆角变化，停下后带弹性恢复原状。' },
+    { title: '3D 视差', en: '3D parallax', text: '做一个三层视差卡片：指针移动时背景、数值、图表、徽标按不同深度错位位移，并带轻微透视旋转，离开后回正。' },
+    { title: '滚动聚焦', en: 'Scroll focus', text: '做一个滚动聚焦列表：越靠近视口中心的条目放得越大，滚动带惯性，停下时自动吸附到最近一条居中。' },
+    { title: '流体 Tab', en: 'Fluid tab', text: '做一个流体 Tab：切换时选中底色前缘快、后沿慢，中间被拉长再收束回弹，文字与内容同步切换。' },
+    { title: '图片展开', en: 'Image expand', text: '做一个图片展开：点缩略图后同一张图从原位置放大到全屏，只改变裁切范围，不缩放图片本身，关闭时反向收回。' },
+    { title: '手势驱动转场', en: 'Gesture drive', text: '做一个手势驱动转场：向左拖动页面进入详情，动画进度完全跟随指尖位置，松手时超过 55% 完成，否则弹回。' },
+    { title: '物理碰撞', en: 'Physics bounce', text: '做一个一维物理碰撞：不同质量的球以同一套动量规则碰撞，重的推不动、轻的弹得远，带阻尼并遵循物理反馈。' }
+  ];
+  const toast = $('#toast');
+  let toastTimer;
+  const showToast = message => {
+    toast.textContent = message;
+    toast.classList.add('is-open');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-open'), 1800);
+  };
+  const copyText = async text => {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch (err) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand('copy'); ta.remove(); return ok;
+      } catch (err2) { return false; }
+    }
+  };
+  const dialog = $('#promptDialog');
+  let activePrompt = 0;
+  const openPrompt = index => {
+    activePrompt = Number(index);
+    const item = prompts[activePrompt];
+    $('#dialogTitle').innerHTML = `${item.title} <em>${item.en}</em>`;
+    $('#dialogText').textContent = item.text;
+    $('#dialogSource').textContent = `EP.05 / ${String(activePrompt + 1).padStart(2, '0')}`;
+    dialog.showModal();
+    document.body.classList.add('is-locked');
+  };
+  const closeDialog = () => { dialog.close(); document.body.classList.remove('is-locked'); };
+  $$('.prompt-btn').forEach(btn => btn.addEventListener('click', () => openPrompt(btn.dataset.prompt)));
+  $('#dialogClose').addEventListener('click', closeDialog);
+  dialog.addEventListener('close', () => document.body.classList.remove('is-locked'));
+  dialog.addEventListener('click', e => {
+    const rect = dialog.getBoundingClientRect();
+    if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) closeDialog();
+  });
+  $('#dialogCopy').addEventListener('click', async () => {
+    const ok = await copyText(prompts[activePrompt].text);
+    showToast(ok ? '提示词已复制' : '复制失败，请检查浏览器权限');
+  });
+  $('#copyAll').addEventListener('click', async () => {
+    const text = prompts.map((item, i) => `${String(i + 1).padStart(2, '0')}. ${item.title}\n${item.text}`).join('\n\n');
+    const ok = await copyText(text);
+    showToast(ok ? '8 条提示词已全部复制' : '复制失败，请检查浏览器权限');
+  });
+  const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
+  const grab = (el, id) => { try { el.setPointerCapture(id); } catch (err) {} };
+
+  /* 1 magnet */
+  const magnetRail = $('#magnetRail');
+  if (magnetRail) {
+    const puck = $('#magnetPuck');
+    const force = $('#magnetForce');
+    const readout = $('#magnetReadout');
+    const targets = $$('.magnet-target', magnetRail);
+    const range = 68;
+    let dragging = false, x = 0, home = 0, lastX = 0, lastTime = 0, velocity = 0, locked = -1;
+    const railWidth = () => magnetRail.clientWidth;
+    const targetX = target => {
+      const rail = magnetRail.getBoundingClientRect();
+      const r = target.getBoundingClientRect();
+      return r.left + r.width / 2 - rail.left;
+    };
+    const setX = (value, animate) => {
+      x = value;
+      puck.style.transition = animate ? 'left .4s var(--ease)' : 'none';
+      puck.style.left = `${value}px`;
+    };
+    const nearest = raw => {
+      let best = null, dist = Infinity;
+      targets.forEach(target => {
+        const tx = targetX(target);
+        const d = Math.abs(raw - tx);
+        if (d < dist) { dist = d; best = { target, tx, d }; }
+      });
+      return best;
+    };
+    const paint = raw => {
+      const near = nearest(raw);
+      const pull = near.d <= range ? (1 - near.d / range) * .34 : 0;
+      const shown = raw + (near.tx - raw) * pull;
+      setX(shown, false);
+      targets.forEach(target => {
+        target.classList.toggle('is-near', target === near.target && near.d <= range);
+        target.classList.toggle('is-lock', target === near.target && near.d < 22 && locked === targets.indexOf(target));
+      });
+      force.style.width = `${Math.round((near.d <= range ? 1 - near.d / range : 0) * 100)}%`;
+      readout.textContent = `FORCE ${near.d <= range ? (1 - near.d / range).toFixed(2) : '0.00'} · ${Math.round(near.d)}px`;
+    };
+    const init = () => {
+      targets.forEach((target, i) => { target.style.left = `${((i + .5) / targets.length) * 100}%`; });
+      home = railWidth() / 2;
+      setX(home, false);
+      paint(home);
+    };
+    puck.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      dragging = true;
+      locked = -1;
+      targets.forEach(t => t.classList.remove('is-lock'));
+      const r = magnetRail.getBoundingClientRect();
+      const puckX = parseFloat(puck.style.left) || home;
+      // grab offset so the puck does not jump on the first move
+      const grabOffset = e.clientX - (r.left + puckX);
+      const move = ev => {
+        if (!dragging) return;
+        const raw = clamp(ev.clientX - r.left - grabOffset, 8, railWidth() - 8);
+        paint(raw);
+        const now = performance.now();
+        velocity = (raw - lastX) / Math.max(now - lastTime, 1);
+        lastX = raw; lastTime = now;
+      };
+      const up = () => {
+        dragging = false;
+        document.removeEventListener('pointermove', move);
+        document.removeEventListener('pointerup', up);
+        const near = nearest(x);
+        if (near.d <= 38) {
+          locked = targets.indexOf(near.target);
+          setX(near.tx, true);
+          targets.forEach(t => t.classList.toggle('is-lock', t === near.target));
+          readout.textContent = `LOCKED · ${near.target.textContent.trim()}`;
+          force.style.width = '100%';
+          showToast(`已吸附到「${near.target.textContent.trim()}」`);
+        } else {
+          setX(home, true);
+          readout.textContent = 'MISS · 回弹';
+          force.style.width = '0%';
+          targets.forEach(t => t.classList.remove('is-lock', 'is-near'));
+        }
+      };
+      lastX = parseFloat(puck.style.left) || home;
+      lastTime = performance.now();
+      document.addEventListener('pointermove', move);
+      document.addEventListener('pointerup', up, { once: true });
+    });
+    window.addEventListener('resize', init);
+    init();
+  }
+
+  /* 2 liquid */
+  const liquidCard = $('#liquidCard');
+  if (liquidCard) {
+    const area = $('#liquidArea');
+    const readout = $('#liquidReadout');
+    let dragging = false, startX = 0, startY = 0, baseX = 0, baseY = 0, lastX = 0, lastTime = 0, vx = 0;
+    const setShape = (nx, ny, velocity) => {
+      const stretch = clamp(Math.abs(velocity) * .42, 0, 14);
+      liquidCard.style.transform = `translate(calc(-50% + ${nx}px), calc(-50% + ${ny}px)) rotate(${clamp(velocity * .5, -12, 12)}deg) skewX(${clamp(-velocity * .9, -9, 9)}deg) scale(${1 + stretch * .012}, ${1 - stretch * .006})`;
+      liquidCard.style.borderRadius = `${14 + stretch * .5}px ${14 - stretch * .3}px ${14 + stretch * .5}px ${14 - stretch * .3}px`;
+      readout.textContent = `VELOCITY ${Math.abs(velocity).toFixed(2)}`;
+    };
+    liquidCard.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      dragging = true;
+      startX = lastX = e.clientX; startY = e.clientY;
+      baseX = 0; baseY = 0; lastTime = performance.now(); vx = 0;
+      grab(liquidCard, e.pointerId);
+      liquidCard.style.transition = 'none';
+    });
+    liquidCard.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const nx = clamp(e.clientX - startX, -78, 78);
+      const ny = clamp(e.clientY - startY, -40, 40);
+      const now = performance.now();
+      vx = (e.clientX - lastX) / Math.max(now - lastTime, 1);
+      lastX = e.clientX; lastTime = now;
+      setShape(nx, ny, vx);
+    });
+    const end = () => {
+      if (!dragging) return;
+      dragging = false;
+      liquidCard.style.transition = 'transform .5s var(--ease), border-radius .5s var(--ease)';
+      liquidCard.style.transform = 'translate(-50%, -50%) rotate(0deg) skewX(0deg) scale(1,1)';
+      liquidCard.style.borderRadius = '14px';
+      readout.textContent = 'VELOCITY 0.00';
+    };
+    liquidCard.addEventListener('pointerup', end);
+    liquidCard.addEventListener('pointercancel', end);
+  }
+
+  /* 3 parallax */
+  const parallaxCard = $('#parallaxCard');
+  if (parallaxCard) {
+    const layers = $$('[data-depth]', parallaxCard);
+    const readout = $('#parallaxReadout');
+    const paint = (nx, ny) => {
+      parallaxCard.style.transform = `rotateY(${nx * 4}deg) rotateX(${-ny * 4}deg)`;
+      layers.forEach(layer => {
+        const d = Number(layer.dataset.depth);
+        layer.style.transform = `translate3d(${nx * d}px, ${ny * d}px, ${d}px)`;
+      });
+      readout.textContent = `DEPTH ${ (nx * 16).toFixed(1) } · ${ (ny * 16).toFixed(1) } · 悬停看层差`;
+    };
+    const reset = () => {
+      layers.forEach(layer => layer.style.transform = 'translate3d(0,0,0)');
+      parallaxCard.style.transform = 'none';
+      readout.textContent = 'DEPTH 0.0 · 0.0 · 悬停或拖动看层差';
+    };
+    parallaxCard.addEventListener('pointermove', e => {
+      const r = parallaxCard.getBoundingClientRect();
+      const nx = clamp((e.clientX - r.left) / r.width * 2 - 1, -1, 1);
+      const ny = clamp((e.clientY - r.top) / r.height * 2 - 1, -1, 1);
+      paint(nx, ny);
+    });
+    parallaxCard.addEventListener('pointerleave', reset);
+    reset();
+  }
+
+  /* 4 scroll focus */
+  const focusScroll = $('#focusScroll');
+  if (focusScroll) {
+    const rows = $$('.focus-row', focusScroll);
+    const readout = $('#focusReadout');
+    let scrollTimer = null;
+    const midY = () => focusScroll.getBoundingClientRect().top + focusScroll.clientHeight / 2;
+    const nearestRow = () => {
+      let best = 0, bestD = Infinity;
+      rows.forEach((row, i) => {
+        const r = row.getBoundingClientRect();
+        const d = Math.abs(r.top + r.height / 2 - midY());
+        if (d < bestD) { bestD = d; best = i; }
+      });
+      return best;
+    };
+    const centerRow = (i, smooth) => {
+      const r = rows[i].getBoundingClientRect();
+      const target = focusScroll.scrollTop + (r.top + r.height / 2 - midY());
+      focusScroll.scrollTo({ top: target, behavior: smooth ? 'smooth' : 'auto' });
+    };
+    const paint = () => {
+      const mid = midY();
+      let best = 0, bestD = Infinity;
+      rows.forEach((row, i) => {
+        const r = row.getBoundingClientRect();
+        const d = Math.abs(r.top + r.height / 2 - mid);
+        if (d < bestD) { bestD = d; best = i; }
+        const closeness = clamp(1 - d / 78, 0, 1);
+        row.style.transform = `scale(${.84 + closeness * .16})`;
+        row.style.opacity = String(.68 + closeness * .32);
+        row.classList.toggle('is-center', false);
+      });
+      rows[best].classList.add('is-center');
+      readout.textContent = `CENTER ${String(best + 1).padStart(2, '0')}`;
+    };
+    focusScroll.addEventListener('scroll', () => {
+      paint();
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => centerRow(nearestRow(), true), 160);
+    }, { passive: true });
+    centerRow(2, false);
+    paint();
+  }
+
+  /* 5 fluid tab */
+  const fluidTabbar = $('#fluidTabbar');
+  if (fluidTabbar) {
+    const blob = $('#fluidBlob');
+    const tabs = $$('button', fluidTabbar);
+    const title = $('#fluidTitle');
+    const eyebrow = $('#fluidEyebrow');
+    const note = $('#fluidNote');
+    const data = [
+      { t: '冰川段', e: 'TODAY · 今天', n: 'LEAD 0.20 / TAIL 0.105' },
+      { t: '林线段', e: 'ROUTE · 路线', n: 'FRONT FAST · TAIL SLOW' },
+      { t: '50.0 km', e: 'DATA · 数据', n: 'ELASTIC SETTLE 0.94' },
+      { t: '偏好设置', e: 'SETTINGS · 设置', n: 'MOTION ENABLED' }
+    ];
+    let active = 0;
+    const measure = i => {
+      const r = tabs[i].getBoundingClientRect();
+      const bar = fluidTabbar.getBoundingClientRect();
+      return { left: r.left - bar.left, width: r.width };
+    };
+    const setActive = (i, animate = true) => {
+      const from = measure(active);
+      const to = measure(i);
+      tabs.forEach((tab, j) => tab.classList.toggle('is-on', j === i));
+      active = i;
+      title.textContent = data[i].t;
+      eyebrow.textContent = data[i].e;
+      note.textContent = data[i].n;
+      if (!animate) {
+        blob.style.left = `${to.left}px`; blob.style.width = `${to.width}px`;
+        return;
+      }
+      blob.animate([
+        { left: `${from.left}px`, width: `${from.width}px` },
+        { left: `${from.left + (to.left - from.left) * .65}px`, width: `${Math.max(from.width, to.width) + 10}px`, offset: .55 },
+        { left: `${to.left}px`, width: `${to.width}px` }
+      ], { duration: 480, easing: 'cubic-bezier(.2,.8,.25,1)' });
+      blob.style.left = `${to.left}px`; blob.style.width = `${to.width}px`;
+    };
+    tabs.forEach((tab, i) => tab.addEventListener('click', () => { if (i !== active) setActive(i); }));
+    requestAnimationFrame(() => setActive(0, false));
+  }
+
+  /* 6 image expand */
+  const imgThumb = $('#imgThumb');
+  if (imgThumb) {
+    const overlay = $('#imgOverlay');
+    const full = $('#imgFull');
+    const close = $('#imgClose');
+    let open = false;
+    const openImage = () => {
+      if (open) return;
+      open = true;
+      const phone = imgThumb.closest('.img-phone');
+      const pr = phone.getBoundingClientRect();
+      const tr = imgThumb.querySelector('.img-art').getBoundingClientRect();
+      const top = tr.top - pr.top;
+      const right = pr.right - tr.right;
+      const bottom = pr.bottom - tr.bottom;
+      const left = tr.left - pr.left;
+      overlay.classList.add('is-open');
+      overlay.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 240, fill: 'forwards' });
+      full.style.clipPath = `inset(${top}px ${right}px ${bottom}px ${left}px round 9px)`;
+      requestAnimationFrame(() => {
+        full.style.transition = 'clip-path .55s cubic-bezier(.22,.8,.24,1)';
+        full.style.clipPath = 'inset(0px 0px 0px 0px round 0px)';
+      });
+    };
+    const closeImage = () => {
+      if (!open) return;
+      open = false;
+      const phone = imgThumb.closest('.img-phone');
+      const pr = phone.getBoundingClientRect();
+      const tr = imgThumb.querySelector('.img-art').getBoundingClientRect();
+      full.style.transition = 'clip-path .45s cubic-bezier(.22,.8,.24,1)';
+      full.style.clipPath = `inset(${tr.top - pr.top}px ${pr.right - tr.right}px ${pr.bottom - tr.bottom}px ${tr.left - pr.left}px round 9px)`;
+      overlay.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, delay: 180, fill: 'forwards' });
+      setTimeout(() => overlay.classList.remove('is-open'), 450);
+    };
+    imgThumb.addEventListener('click', openImage);
+    close.addEventListener('click', closeImage);
+  }
+
+  /* 7 gesture transition */
+  const gesturePhone = $('#gesturePhone');
+  if (gesturePhone) {
+    const pageA = $('#gpA'), pageB = $('#gpB');
+    const xOut = $('#gpX'), progressOut = $('#gpProgress'), stateOut = $('#gpState');
+    const close = $('#gpClose');
+    const width = () => gesturePhone.clientWidth;
+    let dragging = false, startX = 0, dx = 0, open = false, animating = false;
+    const setPages = (x, animate = false) => {
+      const w = width();
+      pageA.style.transition = animate ? 'transform .48s cubic-bezier(.22,.8,.24,1)' : 'none';
+      pageB.style.transition = animate ? 'transform .48s cubic-bezier(.22,.8,.24,1)' : 'none';
+      pageA.style.transform = `translateX(${x}px)`;
+      pageB.style.transform = `translateX(${w + x}px)`;
+      const p = Math.round(clamp(-x / w, 0, 1) * 100);
+      xOut.textContent = `X ${Math.round(x)}`;
+      progressOut.textContent = `${p}%`;
+      stateOut.textContent = open ? '已展开' : p >= 55 ? '完成' : '回弹';
+    };
+    const end = () => {
+      if (!dragging) return;
+      dragging = false;
+      const p = -dx / width();
+      if (p >= .55) { open = true; setPages(-width(), true); showToast('进入详情'); }
+      else { open = false; setPages(0, true); }
+    };
+    gesturePhone.addEventListener('pointerdown', e => {
+      if (animating || e.target.closest('button')) return;
+      dragging = true;
+      startX = e.clientX;
+      dx = 0;
+      grab(gesturePhone, e.pointerId);
+    });
+    gesturePhone.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      dx = clamp(e.clientX - startX, -width(), width());
+      const x = open ? clamp(-width() + dx, -width(), 0) : clamp(dx, -width(), 0);
+      setPages(x, false);
+    });
+    gesturePhone.addEventListener('pointerup', end);
+    gesturePhone.addEventListener('pointercancel', end);
+    close.addEventListener('click', e => {
+      e.stopPropagation();
+      open = false;
+      setPages(0, true);
+    });
+    setPages(0, false);
+  }
+
+  /* 8 physics */
+  const physicsTrack = $('#physicsTrack');
+  if (physicsTrack) {
+    const balls = $$('.ball', physicsTrack);
+    const launch = $('#physLaunch');
+    const readout = $('#physReadout');
+    const values = balls.map(ball => Number(ball.dataset.mass));
+    const radii = [15, 11.5, 19];
+    const startX = [18, 108, 198];
+    let state = null, raf = 0;
+    const layout = () => {
+      balls.forEach((ball, i) => {
+        ball.style.left = `${startX[i]}px`;
+        ball.style.transform = 'translateX(0px)';
+      });
+    };
+    const run = () => {
+      cancelAnimationFrame(raf);
+      layout();
+      state = startX.map((x, i) => ({ x, v: i === 0 ? 4.4 : 0 }));
+      readout.textContent = '碰撞中 · 注意质量差';
+      let last = performance.now();
+      const tick = now => {
+        const dt = Math.min((now - last) / 16.67, 2);
+        last = now;
+        state.forEach((b, i) => { b.v *= Math.pow(.995, dt); b.x += b.v * dt; });
+        // walls
+        state.forEach((b, i) => {
+          const r = radii[i];
+          if (b.x < r) { b.x = r; b.v = Math.abs(b.v) * .82; }
+          if (b.x > physicsTrack.clientWidth - r) { b.x = physicsTrack.clientWidth - r; b.v = -Math.abs(b.v) * .82; }
+        });
+        // pair collisions
+        for (let i = 0; i < state.length; i++) {
+          for (let j = i + 1; j < state.length; j++) {
+            const a = state[i], b = state[j];
+            const d = b.x - a.x;
+            const min = radii[i] + radii[j];
+            if (d < min) {
+              const m1 = values[i], m2 = values[j];
+              const u1 = a.v, u2 = b.v;
+              const v1 = ((m1 - m2) * u1 + 2 * m2 * u2) / (m1 + m2);
+              const v2 = ((m2 - m1) * u2 + 2 * m1 * u1) / (m1 + m2);
+              a.v = v1 * .96; b.v = v2 * .96;
+              const overlap = (min - d) / 2 + .2;
+              a.x -= overlap; b.x += overlap;
+            }
+          }
+        }
+        balls.forEach((ball, i) => { ball.style.transform = `translateX(${state[i].x - startX[i]}px)`; });
+        const energy = state.reduce((sum, b) => sum + Math.abs(b.v), 0);
+        if (energy > .05) raf = requestAnimationFrame(tick);
+        else { readout.textContent = '停下 · 再发射一次'; balls.forEach((ball, i) => { ball.style.left = `${state[i].x}px`; ball.style.transform = 'translateX(0px)'; }); }
+      };
+      raf = requestAnimationFrame(tick);
+    };
+    launch.addEventListener('click', run);
+    layout();
+  }
+})();
+</script>
+</body>
+</html>

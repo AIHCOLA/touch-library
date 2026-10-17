@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="touch Episode 02：10 种选择器交互，全部可操作，附可直接交给 AI 的提示词。">
+<title>一个下拉框，十种逻辑 · touch Ep.02</title>
+<style>
+:root{--bg:#f5f3ee;--paper:#fbfaf7;--ink:#171614;--ink-soft:#403c36;--muted:#6d675e;--faint:#8f887c;--line:rgba(23,22,20,.13);--line-soft:rgba(23,22,20,.075);--accent:#4b5f68;--accent-soft:#e6ebeb;--sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","STSong",serif;--mono:"SFMono-Regular",ui-monospace,Consolas,"Liberation Mono",monospace;--ease:cubic-bezier(.22,.8,.24,1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}body.is-locked{overflow:hidden}::selection{background:#d6e1e1;color:#182322}a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}h1,h2,h3,h4,p,ul{margin:0}ul{padding:0;list-style:none}svg{display:block}:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.wrap{width:min(1180px,calc(100% - 56px));margin-inline:auto}.mono{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+/* topbar */ .topbar{position:sticky;top:0;z-index:50;background:rgba(245,243,238,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--line-soft)}.topbar__in{height:66px;display:flex;align-items:center;gap:22px}.brand{display:flex;align-items:center;gap:11px}.brand__mark{width:29px;height:29px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:14px}.brand__name{font-size:13px;font-weight:600}.brand__name span{color:var(--muted);font-weight:400}.top-label{padding-left:18px;border-left:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}.top-actions{margin-left:auto;display:flex;gap:8px}.pill-link,.pill-dark{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 12px;font-size:11.5px;white-space:nowrap}.pill-link{border:1px solid var(--line);color:var(--muted)}.pill-link:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}.pill-dark{background:var(--ink);color:var(--paper);border:1px solid var(--ink);padding:8px 15px}.pill-link svg,.pill-dark svg{width:11px;height:11px;flex:none}
+/* hero */ .hero{padding:76px 0 0;overflow:hidden}.hero__top{display:flex;justify-content:space-between;gap:24px;color:var(--muted)}.hero h1{margin-top:30px;font-size:clamp(48px,8.6vw,112px);line-height:.95;letter-spacing:-.065em;font-weight:600}.hero h1 em{display:block;font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent);letter-spacing:-.05em;white-space:nowrap}.hero__lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(34px,8vw,110px);align-items:end;margin-top:36px;padding-bottom:38px}.hero__lead{font-size:clamp(17px,2vw,23px);line-height:1.55;letter-spacing:-.015em;max-width:26em;color:var(--ink-soft)}.hero__lead span{color:var(--muted)}.hero__aside{color:var(--muted);font-size:12.5px;line-height:1.85;padding-bottom:3px}.hero__aside strong{display:block;color:var(--ink);font-weight:500;font-size:12px;margin-bottom:7px}.hero__aside a{display:inline-flex;margin-top:9px;border-bottom:1px solid var(--line);padding-bottom:1px;color:var(--ink-soft)}.hero__meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}.hero__meta div{padding:17px 0 20px;border-right:1px solid var(--line-soft)}.hero__meta div:last-child{border-right:0}.hero__meta div:not(:first-child){padding-left:clamp(14px,2.4vw,30px)}.hero__meta b{display:block;font-family:var(--serif);font-size:26px;line-height:1.1;font-weight:400}.hero__meta span{display:block;margin-top:5px;font-size:11px;color:var(--muted)}
+/* nav */ .toc{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:30px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.toc a{display:inline-flex;gap:5px;align-items:baseline;padding:5px 8px;border-radius:999px;font-size:10px;color:var(--muted)}.toc a:hover{background:rgba(23,22,20,.05);color:var(--ink)}.toc a b{font-family:var(--mono);font-size:7px;color:var(--faint);font-weight:400}.toc .note{margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+/* grid */ .components{padding-top:44px}.comp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-top:1px solid var(--line);padding-top:20px}.comp-head h2{font-size:clamp(28px,3.4vw,42px);line-height:1.08;letter-spacing:-.045em}.comp-head h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--muted)}.comp-head p{margin-top:6px;font-size:12px;color:var(--muted);max-width:40em}.comp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}.comp{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:19px;background:var(--paper);overflow:hidden;transition:border-color .2s}.comp:hover{border-color:rgba(23,22,20,.26)}.comp__head{display:flex;align-items:flex-start;gap:11px;padding:16px 18px 12px}.comp__no{font-family:var(--mono);font-size:9px;color:var(--accent);padding-top:2px}.comp__title{flex:1;min-width:0}.comp__title h3{font-size:16px;line-height:1.25;letter-spacing:-.03em;font-weight:600}.comp__title h3 em{font-family:var(--serif);font-style:italic;font-weight:400;font-size:11px;color:var(--muted);margin-left:4px}.comp__title p{margin-top:3px;font-size:10.5px;line-height:1.6;color:var(--muted)}.comp__src{font-family:var(--mono);font-size:7px;color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:4px 7px}.stage{position:relative;margin:0 10px;min-height:238px;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:16px;overflow:hidden;isolation:isolate}.stage--sand{background:linear-gradient(145deg,#efe9df,#f5f1e8 58%,#eae5d8)}.stage--blue{background:linear-gradient(145deg,#e2eaee,#edf1f1 58%,#e4e7df)}.stage--dark{background:radial-gradient(110% 100% at 15% 0,#2b2a25,#191815 58%);color:#f4efe4}.stage--mint{background:linear-gradient(145deg,#e2ece4,#edf1e8 58%,#e6e8da)}.stage--lilac{background:linear-gradient(145deg,#e9e4f0,#eeeae8 58%,#e5e2d9)}.comp__foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px 15px;margin-top:auto}.comp__hint{font-size:10px;line-height:1.5;color:var(--muted)}.prompt-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:9.5px;color:var(--ink-soft)}.prompt-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}.prompt-btn svg{width:8px;height:8px}
+/* shared demo */ .panel{width:min(100%,300px);border-radius:12px;padding:12px;box-shadow:0 18px 28px -24px rgba(23,22,20,.4)}.panel--card{background:#fdfaf3;border:1px solid rgba(23,22,20,.09);color:#25211b}.panel--dark{background:#23211d;border:1px solid rgba(255,255,255,.08);color:#f2ede3}.panel--glass{background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.7);color:#25211b}.mini-label{font-family:var(--mono);font-size:5.5px;letter-spacing:.09em;text-transform:uppercase;opacity:.55}
+/* 1 fold */ .fold{overflow:hidden}.fold__art{height:88px;border-radius:8px;background:linear-gradient(145deg,#c9a476,#8e6b4f 52%,#5d4b3c);position:relative}.fold__art::after{content:"LISBON · 3 DAYS";position:absolute;left:8px;bottom:7px;color:rgba(255,255,255,.82);font-family:var(--mono);font-size:5px;letter-spacing:.08em}.fold__head{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:9px 2px 4px;text-align:left}.fold__head b{font-size:12px;font-weight:500;letter-spacing:-.02em;display:block}.fold__head small{display:block;font-family:var(--mono);font-size:5px;color:#9a8f7e;margin-top:2px}.fold__arrow{font-size:12px;color:#8f8372;transition:transform .3s var(--ease)}.fold.is-open .fold__arrow{transform:rotate(180deg)}.fold__body{max-height:0;overflow:hidden;transition:max-height .35s var(--ease),opacity .25s;opacity:0}.fold.is-open .fold__body{max-height:90px;opacity:1}.fold__body p{font-size:7px;line-height:1.7;color:#7d7262;padding-top:4px}.fold__tags{display:flex;gap:4px;margin-top:6px}.fold__tags span{background:#f0e8db;border-radius:99px;padding:3px 5px;font-family:var(--mono);font-size:5px;color:#857763}
+/* 2 segmented */ .seg-panel{width:min(100%,300px);border-radius:12px;background:#fffdf7;border:1px solid rgba(23,22,20,.08);padding:10px;color:#25211b}.seg{position:relative;display:flex;background:#f0ebe1;border-radius:8px;padding:3px}.seg__thumb{position:absolute;left:3px;top:3px;bottom:3px;width:calc((100% - 6px)/3);border-radius:6px;background:#fffdf7;box-shadow:0 2px 5px rgba(60,48,30,.1);transition:left .3s var(--ease)}.seg button{position:relative;z-index:1;flex:1;height:24px;font-size:6.5px;color:#8b806f}.seg button.is-on{color:#2b261e;font-weight:500}.seg-viewport{overflow:hidden;margin-top:9px}.seg-track{display:flex;transition:transform .35s var(--ease)}.seg-slide{flex:0 0 100%;padding:4px}.seg-slide .chart{display:flex;align-items:flex-end;gap:4px;height:63px;border-bottom:1px solid #e8e1d5;padding-bottom:3px}.seg-slide .chart i{flex:1;border-radius:2px 2px 0 0;background:#d8c5a8;height:var(--h)}.seg-slide .chart i.on{background:#6f8f85}.seg-slide small{display:block;font-family:var(--mono);font-size:5px;color:#9b9182;margin-top:5px}
+/* 3 slide */ .slide-panel{padding:10px}.slide-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.slide-top b{font-size:10px;font-weight:500}.slide{position:relative;width:100%;height:38px;border-radius:99px;background:#e5eee4;border:1px solid rgba(44,72,50,.1);overflow:hidden;touch-action:none}.slide__fill{position:absolute;left:0;top:0;bottom:0;width:40px;border-radius:99px;background:#cfe58a;transition:width .1s}.slide__label{position:absolute;inset:0;display:grid;place-items:center;padding-left:26px;font-size:7px;color:#5d6b5f;transition:opacity .2s}.slide__thumb{position:absolute;left:3px;top:3px;width:32px;height:32px;border-radius:50%;background:#1e211b;color:#d8ee5a;display:grid;place-items:center;touch-action:none;transition:left .2s var(--ease),background .25s,color .25s}.slide.is-done .slide__fill{background:#20241d}.slide.is-done .slide__label{color:#d8ee5a;font-weight:500}.slide.is-done .slide__thumb{left:calc(100% - 35px);background:#d8ee5a;color:#1e211b}.slide-note{font-family:var(--mono);font-size:5px;color:#8a948a;margin-top:6px;text-align:right}
+/* 4 flip */ .flip{width:min(100%,240px);height:160px;perspective:800px;background:none;text-align:left}.flip__inner{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s var(--ease)}.flip.is-flipped .flip__inner{transform:rotateY(180deg)}.flip__face{position:absolute;inset:0;border-radius:10px;padding:12px;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.flip__face.front{background:linear-gradient(145deg,#c49b70,#8e6b4f 55%,#5d4a3a);color:#fff}.flip__face.back{background:#fdf9ef;border:1px solid rgba(23,22,20,.1);color:#25211b;transform:rotateY(180deg)}.flip__face small{font-family:var(--mono);font-size:5px;letter-spacing:.08em;opacity:.65}.flip__face b{font-size:17px;line-height:1.1;letter-spacing:-.03em;font-weight:500;margin-top:auto}.flip__face p{font-size:6.5px;line-height:1.65;color:#817766;margin-top:5px}.flip__tag{position:absolute;right:9px;top:9px;width:17px;height:17px;border-radius:50%;border:1px solid rgba(255,255,255,.5);display:grid;place-items:center;font-size:8px}
+/* 5 operation */ .op-panel{padding:11px}.op-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid rgba(23,22,20,.07)}.op-row span{font-size:8px;color:#8b8172}.op-row b{font-size:10px;font-weight:500}.stepper{display:flex;align-items:center;gap:7px}.stepper button{width:20px;height:20px;border-radius:6px;background:#f0ebe1;font-size:11px;display:grid;place-items:center}.stepper b{font-size:10px;min-width:12px;text-align:center}.op-range{width:100%;margin-top:9px;accent-color:#4b5f68}.op-total{display:flex;align-items:center;justify-content:space-between;margin-top:8px;font-family:var(--mono);font-size:6px;color:#8d8374}.op-total b{font-family:var(--sans);font-size:14px;color:#29251e;font-weight:500}
+/* 6 chips */ .chips-stage{width:100%}.chips-line{display:flex;gap:5px;overflow-x:auto;padding:4px 1px 7px;scrollbar-width:none}.chips-line::-webkit-scrollbar{display:none}.chip{flex:none;height:30px;padding:0 11px;border-radius:999px;border:1px solid rgba(23,22,20,.14);background:#fdfaf3;color:#6d6354;font-size:10px;transition:background .2s,color .2s,border-color .2s,transform .2s}.chip.is-on{background:#25221c;color:#f6f1e7;border-color:#25221c;transform:translateY(-1px)}.chips-caption{display:flex;justify-content:space-between;font-family:var(--mono);font-size:5px;color:#9a9080;margin-top:2px}
+/* 7 progress */ .prog-panel{padding:11px}.prog-steps{display:flex;align-items:flex-start;gap:0;margin-top:4px}.prog-step{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:6px;color:#9a9080;text-align:center}.prog-step::before{content:"";position:absolute;left:50%;right:-50%;top:8px;height:1px;background:#e4ddd0}.prog-step:last-child::before{display:none}.prog-step i{position:relative;z-index:1;width:17px;height:17px;border-radius:50%;background:#eee7db;border:1px solid #ddd4c5;display:grid;place-items:center;font-style:normal;font-size:6px;color:#a19685}.prog-step.done i{background:#6f8f85;border-color:#6f8f85;color:#fff}.prog-step.active i{background:#25221c;border-color:#25221c;color:#d8ee5a}.prog-step.active{color:#2b261e;font-weight:500}.prog-step b{font-weight:400}.prog-detail{margin-top:10px;border-radius:8px;background:#f2ede3;padding:8px;min-height:47px}.prog-detail b{display:block;font-size:8px;font-weight:500;color:#3b352b}.prog-detail p{font-size:6.5px;line-height:1.6;color:#8b8172;margin-top:2px}
+/* 8 bottom bar */ .bottom-card{width:min(100%,280px);border-radius:12px;background:#fdfaf3;border:1px solid rgba(23,22,20,.09);overflow:hidden;position:relative;padding-bottom:46px;color:#25211b}.bottom-card__body{padding:10px}.bottom-row{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid rgba(23,22,20,.06)}.bottom-row i{width:24px;height:24px;border-radius:5px;background:var(--art);flex:none}.bottom-row b{font-size:7.5px;font-weight:500}.bottom-row small{display:block;font-size:5px;color:#9a9080}.bottom-row span{margin-left:auto;font-family:var(--mono);font-size:6px;color:#6d6354}.bottom-bar{position:absolute;left:0;right:0;bottom:0;height:45px;background:#25221c;color:#f5efe4;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 10px}.bottom-bar small{display:block;font-family:var(--mono);font-size:4.5px;color:#9f9789}.bottom-bar b{display:block;font-size:10px;font-weight:500;margin-top:1px}.bottom-bar button{height:26px;border-radius:7px;background:#d8ee5a;color:#1e210e;padding:0 9px;font-size:6.5px;font-weight:500}.bottom-bar button.is-done{background:#f2ede3;color:#25211c}
+/* 9 smart input */ .smart-panel{padding:11px}.smart-label{font-family:var(--mono);font-size:5.5px;color:#9a9080;letter-spacing:.08em}.smart-row{display:flex;align-items:center;gap:6px;margin-top:4px;border-bottom:1px solid rgba(23,22,20,.16);padding-bottom:5px}.smart-row input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:14px;letter-spacing:.02em;color:#25211b;outline:none;font-variant-numeric:tabular-nums}.smart-row input::placeholder{color:#b1a696;font-size:10px}.smart-unit{font-size:7px;color:#8f8576}.smart-count{font-family:var(--mono);font-size:5px;color:#a19787}.smart-hint{font-size:6px;color:#9a9080;margin-top:5px}.smart-preview{display:flex;gap:4px;margin-top:8px}.smart-preview span{background:#f1ece2;border-radius:5px;padding:4px 6px;font-family:var(--mono);font-size:5px;color:#7c7262}
+/* 10 tabs */ .tabs-panel{padding:9px}.tabbar{position:relative;display:flex;border-bottom:1px solid #e7e0d4}.tabbar__thumb{position:absolute;left:0;bottom:-1px;height:2px;width:25%;background:#25221c;transition:left .3s var(--ease)}.tabbar button{flex:1;height:29px;font-size:6.5px;color:#978c7c}.tabbar button.is-on{color:#25211c;font-weight:500}.tabpanels{position:relative;overflow:hidden;height:104px;margin-top:7px}.tabpanel{position:absolute;inset:0;opacity:0;transform:translateX(12px);transition:opacity .25s,transform .3s var(--ease);padding:3px}.tabpanel.is-on{opacity:1;transform:none}.tabpanel .ph{height:54px;border-radius:7px;background:var(--art)}.tabpanel b{display:block;font-size:8px;font-weight:500;margin-top:6px}.tabpanel small{display:block;font-size:6px;color:#918776;margin-top:2px}
+/* dialog */ dialog.prompt-dialog{width:min(520px,calc(100% - 32px));border:1px solid rgba(23,22,20,.15);border-radius:17px;padding:22px;background:var(--paper);color:var(--ink);box-shadow:0 30px 70px -30px rgba(23,22,20,.45)}dialog::backdrop{background:rgba(18,17,15,.45);backdrop-filter:blur(3px)}.dialog-top{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:7px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}.dialog-close{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:14px;color:var(--muted)}.prompt-dialog h3{font-size:22px;line-height:1.2;letter-spacing:-.035em;margin-top:14px}.prompt-dialog h3 em{font-family:var(--serif);font-style:italic;font-weight:400;font-size:13px;color:var(--muted);margin-left:5px}.prompt-dialog p{margin-top:12px;padding:12px 14px;background:var(--accent-soft);border-radius:9px;font-size:12px;line-height:1.75;color:var(--ink-soft)}.dialog-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}.dialog-foot span{font-family:var(--mono);font-size:7px;color:var(--faint)}.dialog-copy{display:inline-flex;gap:6px;align-items:center;border-radius:999px;background:var(--ink);color:var(--paper);padding:8px 12px;font-size:10px}.toast{position:fixed;left:50%;bottom:28px;z-index:120;transform:translate(-50%,12px);background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 15px;font-size:11px;opacity:0;visibility:hidden;transition:opacity .25s,transform .3s,visibility .25s;pointer-events:none}.toast.is-open{opacity:1;visibility:visible;transform:translate(-50%,0)}
+/* next/footer */ .next{border-top:1px solid var(--line);padding:32px 0;margin-top:54px}.next__inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}.next p{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}.next h3{margin-top:8px;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.035em}.next h3 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}.next a{border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:10.5px;color:var(--muted)}.footer{border-top:1px solid var(--line);padding:48px 0 36px}.footer__grid{display:flex;justify-content:space-between;gap:34px;flex-wrap:wrap}.footer__title{font-family:var(--serif);font-size:clamp(23px,3vw,31px);line-height:1.25}.footer__title em{font-style:italic}.footer__meta{display:grid;gap:9px;font-size:11px;color:var(--muted);max-width:430px}.footer__meta a{border-bottom:1px solid var(--line);width:fit-content;padding-bottom:2px}.footer__base{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:30px;padding-top:14px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+@media(max-width:900px){.hero__lower{grid-template-columns:1fr;gap:24px}.comp-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.wrap{width:calc(100% - 36px)}.topbar__in{height:58px;gap:10px}.brand__name,.top-label{display:none}.pill-link{padding:6px 10px;font-size:10px}.pill-dark{padding:7px 11px;font-size:10px}.pill-dark svg{display:none}.hero{padding-top:48px}.hero__top{font-size:8px}.hero h1{font-size:clamp(42px,12.5vw,60px)}.hero h1 em{white-space:normal}.hero__lower{margin-top:26px;padding-bottom:30px}.hero__lead{font-size:16px}.hero__meta{grid-template-columns:1fr 1fr}.hero__meta div{padding:14px 0}.hero__meta div:nth-child(2){border-right:0}.hero__meta div:nth-child(3),.hero__meta div:nth-child(4){border-top:1px solid var(--line-soft)}.hero__meta div:not(:first-child){padding-left:0}.hero__meta div:nth-child(even){padding-left:14px}.hero__meta b{font-size:22px}.toc{gap:2px;margin-top:22px}.toc a{font-size:9px;padding:4px 6px}.toc .note{width:100%;margin-left:0;margin-top:4px}.components{padding-top:34px}.comp-head{display:block}.comp-head p{font-size:11px}.comp-grid{gap:10px;margin-top:16px}.comp{border-radius:16px}.comp__head{padding:14px 15px 10px}.comp__title h3{font-size:15px}.comp__title p{font-size:10px}.comp__src{display:none}.stage{margin:0 8px;min-height:228px;padding:13px;border-radius:12px}.comp__foot{padding:10px 15px 14px}.prompt-btn{font-size:9px}.comp__hint{font-size:9px}.next,.footer{padding:30px 0}.footer__grid{flex-direction:column;gap:20px}}
+@media(max-width:380px){.stage{padding:11px}.panel{width:100%}.seg-slide .chart{height:55px}}
+/* selector demos */
+.sel-panel{width:min(100%,300px);background:#fdfaf3;border:1px solid rgba(23,22,20,.09);border-radius:12px;padding:11px;color:#25211b;box-shadow:0 18px 28px -24px rgba(23,22,20,.4);position:relative}
+.sel-label{display:block;font-family:var(--mono);font-size:5.5px;letter-spacing:.09em;color:#9a9080}
+.sel-trigger{width:100%;height:32px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:5px;padding:0 9px;border:1px solid rgba(23,22,20,.14);border-radius:7px;background:#fffdf7;font-size:8px;color:#3b352b;text-align:left}
+.sel-trigger i{font-style:normal;font-size:10px;color:#948a7b;transition:transform .25s}
+.sel-trigger.is-open i{transform:rotate(180deg)}
+.sel-list{max-height:0;overflow:hidden;opacity:0;margin-top:0;border-radius:7px;background:#fffdf7;transition:max-height .3s var(--ease),opacity .2s,margin .25s,border-color .2s;border:1px solid transparent}
+.sel-list.is-open{max-height:178px;opacity:1;margin-top:5px;border-color:rgba(23,22,20,.1);overflow-y:auto}
+.sel-option{display:flex;width:100%;align-items:center;gap:7px;height:27px;padding:0 9px;text-align:left;font-size:8px;color:#5e574b;border-bottom:1px solid rgba(23,22,20,.05);transition:background .15s,color .15s}
+.sel-option:last-child{border-bottom:0}.sel-option:hover,.sel-option.is-on{background:#f0ece2;color:#25211c}
+.sel-option.is-active{background:#edf1ee;color:#25211c;box-shadow:inset 2px 0 #6f8f85}
+.sel-option.is-on::after{content:"✓";margin-left:auto;font-size:8px;color:#5f7f75}
+.sel-group{position:sticky;top:0;z-index:1;background:#f4efe5;padding:5px 9px;font-family:var(--mono);font-size:5px;letter-spacing:.08em;color:#9b9181}
+.sel-search{padding:5px 6px;border-bottom:1px solid rgba(23,22,20,.06)}
+.sel-search input,.sel-input{width:100%;height:26px;border:1px solid rgba(23,22,20,.12);border-radius:6px;background:#faf6ee;padding:0 7px;font:inherit;font-size:8px;color:#373229;outline:none}
+.sel-search input:focus,.sel-input:focus{border-color:#6f8f85;background:#fffdf7}
+.sel-empty{padding:9px;font-size:7px;color:#9a9080;text-align:center}
+.sel-input{margin-top:5px}
+.remote-state{display:flex;align-items:center;gap:5px;min-height:25px;padding:4px 2px;font-family:var(--mono);font-size:5.5px;color:#9a9080}
+.remote-state.is-loading::before{content:"";width:8px;height:8px;border:1.5px solid #d8d0c1;border-top-color:#6f8f85;border-radius:50%;animation:spin .7s linear infinite}
+.remote-state.is-error{color:#a05e52}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sel-remote-list{display:grid;gap:3px}
+.remote-person{display:flex;align-items:center;gap:6px;padding:5px 6px;border-radius:6px;background:#f5f0e6;font-size:7px;color:#5b5448}
+.remote-person i{width:16px;height:16px;border-radius:50%;background:#c9bfae;display:grid;place-items:center;font-style:normal;font-size:6px;color:#3c372f;flex:none}
+.remote-person small{margin-left:auto;font-family:var(--mono);font-size:4.5px;color:#9a9080}
+.multi-chips{display:flex;flex-wrap:wrap;gap:4px;min-height:22px;margin:6px 0}
+.multi-more{font-family:var(--mono);font-size:5px;letter-spacing:.04em;color:#6b5d78;background:#efeaf5;border-radius:99px;padding:4px 7px;margin-bottom:1px}
+.multi-more:hover{background:#e6dff0;color:#41344f}
+.multi-chip{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 6px 0 7px;border-radius:99px;background:#e9e3f2;color:#4a3d5b;font-size:6.5px}
+.multi-chip button{width:12px;height:12px;border-radius:50%;background:rgba(0,0,0,.12);display:grid;place-items:center;font-size:7px;line-height:1;color:#4a3d5b}
+.multi-empty{font-size:6.5px;color:#a19787;padding:4px 0}
+.multi-toggle{font-family:var(--mono);font-size:5px;color:#8d8374;margin-left:auto}
+.sel-check{display:flex;align-items:center;gap:6px;height:27px;padding:0 9px;border-bottom:1px solid rgba(23,22,20,.05);font-size:7.5px;color:#5e574b}
+.sel-check input{accent-color:#6f8f85;width:10px;height:10px}
+.tree-list{padding:2px 0}
+.tree-parent{display:flex;align-items:center;gap:6px;height:28px;padding:0 8px;font-size:7.5px;color:#4b453b}
+.tree-parent em{margin-left:auto;font-family:var(--mono);font-size:4.5px;font-style:normal;color:#a19787}
+.tree-root{height:30px;border-bottom:1px solid rgba(23,22,20,.06);margin-bottom:2px}
+.tree-root>span{font-weight:500;letter-spacing:-.01em}
+.tree-root .tree-box{width:14px;height:14px}
+.tree-box{width:13px;height:13px;border-radius:3px;border:1px solid #cfc5b4;background:#fffdf7;display:grid;place-items:center;font-size:7px;color:transparent;flex:none}
+.tree-box.is-on{background:#6f8f85;border-color:#6f8f85;color:#fff}
+.tree-box.is-half{background:#d9e3de;border-color:#9db3aa;color:#58706a}
+.tree-children{display:grid;padding-left:27px}
+.tree-children .tree-children{padding-left:22px}
+.tree-sub{height:26px;padding-left:0}
+.tree-leaf-row{display:flex;align-items:center;gap:6px;height:23px;padding-left:0;font-size:7px;color:#78705f;text-align:left}
+.tree-child{display:flex;align-items:center;gap:6px;height:23px;font-size:7px;color:#78705f;text-align:left}
+.tree-child i{width:10px;height:10px;border-radius:3px;border:1px solid #d8cfc0;display:grid;place-items:center;font-style:normal;font-size:6px;color:transparent}
+.tree-child.is-on i{background:#6f8f85;border-color:#6f8f85;color:#fff}
+.date-panel{width:min(100%,310px)}
+.date-readout{display:flex;align-items:center;gap:7px;margin-top:4px;font-size:8px;color:#6f675a}
+.date-readout b{font-size:12px;font-weight:500;color:#2f2a22}
+.date-readout span{color:#b0a696}
+.date-count{margin-left:auto;font-family:var(--mono);font-size:6px;font-style:normal;color:#435a52;background:#dceae4;border-radius:99px;padding:2px 6px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:7px}
+.cal-day{height:23px;border-radius:5px;font-size:6.5px;color:#6e6658;background:transparent;font-variant-numeric:tabular-nums}
+.cal-day.head{font-family:var(--mono);font-size:4.5px;color:#b0a696;height:16px}
+.cal-day.in-range{background:#e5ece8;color:#435a52}
+.cal-day.edge{background:#6f8f85;color:#fff}
+.cal-day.today{outline:1px solid #b9a4db}
+.date-range-note{font-family:var(--mono);font-size:5px;color:#9a9080;margin-top:5px}
+.created-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.created-tag{display:inline-flex;align-items:center;gap:4px;height:21px;padding:0 6px;border-radius:99px;background:#e8e5f1;color:#4e435e;font-size:6.5px}
+.created-tag button{width:11px;height:11px;border-radius:50%;background:rgba(0,0,0,.1);display:grid;place-items:center;font-size:7px;line-height:1}
+.sel-create{display:flex;width:100%;align-items:center;height:28px;padding:0 9px;font-size:7px;color:#6f8f85;background:#edf2ef;text-align:left}
+.create-note{font-family:var(--mono);font-size:4.8px;color:#9a9080;margin-top:5px}
+.split-wrap{position:relative;display:flex;align-items:stretch;height:36px;border-radius:8px;overflow:visible}
+.split-main{height:36px;padding:0 16px;border-radius:8px 0 0 8px;background:#d8ee5a;color:#1e210e;font-size:8px;font-weight:500}
+.split-more{width:30px;height:36px;border-radius:0 8px 8px 0;background:#c6dc4d;color:#1e210e;font-size:11px;border-left:1px solid rgba(30,33,14,.15)}
+.split-menu{position:absolute;right:0;top:40px;width:150px;border-radius:8px;background:#fdfaf3;border:1px solid rgba(23,22,20,.12);padding:4px;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .2s,transform .2s,visibility .2s;z-index:4;box-shadow:0 16px 24px -18px rgba(0,0,0,.5)}
+.split-menu.is-open{opacity:1;visibility:visible;transform:none}
+.split-menu button{display:block;width:100%;height:27px;border-radius:5px;padding:0 8px;text-align:left;font-size:7px;color:#5d5548}
+.split-menu button:hover{background:#f0ebe1;color:#25211b}
+.mega{max-height:0;overflow:hidden;opacity:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;border-radius:7px;background:#fffdf7;transition:max-height .3s var(--ease),opacity .2s,margin .25s,padding .25s;border:1px solid transparent;padding:0 3px}
+.mega.is-open{max-height:220px;opacity:1;margin-top:5px;border-color:rgba(23,22,20,.1);padding:5px 3px}
+.mega-col{display:flex;flex-direction:column;padding:0 2px;min-width:0}
+.mega-head{font-family:var(--mono);font-size:4.5px;letter-spacing:.06em;text-transform:uppercase;color:#a19787;padding:3px 4px 4px;border-bottom:1px solid rgba(23,22,20,.06);margin-bottom:3px;white-space:nowrap}
+.mega-item{border-radius:5px;padding:4px;text-align:left;white-space:normal;line-height:1.35}
+.mega-item b{display:block;font-size:6.5px;font-weight:500;color:#4b453b}
+.mega-item small{display:block;font-size:5px;line-height:1.45;color:#9a9080;margin-top:1px;white-space:normal}
+.mega-item:hover,.mega-item:focus-visible{background:#f2eee5;color:#25211b}
+.mega-item:hover small{color:#7b7263}
+
+</style>
+</head>
+<body>
+<a class="sr-only" href="#components">跳到组件</a>
+<header class="topbar"><div class="wrap topbar__in"><a class="brand" href="library.html"><span class="brand__mark">t</span><span class="brand__name">点触 <span>/ touch</span></span></a><span class="top-label">Episode 02 · Selectors</span><div class="top-actions"><a class="pill-link" href="library.html"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 8H3M7 4 3 8l4 4"/></svg><span>专题库</span></a><button class="pill-dark" type="button" id="copyAll"><span>复制 10 条</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg></button></div></div></header>
+<main>
+  <section class="hero"><div class="wrap">
+    <div class="hero__top mono"><span>Touch Library / Episode 02</span><span>10 Selectors · 01 Episode</span></div>
+    <h1>一个下拉框，<em>十种逻辑。</em></h1>
+    <div class="hero__lower"><p class="hero__lead">第 2 集 · 选择器的 10 种交互细节。<br><span>选项多少、有没有层级、要留几个值，<br>决定你该用哪一种选择器。</span></p><aside class="hero__aside"><strong>关于这一页</strong>整理自抖音 @叨叨AI「交互/设计/动效」第 2 集（2026-09-10）。10 种选择器全部做成可操作样片，提示词逐条取自原片。<br><a href="library.html">返回专题库 ↗</a></aside></div>
+    <div class="hero__meta"><div><b>10</b><span>选择器交互</span></div><div><b>01</b><span>原视频来源</span></div><div><b>10</b><span>可复制提示词</span></div><div><b>100%</b><span>可真实操作</span></div></div>
+    <nav class="toc" aria-label="选择器索引"><a href="#s1"><b>01</b>单选下拉</a><a href="#s2"><b>02</b>分组下拉</a><a href="#s3"><b>03</b>可搜索</a><a href="#s4"><b>04</b>远程搜索</a><a href="#s5"><b>05</b>多选</a><a href="#s6"><b>06</b>树形</a><a href="#s7"><b>07</b>日期区间</a><a href="#s8"><b>08</b>可新建</a><a href="#s9"><b>09</b>拆分按钮</a><a href="#s10"><b>10</b>多列导航</a><span class="note">Ep.02 · 10 selectors</span></nav>
+  </div></section>
+  <section class="wrap components" id="components">
+    <div class="comp-head"><div><h2>选对控件，<em>少一半解释</em></h2><p>每一种选择器都对应一种数据形状；点开、筛选、选择，看看它怎么回应。</p></div></div>
+    <div class="comp-grid">
+      <article class="comp" id="s1"><div class="comp__head"><span class="comp__no">01</span><div class="comp__title"><h3>单选下拉 <em>Single select</em></h3><p>选项少且固定，只留一个值。</p></div><span class="comp__src">Ep.02</span></div>
+        <div class="stage stage--blue"><div class="sel-panel"><span class="sel-label">STATUS</span><button class="sel-trigger" type="button" id="singleTrigger" aria-expanded="false"><span id="singleValue">In progress</span><i>⌄</i></button><div class="sel-list" id="singleList"><button class="sel-option is-on" type="button">In progress</button><button class="sel-option" type="button">In review</button><button class="sel-option" type="button">Done</button><button class="sel-option" type="button">Blocked</button><button class="sel-option" type="button">Backlog</button></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点开，选一个状态</span><button class="prompt-btn" data-prompt="0">提示词</button></div></article>
+
+      <article class="comp" id="s2"><div class="comp__head"><span class="comp__no">02</span><div class="comp__title"><h3>分组下拉 <em>Grouped select</em></h3><p>选项多且可分类，组名固定。</p></div><span class="comp__src">Ep.02</span></div>
+        <div class="stage stage--sand"><div class="sel-panel"><span class="sel-label">TEAM</span><button class="sel-trigger" type="button" id="groupTrigger" aria-expanded="false"><span id="groupValue">Select a teammate</span><i>⌄</i></button><div class="sel-list" id="groupList"><div class="sel-group">Design</div><button class="sel-option" type="button">Mia Chen</button><button class="sel-option" type="button">Noah Park</button><div class="sel-group">Engineering</div><button class="sel-option" type="button">Ava Lin</button><button class="sel-option" type="button">Sam Ortiz</button><div class="sel-group">Product</div><button class="sel-option" type="button">Zoe Hart</button></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点开，看分组标题滚动固定</span><button class="prompt-btn" data-prompt="1">提示词</button></div></article>
+
+      <article class="comp" id="s3"><div class="comp__head"><span class="comp__no">03</span><div class="comp__title"><h3>可搜索下拉 <em>Searchable</em></h3><p>本地筛选，支持键盘，无结果有提示。</p></div><span class="comp__src">Ep.02</span></div>
+        <div class="stage stage--mint"><div class="sel-panel"><span class="sel-label">CITY</span><button class="sel-trigger" type="button" id="searchTrigger" aria-expanded="false"><span id="searchValue">Choose a city</span><i>⌄</i></button><div class="sel-list" id="searchList"><div class="sel-search"><input id="searchInput" type="search" placeholder="Type to filter" autocomplete="off" aria-label="搜索城市"></div><div id="searchOptions"><button class="sel-option" type="button">Lisbon</button><button class="sel-option" type="button">Porto</button><button class="sel-option" type="button">Prague</button><button class="sel-option" type="button">Santorini</button><button class="sel-option" type="button">Copenhagen</button></div><div class="sel-empty" id="searchEmpty" hidden>No match · try “Lis”</div></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点开，输入 cit 或 pra</span><button class="prompt-btn" data-prompt="2">提示词</button></div></article>
+
+      <article class="comp" id="s4"><div class="comp__head"><span class="comp__no">04</span><div class="comp__title"><h3>远程搜索下拉 <em>Remote search</em></h3><p>加载、空结果、失败都有去处。</p></div><span class="comp__src">Ep.02</span></div>
+        <div class="stage stage--sand"><div class="sel-panel"><span class="sel-label">REMOTE DIRECTORY</span><div class="sel-search"><input id="remoteInput" type="search" placeholder="Search people…" autocomplete="off" aria-label="远程搜索"></div><div class="remote-state" id="remoteState"><span>Type “lis” to search</span></div><div class="sel-remote-list" id="remoteList"></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">输入 lis；输入 fail 看失败态</span><button class="prompt-btn" data-prompt="3">提示词</button></div></article>
+
+      <article class="comp" id="s5"><div class="comp__head"><span class="comp__no">05</span><div class="comp__title"><h3>多选选择器 <em>Multi select</em></h3><p>多结果以可删除块显示，超三行折叠。</p></div><span class="comp__src">Ep.02</span></div>
+        <div class="stage stage--blue"><div class="sel-panel"><span class="sel-label">LABELS</span><div class="multi-chips" id="multiChips"><span class="multi-empty" id="multiEmpty">Nothing selected</span></div><button class="multi-more" type="button" id="multiMore" aria-expanded="false" hidden></button><button class="sel-trigger" type="button" id="multiTrigger" aria-expanded="false"><span>Add labels</span><i>⌄</i></button><div class="sel-list" id="multiList"><label class="sel-check"><input type="checkbox" value="Design"><span>Design</span></label><label class="sel-check"><input type="checkbox" value="Brand"><span>Brand</span></label><label class="sel-check"><input type="checkbox" value="Product"><span>Product</span></label><label class="sel-check"><input type="checkbox" value="Editorial"><span>Editorial</span></label><label class="sel-check"><input type="checkbox" value="Motion"><span>Motion</span></label><label class="sel-check"><input type="checkbox" value="Research"><span>Research</span></label><label class="sel-check"><input type="checkbox" value="Writing"><span>Writing</span></label><label class="sel-check"><input type="checkbox" value="Events"><span>Events</span></label><label class="sel-check"><input type="checkbox" value="Community"><span>Community</span></label><label class="sel-check"><input type="checkbox" value="Archive"><span>Archive</span></label></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">多选几个，再从块上删除</span><button class="prompt-btn" data-prompt="4">提示词</button></div></article>
+
+      <article class="comp" id="s6"><div class="comp__head"><span class="comp__no">06</span><div class="comp__title"><h3>树形选择器 <em>Tree select</em></h3><p>父子联动，半选状态单独样式。</p></div><span class="comp__src">Ep.02</span></div>
+        <div class="stage stage--mint"><div class="sel-panel"><span class="sel-label">COLLECTIONS</span><button class="sel-trigger" type="button" id="treeTrigger" aria-expanded="false"><span id="treeValue">Choose collections</span><i>⌄</i></button><div class="sel-list tree-list" id="treeList"><div class="tree-parent tree-root" data-group="tide"><button class="tree-box" type="button" aria-label="选择 TIDE"><i></i></button><span>TIDE</span><em>12</em></div><div class="tree-children"><div class="tree-parent tree-sub" data-group="design"><button class="tree-box" type="button" aria-label="选择 Design"><i></i></button><span>Design</span><em>4</em></div><div class="tree-children tree-leaves"><button class="tree-child" type="button" data-leaf="Visual"><i></i>Visual</button><button class="tree-child" type="button" data-leaf="Brand"><i></i>Brand</button><button class="tree-child" type="button" data-leaf="Illustration"><i></i>Illustration</button><button class="tree-child" type="button" data-leaf="Motion"><i></i>Motion</button></div><button class="tree-child tree-leaf-row" type="button" data-leaf="Frontend"><i></i>Frontend</button></div></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点父级选整组，点子级看半选</span><button class="prompt-btn" data-prompt="5">提示词</button></div></article>
+
+      <article class="comp" id="s7"><div class="comp__head"><span class="comp__no">07</span><div class="comp__title"><h3>日期区间选择器 <em>Date range</em></h3><p>两个互相约束的值，范围可预览。</p></div><span class="comp__src">Ep.02</span></div>
+        <div class="stage stage--blue"><div class="sel-panel date-panel"><span class="sel-label">TRIP DATES</span><div class="date-readout"><b id="dateStart">Sep 12</b><span>→</span><b id="dateEnd">Sep 26</b><i class="date-count" id="dateCount">15d</i></div><div class="calendar" id="dateCalendar"></div><div class="date-range-note">Click two dates · preview the range</div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点两天，组成一段日期区间</span><button class="prompt-btn" data-prompt="6">提示词</button></div></article>
+
+      <article class="comp" id="s8"><div class="comp__head"><span class="comp__no">08</span><div class="comp__title"><h3>可新建选择器 <em>Creatable</em></h3><p>无匹配项时新建，先清理再查重。</p></div><span class="comp__src">Ep.02</span></div>
+        <div class="stage stage--sand"><div class="sel-panel"><span class="sel-label">PROJECT TAGS</span><input class="sel-input" id="createInput" type="text" placeholder="Type a tag…" autocomplete="off" aria-label="新建标签"><div class="sel-list is-open" id="createList"><button class="sel-option" type="button" data-tag="Brand">Brand</button><button class="sel-option" type="button" data-tag="Editorial">Editorial</button><button class="sel-option" type="button" data-tag="Motion">Motion</button><button class="sel-create" type="button" id="createOption" hidden>＋ Create “<span id="createQuery"></span>”</button></div><div class="created-tags" id="createdTags"></div><div class="create-note" id="createNote">Whitespace will be trimmed · duplicates are blocked</div></div></div>
+        <div class="comp__foot"><span class="comp__hint">输入新词，点 Create；重复试试</span><button class="prompt-btn" data-prompt="7">提示词</button></div></article>
+
+      <article class="comp" id="s9"><div class="comp__head"><span class="comp__no">09</span><div class="comp__title"><h3>拆分按钮 <em>Split button</em></h3><p>主按钮做默认动作，菜单放次动作。</p></div><span class="comp__src">Ep.02</span></div>
+        <div class="stage stage--dark"><div class="split-wrap"><button class="split-main" type="button" id="splitMain">Publish</button><button class="split-more" type="button" id="splitMore" aria-expanded="false" aria-label="更多发布选项">⌄</button><div class="split-menu" id="splitMenu"><button type="button" data-action="Schedule">Schedule</button><button type="button" data-action="Save draft">Save draft</button></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点主按钮，或点右侧箭头</span><button class="prompt-btn" data-prompt="8">提示词</button></div></article>
+
+      <article class="comp" id="s10"><div class="comp__head"><span class="comp__no">10</span><div class="comp__title"><h3>多列导航 <em>Multi-column</em></h3><p>三列分组，说明文字，悬停延迟收起。</p></div><span class="comp__src">Ep.02</span></div>
+        <div class="stage stage--blue"><div class="sel-panel"><span class="sel-label">PLATFORM</span><button class="sel-trigger" type="button" id="megaTrigger" aria-expanded="false"><span id="megaValue">Browse the platform</span><i>⌄</i></button><div class="mega" id="megaMenu"><div class="mega-col"><span class="mega-head">Product</span><button class="mega-item" type="button"><b>Console</b><small>One workspace for the team</small></button><button class="mega-item" type="button"><b>Mobile</b><small>Take tasks with you</small></button><button class="mega-item" type="button"><b>Board</b><small>See the whole pipeline</small></button></div><div class="mega-col"><span class="mega-head">Solutions</span><button class="mega-item" type="button"><b>Design</b><small>From sketch to handoff</small></button><button class="mega-item" type="button"><b>Engineering</b><small>Specs and schedule in one</small></button><button class="mega-item" type="button"><b>Small teams</b><small>Runs with five people</small></button></div><div class="mega-col"><span class="mega-head">Resources</span><button class="mega-item" type="button"><b>API Docs</b><small>Wire it into your stack</small></button><button class="mega-item" type="button"><b>Changelog</b><small>What shipped this week</small></button><button class="mega-item" type="button"><b>Help Center</b><small>Start here when stuck</small></button></div></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">移开延迟收起；方向键可遍历</span><button class="prompt-btn" data-prompt="9">提示词</button></div></article>
+    </div>
+  </section>
+</main>
+
+<section class="next"><div class="wrap next__inner"><div><p>Episode 02 complete</p><h3>下一集：<em>7 种高级交互</em></h3></div><a href="episode-03-gestures.html">打开 Ep.03 手势专题 <span aria-hidden="true">↗</span></a></div></section>
+<footer class="footer"><div class="wrap"><div class="footer__grid"><p class="footer__title">选对控件，<br>少一半<em>解释</em>。</p><div class="footer__meta"><span>内容来源：抖音 @叨叨AI「交互/设计/动效」第 2 集（选择器的 10 种交互细节，2026-09-10）。</span><a href="https://www.douyin.com/video/7683829160623809145" target="_blank" rel="noopener noreferrer">查看原片 ↗</a><span>页面中的演示为按原意重新实现的交互样例；提示词逐条取自原片。</span></div></div><div class="footer__base"><span>Touch Library · Episode 02</span><span>Made with restraint · 2026</span></div></div></footer>
+<dialog class="prompt-dialog" id="promptDialog"><div class="dialog-top"><span id="dialogSource">EP.01 / 01</span><button class="dialog-close" type="button" id="dialogClose" aria-label="关闭">×</button></div><h3 id="dialogTitle">折叠卡片 <em>Fold card</em></h3><p id="dialogText"></p><div class="dialog-foot"><span>取自原片</span><button class="dialog-copy" type="button" id="dialogCopy"><svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg><span>复制提示词</span></button></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const prompts = [
+    { title: '单选下拉', en: 'Single select', text: '做一个单选下拉，五个固定选项，默认选中第一个，选完自动收起。' },
+    { title: '分组下拉', en: 'Grouped select', text: '做一个分组下拉，按团队和项目分组，组标题不可选，滚动时固定在顶部。' },
+    { title: '可搜索下拉', en: 'Searchable', text: '做一个支持本地筛选的可搜索下拉，支持上下键和回车确认，没有匹配项时显示提示。' },
+    { title: '远程搜索下拉', en: 'Remote search', text: '做一个远程搜索下拉，输入停止三百毫秒后再请求，旧请求结果不能覆盖新请求，并显示加载中、空结果和失败状态。' },
+    { title: '多选选择器', en: 'Multi select', text: '做一个多选选择器，已选项以可删除的块显示，超过三行后折叠，并显示剩余数量。' },
+    { title: '树形选择器', en: 'Tree select', text: '做一个父子联动的树形选择器，半选状态使用单独的样式，只回传最上层选中的节点。' },
+    { title: '日期区间选择器', en: 'Date range', text: '做一个日期区间选择器，选择起止日期时预览范围，开始和结束日期可以分别修改。' },
+    { title: '可新建选择器', en: 'Creatable', text: '做一个可新建的选择器，无匹配时显示新建选项，创建前清理首尾空格，并检查是否重名。' },
+    { title: '拆分按钮', en: 'Split button', text: '做一个拆分按钮，左侧点击执行主动作，右侧箭头展开次要动作列表，并明确区分主次。' },
+    { title: '多列导航', en: 'Multi-column', text: '做一个三列分组的多列导航菜单，包含说明文字，鼠标斜向移动时延迟收起，并支持键盘遍历。' }
+  ];
+
+  const toast = $('#toast');
+  let toastTimer;
+  const showToast = message => {
+    toast.textContent = message;
+    toast.classList.add('is-open');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-open'), 1800);
+  };
+  const copyText = async text => {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch (err) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand('copy'); ta.remove(); return ok;
+      } catch (err2) { return false; }
+    }
+  };
+
+  const dialog = $('#promptDialog');
+  const dialogTitle = $('#dialogTitle');
+  const dialogText = $('#dialogText');
+  const dialogSource = $('#dialogSource');
+  let activePrompt = 0;
+  const openPrompt = index => {
+    activePrompt = Number(index);
+    const item = prompts[activePrompt];
+    dialogTitle.innerHTML = `${item.title} <em>${item.en}</em>`;
+    dialogText.textContent = item.text;
+    dialogSource.textContent = `EP.02 / ${String(activePrompt + 1).padStart(2, '0')}`;
+    dialog.showModal();
+  };
+  $$('.prompt-btn').forEach(btn => btn.addEventListener('click', () => openPrompt(btn.dataset.prompt)));
+  $('#dialogClose').addEventListener('click', () => dialog.close());
+  $('#dialogCopy').addEventListener('click', async () => {
+    const ok = await copyText(prompts[activePrompt].text);
+    showToast(ok ? '提示词已复制' : '复制失败，请检查浏览器权限');
+  });
+  dialog.addEventListener('click', e => {
+    const rect = dialog.getBoundingClientRect();
+    if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) dialog.close();
+  });
+  $('#copyAll').addEventListener('click', async () => {
+    const text = prompts.map((item, i) => `${String(i + 1).padStart(2, '0')}. ${item.title}\n${item.text}`).join('\n\n');
+    const ok = await copyText(text);
+    showToast(ok ? '10 条提示词已全部复制' : '复制失败，请检查浏览器权限');
+  });
+
+  const toggleList = (trigger, list, open) => {
+    list.classList.toggle('is-open', open);
+    trigger.classList.toggle('is-open', open);
+    trigger.setAttribute('aria-expanded', String(open));
+  };
+
+  /* 1 single */
+  const singleTrigger = $('#singleTrigger');
+  if (singleTrigger) {
+    const list = $('#singleList');
+    singleTrigger.addEventListener('click', () => toggleList(singleTrigger, list, !list.classList.contains('is-open')));
+    $$('.sel-option', list).forEach(option => option.addEventListener('click', () => {
+      $$('.sel-option', list).forEach(item => item.classList.toggle('is-on', item === option));
+      $('#singleValue').textContent = option.textContent;
+      toggleList(singleTrigger, list, false);
+    }));
+  }
+
+  /* 2 grouped */
+  const groupTrigger = $('#groupTrigger');
+  if (groupTrigger) {
+    const list = $('#groupList');
+    groupTrigger.addEventListener('click', () => toggleList(groupTrigger, list, !list.classList.contains('is-open')));
+    $$('.sel-option', list).forEach(option => option.addEventListener('click', () => {
+      $('#groupValue').textContent = option.textContent;
+      toggleList(groupTrigger, list, false);
+    }));
+  }
+
+  /* 3 searchable */
+  const searchTrigger = $('#searchTrigger');
+  if (searchTrigger) {
+    const list = $('#searchList');
+    const input = $('#searchInput');
+    const empty = $('#searchEmpty');
+    const options = $$('#searchOptions .sel-option');
+    let active = -1;
+    const visible = () => options.filter(option => option.style.display !== 'none');
+    const paint = () => options.forEach(option => option.classList.toggle('is-active', visible()[active] === option));
+    const render = () => {
+      const q = input.value.trim().toLowerCase();
+      let matches = 0;
+      options.forEach(option => {
+        const on = option.textContent.toLowerCase().includes(q);
+        option.style.display = on ? 'flex' : 'none';
+        if (on) matches += 1;
+      });
+      empty.hidden = matches > 0;
+      active = -1;
+      paint();
+    };
+    searchTrigger.addEventListener('click', () => {
+      const open = !list.classList.contains('is-open');
+      toggleList(searchTrigger, list, open);
+      if (open) setTimeout(() => input.focus({ preventScroll: true }), 200);
+      else { active = -1; paint(); }
+    });
+    input.addEventListener('input', render);
+    input.addEventListener('keydown', e => {
+      const listNow = visible();
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!listNow.length) return;
+        active = e.key === 'ArrowDown' ? (active + 1) % listNow.length : (active - 1 + listNow.length) % listNow.length;
+        paint();
+        listNow[active].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const target = listNow[active] || listNow[0];
+        if (target) target.click();
+      } else if (e.key === 'Escape') {
+        toggleList(searchTrigger, list, false);
+        searchTrigger.focus();
+      }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      $('#searchValue').textContent = option.textContent;
+      toggleList(searchTrigger, list, false);
+      input.value = '';
+      render();
+    }));
+    render();
+  }
+
+  /* 4 remote */
+  const remoteInput = $('#remoteInput');
+  if (remoteInput) {
+    const state = $('#remoteState');
+    const list = $('#remoteList');
+    let timer = null;
+    const people = [
+      { name: 'Lisa Chen', role: 'Product designer' },
+      { name: 'Liam Ford', role: 'Motion designer' },
+      { name: 'Mia Park', role: 'Researcher' },
+      { name: 'Noah Lin', role: 'Engineer' }
+    ];
+    const search = () => {
+      clearTimeout(timer);
+      const q = remoteInput.value.trim().toLowerCase();
+      list.innerHTML = '';
+      if (!q) { state.className = 'remote-state'; state.innerHTML = '<span>Type “lis” to search</span>'; return; }
+      state.className = 'remote-state is-loading';
+      state.innerHTML = '<span>Loading remote results…</span>';
+      timer = setTimeout(() => {
+        if (q === 'fail') {
+          state.className = 'remote-state is-error';
+          state.innerHTML = '<span>Request failed · try again</span>';
+          return;
+        }
+        const results = people.filter(person => person.name.toLowerCase().includes(q));
+        if (!results.length) {
+          state.className = 'remote-state';
+          state.innerHTML = '<span>No results · try another name</span>';
+          return;
+        }
+        state.className = 'remote-state';
+        state.innerHTML = `<span>${results.length} result${results.length === 1 ? '' : 's'}</span>`;
+        list.innerHTML = results.map(person => `<div class="remote-person"><i>${person.name[0]}</i><div>${person.name}<small style="display:block;margin:1px 0 0;color:#9a9080">${person.role}</small></div><small>SELECT</small></div>`).join('');
+      }, 300);
+    };
+    remoteInput.addEventListener('input', search);
+  }
+
+  /* 5 multi */
+  const multiTrigger = $('#multiTrigger');
+  if (multiTrigger) {
+    const list = $('#multiList');
+    const chips = $('#multiChips');
+    const empty = $('#multiEmpty');
+    const more = $('#multiMore');
+    const checks = $$('input[type=checkbox]', list);
+    const limit = 8;
+    let expanded = false;
+    const render = () => {
+      chips.querySelectorAll('.multi-chip').forEach(chip => chip.remove());
+      const selected = checks.filter(check => check.checked);
+      empty.hidden = selected.length > 0;
+      if (selected.length <= limit) expanded = false;
+      const visible = expanded ? selected : selected.slice(0, limit);
+      visible.forEach(check => {
+        const chip = document.createElement('span');
+        chip.className = 'multi-chip';
+        chip.innerHTML = `${check.value}<button type="button" aria-label="删除 ${check.value}">×</button>`;
+        chip.querySelector('button').addEventListener('click', () => {
+          check.checked = false;
+          render();
+        });
+        chips.appendChild(chip);
+      });
+      more.hidden = selected.length <= limit;
+      more.textContent = expanded ? '收起已选' : `+${selected.length - limit} more`;
+      more.setAttribute('aria-expanded', String(expanded));
+    };
+    multiTrigger.addEventListener('click', () => toggleList(multiTrigger, list, !list.classList.contains('is-open')));
+    checks.forEach(check => check.addEventListener('change', render));
+    more.addEventListener('click', () => { expanded = !expanded; render(); });
+    render();
+  }
+
+  /* 6 tree */
+  const treeTrigger = $('#treeTrigger');
+  if (treeTrigger) {
+    const list = $('#treeList');
+    treeTrigger.addEventListener('click', () => toggleList(treeTrigger, list, !list.classList.contains('is-open')));
+    const root = $('.tree-root', list);
+    const groups = $$('.tree-sub', list);
+    const leaves = $$('.tree-child[data-leaf]', list);
+    const setLeaf = (leaf, on) => {
+      leaf.classList.toggle('is-on', on);
+      leaf.querySelector('i').textContent = on ? '✓' : '';
+    };
+    const paintGroup = (parent, children) => {
+      const on = children.filter(child => child.classList.contains('is-on')).length;
+      const box = $('.tree-box', parent);
+      box.classList.toggle('is-on', on === children.length);
+      box.classList.toggle('is-half', on > 0 && on < children.length);
+      box.querySelector('i').textContent = on === children.length ? '✓' : on > 0 ? '–' : '';
+    };
+    const update = () => {
+      groups.forEach(group => paintGroup(group, $$('.tree-child[data-leaf]', group.nextElementSibling)));
+      paintGroup(root, leaves);
+      const names = leaves.filter(leaf => leaf.classList.contains('is-on')).map(leaf => leaf.dataset.leaf);
+      const text = !names.length ? 'Choose collections'
+        : names.length === leaves.length ? 'TIDE · all selected'
+        : names.length <= 2 ? names.join(' · ')
+        : `${names.length} collections selected`;
+      $('#treeValue').textContent = text;
+    };
+    $('.tree-box', root).addEventListener('click', () => {
+      const allOn = leaves.every(leaf => leaf.classList.contains('is-on'));
+      leaves.forEach(leaf => setLeaf(leaf, !allOn));
+      update();
+    });
+    groups.forEach(group => {
+      const children = $$('.tree-child[data-leaf]', group.nextElementSibling);
+      $('.tree-box', group).addEventListener('click', () => {
+        const allOn = children.every(child => child.classList.contains('is-on'));
+        children.forEach(child => setLeaf(child, !allOn));
+        update();
+      });
+    });
+    leaves.forEach(leaf => leaf.addEventListener('click', () => {
+      setLeaf(leaf, !leaf.classList.contains('is-on'));
+      update();
+    }));
+    update();
+  }
+
+  /* 7 date range */
+  const calendar = $('#dateCalendar');
+  if (calendar) {
+    const days = Array.from({ length: 30 }, (_, i) => i + 1);
+    const heads = ['M','T','W','T','F','S','S'];
+    heads.forEach(head => {
+      const span = document.createElement('span');
+      span.className = 'cal-day head';
+      span.textContent = head;
+      calendar.appendChild(span);
+    });
+    let start = 12, end = 26;
+    const render = () => {
+      $$('.cal-day:not(.head)', calendar).forEach(day => {
+        const n = Number(day.dataset.day);
+        day.classList.toggle('edge', n === start || n === end);
+        day.classList.toggle('in-range', n > Math.min(start, end) && n < Math.max(start, end));
+      });
+      $('#dateStart').textContent = `Sep ${start}`;
+      $('#dateEnd').textContent = `Sep ${end}`;
+      $('#dateCount').textContent = `${Math.abs(end - start) + 1}d`;
+    };
+    days.forEach(n => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cal-day';
+      btn.dataset.day = String(n);
+      btn.textContent = n;
+      btn.addEventListener('click', () => {
+        if (start === 12 && end === 26) {
+          start = end = n;
+        } else if (start === end) {
+          if (n < start) { end = start; start = n; } else { end = n; }
+        } else {
+          start = end = n;
+        }
+        render();
+      });
+      calendar.appendChild(btn);
+    });
+    render();
+  }
+
+  /* 8 creatable */
+  const createInput = $('#createInput');
+  if (createInput) {
+    const createOption = $('#createOption');
+    const createQuery = $('#createQuery');
+    const createTags = $('#createdTags');
+    const note = $('#createNote');
+    const existing = ['Brand', 'Editorial', 'Motion'];
+    const created = [];
+    const allTags = () => [...existing, ...created];
+    const renderCreate = () => {
+      const q = createInput.value.trim();
+      const qLower = q.toLowerCase();
+      $$('.sel-option', $('#createList')).forEach(option => {
+        option.style.display = !q || option.dataset.tag.toLowerCase().includes(qLower) ? 'flex' : 'none';
+      });
+      const duplicate = allTags().some(tag => tag.toLowerCase() === qLower);
+      createOption.hidden = !q || duplicate;
+      createQuery.textContent = q;
+      note.textContent = duplicate && q ? 'That tag already exists · duplicates are blocked' : 'Whitespace will be trimmed · duplicates are blocked';
+    };
+    const addTag = value => {
+      const clean = value.trim();
+      if (!clean) return;
+      if (allTags().some(tag => tag.toLowerCase() === clean.toLowerCase())) {
+        note.textContent = 'That tag already exists · duplicates are blocked';
+        return;
+      }
+      created.push(clean);
+      const chip = document.createElement('span');
+      chip.className = 'created-tag';
+      chip.innerHTML = `${clean}<button type="button" aria-label="删除 ${clean}">×</button>`;
+      chip.querySelector('button').addEventListener('click', () => {
+        const i = created.indexOf(clean);
+        if (i >= 0) created.splice(i, 1);
+        chip.remove();
+        renderCreate();
+      });
+      createTags.appendChild(chip);
+      createInput.value = '';
+      renderCreate();
+    };
+    $$('.sel-option', $('#createList')).forEach(option => option.addEventListener('click', () => addTag(option.dataset.tag)));
+    createOption.addEventListener('click', () => addTag(createInput.value));
+    createInput.addEventListener('input', renderCreate);
+    renderCreate();
+  }
+
+  /* 9 split */
+  const splitMore = $('#splitMore');
+  if (splitMore) {
+    const menu = $('#splitMenu');
+    const main = $('#splitMain');
+    splitMore.addEventListener('click', () => {
+      const open = !menu.classList.contains('is-open');
+      menu.classList.toggle('is-open', open);
+      splitMore.setAttribute('aria-expanded', String(open));
+    });
+    $$('#splitMenu button').forEach(btn => btn.addEventListener('click', () => {
+      menu.classList.remove('is-open');
+      splitMore.setAttribute('aria-expanded', 'false');
+      showToast(`${btn.dataset.action} · secondary action`);
+    }));
+    main.addEventListener('click', () => {
+      if (main.classList.contains('is-done')) return;
+      main.classList.add('is-done');
+      main.textContent = 'Published ✓';
+      setTimeout(() => { main.classList.remove('is-done'); main.textContent = 'Publish'; }, 1600);
+    });
+  }
+
+  /* 10 multi-column */
+  const megaTrigger = $('#megaTrigger');
+  if (megaTrigger) {
+    const menu = $('#megaMenu');
+    const panel = megaTrigger.closest('.sel-panel');
+    const items = $$('.mega-item', menu);
+    let closeTimer;
+    const setMega = open => {
+      clearTimeout(closeTimer);
+      menu.classList.toggle('is-open', open);
+      megaTrigger.classList.toggle('is-open', open);
+      megaTrigger.setAttribute('aria-expanded', String(open));
+    };
+    megaTrigger.addEventListener('click', () => setMega(!menu.classList.contains('is-open')));
+    megaTrigger.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setMega(true);
+        items[0].focus();
+      }
+    });
+    menu.addEventListener('keydown', e => {
+      const i = items.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const next = e.key === 'ArrowDown' ? (i + 1) % items.length : (i - 1 + items.length) % items.length;
+        items[next].focus();
+      } else if (e.key === 'Escape') {
+        setMega(false);
+        megaTrigger.focus();
+      }
+    });
+    menu.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+    panel.addEventListener('mouseleave', () => {
+      closeTimer = setTimeout(() => setMega(false), 340);
+    });
+    items.forEach(item => item.addEventListener('click', () => {
+      const group = $('.mega-head', item.closest('.mega-col')).textContent;
+      $('#megaValue').textContent = `${group} · ${$('b', item).textContent}`;
+      setMega(false);
+    }));
+  }
+})();
+
+</script>
+</body>
+</html>

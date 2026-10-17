@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="touch 专题 02：8 个让 App 和小程序质感提升的排版交互。镂空大标题、标题嵌图、展开格、错速双列、吸住日期、档案夹标签、圆泡选择、拖动分屏，附可复制 AI 提示词。">
+<title>让内容互相回应 · touch 专题 02</title>
+<style>
+:root{
+  --bg:#f5f3ee;--paper:#fbfaf7;--ink:#171614;--ink-soft:#403c36;--muted:#6d675e;--faint:#8f887c;
+  --line:rgba(23,22,20,.13);--line-soft:rgba(23,22,20,.075);--accent:#3f5f6b;--accent-soft:#dbe4e2;
+  --sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","STSong",serif;
+  --mono:"SFMono-Regular",ui-monospace,Consolas,"Liberation Mono",monospace;
+  --ease:cubic-bezier(.22,.8,.24,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:#dce7e5;color:#12221f}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+input{font-family:inherit}
+h1,h2,h3,h4,p,figure{margin:0}
+ul{padding:0;margin:0;list-style:none}
+svg{display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{width:min(1220px,calc(100% - 56px));margin-inline:auto}
+.mono{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:60;background:rgba(245,243,238,.84);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--line-soft)}
+.topbar__in{height:66px;display:flex;align-items:center;gap:24px}
+.brand{display:flex;align-items:center;gap:11px;flex:none}
+.brand__mark{width:29px;height:29px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:14px;line-height:1}
+.brand__name{font-size:13px;font-weight:600;letter-spacing:.02em}
+.brand__name span{color:var(--muted);font-weight:400}
+.topic-label{margin-left:12px;padding-left:18px;border-left:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
+.top-links{margin-left:auto;display:flex;align-items:center;gap:7px;flex:none}
+.pill-link{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--muted);font-size:11.5px;white-space:nowrap;transition:border-color .25s,color .25s,background .25s}
+.pill-link:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}
+.pill-link svg{width:11px;height:11px}
+.pill-link--solid{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.pill-link--solid:hover{background:#33302b;border-color:#33302b;color:#fff}
+
+/* hero */
+.hero{padding:76px 0 0;overflow:hidden}
+.hero__top{display:flex;justify-content:space-between;gap:24px;color:var(--muted)}
+.hero__top span:last-child{text-align:right}
+.hero__main{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(36px,8vw,110px);align-items:end;margin-top:36px;padding-bottom:46px}
+.hero h1{font-size:clamp(54px,8.8vw,124px);line-height:.94;letter-spacing:-.065em;font-weight:600}
+.hero h1 em{display:block;font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.045em;color:var(--accent);white-space:nowrap}
+.hero__lead{font-size:clamp(17px,1.95vw,23px);line-height:1.55;letter-spacing:-.015em;max-width:23em;margin-top:27px;color:var(--ink-soft)}
+.hero__lead span{color:var(--muted)}
+.hero__aside{padding-bottom:4px;font-size:12.5px;line-height:1.8;color:var(--muted)}
+.hero__aside strong{display:block;color:var(--ink);font-size:12px;font-weight:500;letter-spacing:.02em;margin-bottom:8px}
+.hero__aside a{display:inline-flex;align-items:center;gap:5px;margin-top:13px;font-size:11px;border-bottom:1px solid var(--line);padding-bottom:2px;transition:border-color .2s,color .2s}
+.hero__aside a:hover{color:var(--ink);border-color:var(--ink)}
+.hero__meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.hero__meta div{padding:18px 0 20px;border-right:1px solid var(--line-soft)}
+.hero__meta div:last-child{border-right:0}
+.hero__meta div:not(:first-child){padding-left:clamp(14px,2.4vw,30px)}
+.hero__meta b{display:block;font-family:var(--serif);font-size:27px;line-height:1.1;font-weight:400;letter-spacing:-.02em}
+.hero__meta span{display:block;margin-top:5px;color:var(--muted);font-size:11px}
+
+/* lab */
+.lab{padding:70px 0 82px;border-top:1px solid var(--line);scroll-margin-top:66px}
+.lab__head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin-bottom:24px;flex-wrap:wrap}
+.lab__kicker{color:var(--accent);margin-bottom:8px}
+.lab h2{font-size:clamp(32px,4vw,50px);line-height:1.08;letter-spacing:-.045em;font-weight:600}
+.lab h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--faint);letter-spacing:-.02em}
+.lab-h2-tail{white-space:nowrap}
+.lab__note{max-width:34em;font-size:12.5px;line-height:1.8;color:var(--muted);margin-bottom:4px}
+.type-modes{display:flex;gap:5px;padding:0 0 16px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.type-modes::-webkit-scrollbar{display:none}
+.mode-btn{flex:none;display:flex;align-items:baseline;gap:6px;padding:8px 11px;border-radius:99px;color:var(--muted);font-size:11px;white-space:nowrap;transition:background .2s,color .2s}
+.mode-btn b{font-family:var(--mono);font-size:8px;font-weight:400;letter-spacing:.04em;color:var(--faint);transition:color .2s}
+.mode-btn:hover{background:rgba(23,22,20,.055);color:var(--ink)}
+.mode-btn.is-active{background:var(--ink);color:var(--paper)}
+.mode-btn.is-active b{color:var(--accent-soft)}
+.type-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(34px,5vw,74px);align-items:start;padding-top:34px}
+.type-copy{padding-top:4px}
+.type-copy__no{font-family:var(--serif);font-style:italic;font-size:clamp(38px,4.4vw,54px);line-height:1;color:var(--accent);letter-spacing:-.03em}
+.type-copy__en{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;margin-top:7px}
+.type-copy h3{font-size:clamp(28px,3.2vw,40px);line-height:1.18;letter-spacing:-.04em;font-weight:600;margin-top:12px}
+.type-desc{font-size:14.5px;line-height:1.85;color:var(--ink-soft);margin-top:16px;max-width:34em}
+.type-why{display:flex;gap:13px;border-top:1px solid var(--line-soft);padding-top:15px;margin-top:22px;margin-bottom:22px}
+.type-why b{flex:none;font-family:var(--mono);font-size:8.5px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding-top:3px}
+.type-why p{font-size:12px;line-height:1.75;color:var(--muted)}
+.type-prompt{background:#1c1a17;color:#f7f3ec;border-radius:17px;padding:16px 17px 15px;position:relative;overflow:hidden}
+.type-prompt::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,.08);pointer-events:none}
+.type-prompt__top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px}
+.type-prompt__label{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:#9c9488;text-transform:uppercase}
+.type-prompt__label i{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--accent-soft);margin-right:6px;vertical-align:2px}
+.type-prompt h4{font-size:17px;line-height:1.3;letter-spacing:-.03em;font-weight:500;margin-top:2px}
+.copy-prompt{display:inline-flex;align-items:center;gap:5px;flex:none;border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:5px 9px;color:#d8d2c6;font-size:9px;transition:background .2s,color .2s,border-color .2s}
+.copy-prompt:hover{background:rgba(255,255,255,.1);color:#fff}
+.copy-prompt.is-done{color:#b9dcd5;border-color:#7ba8a0}
+.copy-prompt svg{width:10px;height:10px}
+.type-prompt p{font-size:12.5px;line-height:1.8;color:#eee9df;margin-top:10px}
+.type-prompt__hint{display:block;margin-top:11px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);font-family:var(--mono);font-size:7.5px;letter-spacing:.03em;color:#948c7f}
+.type-stage{
+  position:relative;min-height:664px;border:1px solid var(--line);border-radius:26px;
+  display:grid;place-items:center;padding:34px 22px 40px;overflow:hidden;
+  --tint:#e7e4dc;
+  background:var(--tint);
+}
+.type-stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(23,22,20,.14) .6px,transparent .6px);background-size:17px 17px;opacity:.28;-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 10%,transparent 74%);mask-image:radial-gradient(ellipse at 50% 40%,#000 10%,transparent 74%);pointer-events:none}
+.stage-tag{position:absolute;top:15px;left:18px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;letter-spacing:.12em;color:rgba(23,22,20,.48);text-transform:uppercase}
+.stage-tag::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent)}
+.stage-hint{position:absolute;bottom:13px;left:50%;transform:translateX(-50%);font-size:9.5px;color:rgba(23,22,20,.52);letter-spacing:.02em;white-space:nowrap}
+.type-phone{position:relative;z-index:2;width:min(320px,100%);height:560px;padding:8px;border-radius:42px;background:#121110;box-shadow:0 36px 54px -34px rgba(23,22,20,.58),0 0 0 1px rgba(255,255,255,.06) inset}
+.type-screen{position:relative;height:100%;border-radius:35px;overflow:hidden;background:#f7f2e8;display:flex;flex-direction:column}
+.type-notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);z-index:30;width:70px;height:18px;border-radius:12px;background:#121110}
+.demo-status{position:relative;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:10px 17px 0;font-family:var(--mono);font-size:8px;letter-spacing:.02em;color:#2d2923;flex:none}
+.demo-status__icons{display:flex;gap:3px}
+.demo-status__icons i{width:9px;height:5px;border-radius:1px;background:currentColor;opacity:.8}
+.demo-status__icons i:nth-child(2){width:6px}
+.demo-status__icons i:nth-child(3){width:12px;border-radius:3px}
+.demo-page{position:absolute;inset:0;display:none;flex-direction:column;padding-top:0}
+.demo-page.is-active{display:flex}
+.ed-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 17px 7px;font-family:var(--mono);font-size:7px;letter-spacing:.1em;color:#968d7f;text-transform:uppercase;flex:none}
+.ed-head strong{font-family:var(--sans);font-size:10px;letter-spacing:-.02em;font-weight:600;color:#332f28;text-transform:none}
+.ed-kicker{font-family:var(--mono);font-size:6.5px;letter-spacing:.11em;color:#a19889;text-transform:uppercase}
+
+/* library */
+.library{padding:56px 0 70px;border-top:1px solid var(--line)}
+.library__head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding-bottom:16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.library__head h3{font-size:25px;letter-spacing:-.035em;font-weight:600}
+.library__head p{font-size:11.5px;color:var(--muted);margin-top:4px}
+.copy-all{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--ink);border-radius:999px;padding:9px 14px;font-size:11px;transition:background .2s,color .2s}
+.copy-all:hover{background:var(--ink);color:var(--paper)}
+.copy-all svg{width:12px;height:12px}
+.prompt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding-top:18px}
+.prompt-card{border:1px solid var(--line);border-radius:15px;padding:15px;background:rgba(251,250,247,.7);display:flex;flex-direction:column;gap:8px}
+.prompt-card:hover{background:var(--paper);border-color:rgba(23,22,20,.26)}
+.prompt-card__top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.prompt-card__no{font-family:var(--mono);font-size:8px;color:var(--faint);letter-spacing:.06em}
+.prompt-card h4{font-size:13px;font-weight:500;margin-top:1px}
+.prompt-card p{font-size:11.5px;line-height:1.75;color:var(--muted);flex:1}
+.prompt-card button{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:99px;padding:4px 8px;font-size:9px;color:var(--muted);transition:color .2s,border-color .2s}
+.prompt-card button:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}
+.prompt-card button.is-done{color:var(--accent)}
+.src-tag{font-family:var(--mono);font-size:7px;color:#9f9688;letter-spacing:.05em;text-transform:uppercase}
+
+/* next/footer */
+.next{padding:44px 0;border-top:1px solid var(--line)}
+.next__inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.next p{font-family:var(--mono);font-size:8px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;margin-bottom:7px}
+.next h3{font-size:22px;letter-spacing:-.03em;font-weight:500}
+.next h3 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--muted)}
+.next a{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:99px;padding:9px 14px;font-size:11px;color:var(--muted);transition:border-color .2s,color .2s}
+.next a:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}
+.footer{border-top:1px solid var(--line);padding:46px 0 38px}
+.footer__grid{display:flex;justify-content:space-between;gap:36px;flex-wrap:wrap}
+.footer__title{font-family:var(--serif);font-size:clamp(22px,3vw,32px);line-height:1.25;letter-spacing:-.025em}
+.footer__title em{font-style:italic}
+.footer__meta{display:grid;gap:10px;max-width:390px;font-size:11px;color:var(--muted)}
+.footer__meta a{width:fit-content;border-bottom:1px solid var(--line);padding-bottom:2px;transition:color .2s,border-color .2s}
+.footer__meta a:hover{color:var(--ink);border-color:var(--ink)}
+.footer__base{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:32px;padding-top:15px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.toast{position:fixed;left:50%;bottom:26px;z-index:100;transform:translate(-50%,12px);background:var(--ink);color:var(--paper);border-radius:999px;padding:10px 17px;font-size:11.5px;opacity:0;pointer-events:none;transition:opacity .25s,transform .3s var(--ease);box-shadow:0 16px 32px -16px rgba(0,0,0,.5);white-space:nowrap}
+.toast::before{content:"";display:inline-block;width:5px;height:5px;margin-right:7px;border-radius:50%;background:var(--accent-soft);vertical-align:1px}
+.toast.is-on{opacity:1;transform:translate(-50%,0)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in-view{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .hero__main{grid-template-columns:1fr;gap:26px}
+  .type-grid{grid-template-columns:1fr;gap:28px}
+  .type-copy{max-width:620px}
+  .type-stage{min-height:640px;order:-1}
+  .type-modes{scrollbar-width:thin}
+}
+@media (max-width:760px){
+  .wrap{width:calc(100% - 36px)}
+  .topbar__in{height:58px;gap:10px}
+  .brand__name{display:none}
+  .topic-label{display:none}
+  .pill-link{padding:6px 9px;font-size:10px}
+  .pill-link span{display:none}
+  .hero{padding-top:48px}
+  .hero__top{font-size:8px;letter-spacing:.08em}
+  .hero h1{font-size:clamp(48px,14.5vw,76px)}
+  .hero__lead{font-size:16.5px;margin-top:20px}
+  .hero__meta{grid-template-columns:1fr 1fr}
+  .hero__meta div{padding:15px 0}
+  .hero__meta div:nth-child(2){border-right:0}
+  .hero__meta div:nth-child(3){border-top:1px solid var(--line-soft)}
+  .hero__meta div:nth-child(4){border-top:1px solid var(--line-soft)}
+  .hero__meta div:not(:first-child){padding-left:0}
+  .hero__meta div:nth-child(even){padding-left:14px}
+  .hero__meta b{font-size:23px}
+  .lab{padding:50px 0 56px}
+  .lab h2{font-size:34px}
+  .type-modes{padding-bottom:12px}
+  .mode-btn{padding:7px 9px;font-size:10px}
+  .type-grid{padding-top:24px}
+  .type-stage{min-height:600px;padding:28px 12px 36px;border-radius:20px}
+  .type-phone{height:540px;width:min(310px,100%)}
+  .stage-hint{font-size:8.5px;bottom:11px}
+  .prompt-grid{grid-template-columns:1fr}
+  .library{padding:44px 0 50px}
+  .library__head h3{font-size:21px}
+  .footer{padding:36px 0 30px}
+  .footer__grid{flex-direction:column;gap:20px}
+}
+@media (max-width:380px){
+  .wrap{width:calc(100% - 28px)}
+  .hero h1{font-size:clamp(42px,14vw,58px)}
+  .type-stage{padding-inline:8px}
+  .type-phone{height:520px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+/* ---------- shared editorial art ---------- */
+.photo{position:relative;overflow:hidden;background:#aebdbd}
+.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(20,28,26,.24));pointer-events:none}
+.photo--fjord::before{content:"";position:absolute;left:-8%;right:-8%;top:20%;height:38%;background:linear-gradient(135deg,#7a9095,#465f63);clip-path:polygon(0 100%,15% 38%,31% 67%,48% 19%,64% 58%,81% 34%,100% 70%,100% 100%)}
+.photo--fjord{background:linear-gradient(180deg,#aac0c6 0%,#d8d4c5 42%,#64888c 43%,#2f5156 100%)}
+.photo--bergen{
+  background:
+    linear-gradient(180deg,transparent 0 56%,rgba(26,44,42,.25) 57%,rgba(20,35,33,.5) 100%),
+    repeating-linear-gradient(90deg,#a9533d 0 16%,#e7d8c0 16% 23%,#c07a45 23% 37%,#d7b58e 37% 47%,#8f4a3d 47% 61%,#e3d2b7 61% 69%,#b56b43 69% 83%,#cf9660 83% 100%) bottom/100% 45% no-repeat,
+    linear-gradient(180deg,#a9bdc1 0 46%,#6b8884 47%,#365554 100%);
+}
+.photo--bergen::before{content:"";position:absolute;left:3%;right:3%;bottom:16%;height:16%;background:repeating-linear-gradient(90deg,transparent 0 12px,rgba(255,246,221,.55) 12px 15px,transparent 15px 26px);opacity:.55;mix-blend-mode:screen}
+.photo--night{
+  background:
+    radial-gradient(circle at 22% 74%,rgba(244,200,105,.8) 0 1px,transparent 2px),
+    radial-gradient(circle at 31% 82%,rgba(244,200,105,.65) 0 1px,transparent 2px),
+    radial-gradient(circle at 68% 71%,rgba(244,200,105,.7) 0 1px,transparent 2px),
+    radial-gradient(circle at 80% 84%,rgba(244,200,105,.55) 0 1px,transparent 2px),
+    linear-gradient(180deg,#20303b 0%,#121d26 47%,#080e14 100%);
+}
+.photo--night::before{content:"";position:absolute;left:6%;right:6%;bottom:0;height:48%;background:repeating-linear-gradient(90deg,rgba(255,209,124,.4) 0 1px,transparent 1px 9px),repeating-linear-gradient(0deg,rgba(255,209,124,.18) 0 1px,transparent 1px 12px);opacity:.45}
+.photo--forest{background:linear-gradient(160deg,#97a58f 0%,#586b55 49%,#2d3d31 100%)}
+.photo--forest::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 8px,rgba(24,39,27,.36) 8px 11px,transparent 11px 22px);filter:blur(.4px)}
+.photo--coast{background:linear-gradient(180deg,#a9c2c8 0%,#d9d3c1 38%,#7b9fa2 39%,#3f656b 100%)}
+.photo--coast::before{content:"";position:absolute;left:0;right:0;top:36%;height:1px;background:rgba(255,255,255,.45)}
+.photo--coast::after{content:"";position:absolute;left:6%;right:6%;bottom:14%;height:22%;background:repeating-linear-gradient(0deg,transparent 0 6px,rgba(236,243,238,.28) 6px 7px);clip-path:polygon(0 60%,10% 40%,22% 63%,35% 36%,52% 60%,68% 30%,82% 54%,100% 42%,100% 100%,0 100%);opacity:.45}
+
+/* ---------- 01 knockout ---------- */
+.demo-knockout{background:#252922;color:#f8f1e5;overflow:hidden}
+.demo-status--light{color:rgba(255,250,240,.86)}
+.ko-bg{position:absolute;inset:0;background:linear-gradient(155deg,#3d4237 0%,#20251f 58%,#111410 100%)}
+.ko-bg::before{content:"";position:absolute;left:12%;right:12%;bottom:18%;height:28%;background:linear-gradient(150deg,rgba(120,140,127,.24),transparent);filter:blur(22px)}
+.ko-bg::after{content:"04";position:absolute;right:15px;top:31px;font-family:var(--serif);font-style:italic;font-size:56px;line-height:1;color:rgba(255,250,238,.055);letter-spacing:-.04em}
+.ko-vol{position:absolute;top:38px;left:22px;z-index:3;font-family:var(--mono);font-size:6.5px;letter-spacing:.13em;color:rgba(250,244,233,.48)}
+.ko-vol::after{content:"";display:block;width:32px;height:1px;background:rgba(250,244,233,.22);margin-top:7px}
+.ko-title{
+  position:absolute;left:22px;right:22px;bottom:94px;z-index:4;display:flex;flex-direction:column;align-items:flex-start;
+  font-family:var(--sans);font-weight:700;font-size:104px;line-height:.77;letter-spacing:-.075em;color:transparent;text-align:left;
+  background-image:
+    linear-gradient(180deg,transparent 0 54%,rgba(32,48,46,.18) 55%,rgba(22,38,36,.44) 100%),
+    repeating-linear-gradient(90deg,#a9533d 0 16%,#e7d8c0 16% 23%,#c07a45 23% 37%,#d7b58e 37% 47%,#8f4a3d 47% 61%,#e3d2b7 61% 69%,#b56b43 69% 83%,#cf9660 83% 100%),
+    linear-gradient(180deg,#9fb5b9 0 46%,#5d7775 47%,#2f4848 100%);
+  background-size:100% 100%,100% 48%,100% 100%;
+  background-position:center,bottom,center;background-repeat:no-repeat;
+  -webkit-background-clip:text;background-clip:text;
+  transition:opacity .3s,transform .35s var(--ease);
+}
+.ko-title span{display:block}
+.ko-title small{
+  margin-top:18px;padding:4px 7px;border-radius:3px;background:#1f241e;
+  font-family:var(--mono);font-size:6.5px;font-weight:400;letter-spacing:.12em;color:#cfc6b6;
+  -webkit-text-fill-color:#cfc6b6;
+}
+.ko-caption{position:absolute;left:22px;right:22px;bottom:28px;z-index:3;display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:6.5px;letter-spacing:.05em;color:rgba(250,244,233,.45)}
+.ko-full{
+  position:absolute;inset:0;z-index:8;border:0;color:#fff;text-align:left;
+  background-image:
+    linear-gradient(180deg,rgba(13,22,22,.04) 0 48%,rgba(13,22,22,.48) 100%),
+    repeating-linear-gradient(90deg,#a9533d 0 16%,#e7d8c0 16% 23%,#c07a45 23% 37%,#d7b58e 37% 47%,#8f4a3d 47% 61%,#e3d2b7 61% 69%,#b56b43 69% 83%,#cf9660 83% 100%),
+    linear-gradient(180deg,#a8bdc1 0 46%,#607a78 47%,#31504f 100%);
+  background-size:100% 100%,100% 48%,100% 100%;background-position:center,bottom,center;background-repeat:no-repeat;
+  clip-path:inset(44% 9% 38% 9% round 12px);opacity:0;pointer-events:none;
+  transition:clip-path .55s var(--ease),opacity .22s;
+}
+.ko-full::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(10,18,18,.4));pointer-events:none}
+.demo-knockout.is-expanded .ko-full{opacity:1;pointer-events:auto;clip-path:inset(0)}
+.demo-knockout.is-expanded .ko-title{opacity:0;pointer-events:none;transform:translateY(10px)}
+.demo-knockout.is-expanded .ko-caption{opacity:0}
+.ko-close{position:absolute;z-index:9;top:31px;right:15px;display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:99px;background:rgba(20,26,24,.55);border:1px solid rgba(255,255,255,.22);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-size:7px;letter-spacing:.03em;color:#fff}
+.ko-close i{font-style:normal;font-size:10px;line-height:1}
+.ko-photo-caption{position:absolute;z-index:9;left:18px;right:18px;bottom:18px;font-family:var(--serif);font-style:italic;font-size:14px;letter-spacing:-.01em;color:rgba(255,250,240,.93)}
+
+/* ---------- 02 inline photo ---------- */
+.demo-inline{background:#f7f2e8}
+.inline-body{flex:1;min-height:0;padding:15px 18px 18px;display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:none}
+.inline-body::-webkit-scrollbar{width:0}
+.inline-title{margin-top:9px;font-size:31px;line-height:1.13;letter-spacing:-.055em;font-weight:600;color:#29251f}
+.inline-pic{
+  display:inline-flex;align-items:center;justify-content:center;position:relative;
+  width:48px;height:32px;margin:0 4px;border-radius:10px;overflow:hidden;vertical-align:middle;
+  border:1px solid rgba(23,22,20,.14);background:#d6c9b5;
+  transition:width .42s var(--ease),height .42s var(--ease),margin .42s var(--ease),border-radius .3s;
+}
+.inline-pic .photo{position:absolute;inset:0}
+.inline-pic>i{position:absolute;inset:0;display:grid;place-items:center;background:rgba(13,29,27,.24);color:#fff;font-style:normal;font-size:13px;font-weight:400;z-index:2;transition:opacity .2s}
+.inline-pic em{display:none;position:absolute;left:8px;bottom:6px;z-index:3;font-style:normal;font-family:var(--mono);font-size:5.8px;letter-spacing:.08em;color:rgba(255,255,255,.9);text-transform:uppercase}
+.demo-inline.is-expanded .inline-pic{display:block;width:100%;height:142px;margin:10px 0 9px;border-radius:12px}
+.demo-inline.is-expanded .inline-pic>i{opacity:0}
+.demo-inline.is-expanded .inline-pic em{display:block}
+.inline-meta{display:flex;justify-content:space-between;gap:12px;margin-top:16px;padding-top:10px;border-top:1px solid rgba(23,22,20,.09);font-family:var(--mono);font-size:6.5px;color:#9b9183;text-transform:uppercase;letter-spacing:.05em}
+.inline-copy{display:grid;gap:7px;margin-top:17px}
+.inline-copy p{font-family:var(--serif);font-size:13px;line-height:1.7;color:#5c554a;max-width:31em}
+.inline-copy span{display:block;height:2px;width:100%;border-radius:99px;background:#e3ddd1}
+.inline-copy span.short{width:58%}
+.inline-pull{margin-top:24px;padding-top:13px;border-top:1px solid rgba(23,22,20,.09);font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.4;letter-spacing:-.015em;color:#8b8173}
+.inline-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:18px;font-family:var(--mono);font-size:6.5px;color:#a19788;text-transform:uppercase;letter-spacing:.04em}
+.read-pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:99px;background:#25221d;color:#f8f4ec;font-family:var(--sans);font-size:8px;letter-spacing:.02em;text-transform:none}
+
+/* ---------- 03 expanding grid ---------- */
+.demo-grid{background:#f7f2e8}
+.grid-scroll{flex:1;min-height:0;overflow-y:auto;padding:0 14px 18px;scrollbar-width:none}
+.grid-scroll::-webkit-scrollbar{width:0}
+.eg-hero{position:relative;height:158px;border-radius:13px;overflow:hidden;color:#fff;border:1px solid rgba(255,255,255,.08)}
+.eg-hero>div{position:absolute;left:12px;bottom:11px;z-index:2}
+.eg-hero span{display:block;font-size:17px;line-height:1.1;letter-spacing:-.035em;font-weight:500}
+.eg-hero small{display:block;margin-top:3px;font-family:var(--mono);font-size:6px;letter-spacing:.05em;color:rgba(255,255,255,.68);text-transform:uppercase}
+.eg-hero>i{position:absolute;top:10px;right:10px;z-index:2;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:grid;place-items:center;font-style:normal;font-size:10px;border:1px solid rgba(255,255,255,.24)}
+.eg-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.eg-cell{
+  position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;
+  flex:0 0 calc(50% - 3px);height:92px;padding:10px;border-radius:12px;border:1px solid rgba(23,22,20,.09);
+  background:#fffdf8;color:#3d382f;text-align:left;overflow:hidden;
+  transition:flex-basis .42s var(--ease),height .42s var(--ease),background .25s,color .25s;
+}
+.eg-label{font-family:var(--mono);font-size:5.8px;letter-spacing:.11em;color:#9f9586;text-transform:uppercase}
+.eg-cell b{display:block;margin-top:5px;font-family:var(--serif);font-size:28px;line-height:.9;font-weight:400;letter-spacing:-.04em;color:#2b2721}
+.eg-cell b small{display:inline;font-family:var(--sans);font-size:9px;letter-spacing:0;color:inherit}
+.eg-cell>small{display:block;margin-top:4px;font-size:7px;color:#9d9384}
+.eg-cell .eg-extra{max-height:0;opacity:0;overflow:hidden;transition:max-height .35s var(--ease),opacity .25s;margin-top:0}
+.eg-cell .eg-extra em{display:block;font-style:normal;font-size:8px;line-height:1.55;color:#7f7568;max-width:32em}
+.eg-cell .eg-extra i{display:inline-block;margin-top:6px;font-style:normal;font-family:var(--mono);font-size:6px;letter-spacing:.04em;color:#5e6752;border-bottom:1px solid rgba(94,103,82,.35);padding-bottom:1px}
+.eg-cell.is-expanded{flex-basis:100%;height:154px}
+.eg-cell.is-expanded .eg-extra{max-height:58px;opacity:1;margin-top:8px}
+.eg-cell--stops{background:#8eb5ac;color:#f7fbf8;border-color:transparent}
+.eg-cell--stops .eg-label,.eg-cell--stops>small{color:rgba(247,251,248,.68)}
+.eg-cell--stops b{color:#fff}
+.eg-cell--weather{background:#b7afa8;color:#fbf8f3;border-color:transparent}
+.eg-cell--weather .eg-label,.eg-cell--weather>small{color:rgba(251,248,243,.66)}
+.eg-cell--weather b{color:#fff}
+.eg-cell--notes{background:#d7c9d3}
+.eg-cell--forest{color:#f2f6ee;border-color:transparent;background:linear-gradient(160deg,#97a58f 0%,#586b55 49%,#2d3d31 100%)}
+.eg-cell--forest .eg-label,.eg-cell--forest>small{color:rgba(242,246,238,.65)}
+.eg-cell--forest b{color:#fff}
+.eg-cell--forest .eg-extra em{color:rgba(242,246,238,.8)}
+.eg-cell--forest .eg-extra i{color:#f0f5e9;border-color:rgba(240,245,233,.4)}
+.grid-tip{margin-top:9px;font-family:var(--mono);font-size:6px;letter-spacing:.06em;color:#a49a8b;text-transform:uppercase;text-align:center}
+
+/* ---------- 04 offset columns ---------- */
+.demo-columns{background:#f7f2e8}
+.col-scroll{flex:1;min-height:0;overflow-y:auto;padding:0 11px 44px;scrollbar-width:none;overscroll-behavior:contain}
+.col-scroll::-webkit-scrollbar{width:0}
+.col-grid{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:7px;padding-bottom:180px}
+.col-col{display:grid;gap:7px;min-width:0;will-change:transform}
+.col-col--offset{padding-top:18px}
+.col-card{position:relative;border-radius:11px;overflow:hidden;border:1px solid rgba(255,255,255,.08);margin:0}
+.col-card--tall{height:148px}.col-card--short{height:98px}.col-card--mid{height:121px}
+.col-card>span{position:absolute;top:7px;left:7px;z-index:2;padding:2px 5px;border-radius:99px;background:rgba(20,25,24,.38);font-family:var(--mono);font-size:6px;color:#fff;border:1px solid rgba(255,255,255,.22);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
+.col-card figcaption{position:absolute;left:8px;right:8px;bottom:8px;z-index:2;font-size:9px;line-height:1.3;color:#fff;letter-spacing:-.01em}
+.col-card figcaption small{display:block;margin-top:2px;font-family:var(--mono);font-size:5.5px;letter-spacing:.04em;color:rgba(255,255,255,.65);text-transform:uppercase}
+.col-hint{position:absolute;left:15px;right:15px;bottom:9px;z-index:5;margin:0;padding:7px 0;border-top:1px solid rgba(23,22,20,.08);background:rgba(247,242,232,.94);font-family:var(--mono);font-size:6px;letter-spacing:.05em;color:#a19889;text-transform:uppercase}
+
+/* ---------- 05 sticky dates ---------- */
+.demo-dates{background:#f7f2e8}
+.schedule-scroll{flex:1;min-height:0;overflow-y:auto;padding:0 14px 44px;scrollbar-width:none;overscroll-behavior:contain}
+.schedule-scroll::-webkit-scrollbar{width:0}
+.schedule-day{display:grid;grid-template-columns:55px minmax(0,1fr);gap:9px}
+.day-rail{position:sticky;top:0;z-index:3;height:fit-content;padding:17px 0 9px;background:#f7f2e8}
+.day-rail b{display:block;font-family:var(--serif);font-size:38px;line-height:.85;letter-spacing:-.05em;font-weight:400;color:#2c2821}
+.day-rail span{display:block;margin-top:7px;font-family:var(--mono);font-size:6.5px;letter-spacing:.13em;color:#a09687}
+.day-rail i{display:block;width:19px;height:1px;background:var(--accent);margin-top:9px;opacity:.6}
+.day-events{border-top:1px solid rgba(23,22,20,.09);padding-top:16px;padding-bottom:18px}
+.event{display:flex;align-items:flex-start;gap:7px;padding:11px 0;border-bottom:1px solid rgba(23,22,20,.075);position:relative}
+.ev-time{flex:none;width:32px;font-family:var(--mono);font-size:6.5px;color:#a59b8c;letter-spacing:.02em;padding-top:2px}
+.event h4{font-size:10px;font-weight:500;color:#353028;line-height:1.35}
+.event p{margin-top:3px;font-size:7.5px;line-height:1.55;color:#9b9182}
+.ev-dot{position:absolute;right:1px;top:15px;width:5px;height:5px;border-radius:50%;background:#d8cfc1}
+.dates-hint{position:absolute;left:15px;right:15px;bottom:9px;z-index:5;margin:0;padding:7px 0;border-top:1px solid rgba(23,22,20,.08);background:rgba(247,242,232,.94);font-family:var(--mono);font-size:6px;letter-spacing:.05em;color:#a19889;text-transform:uppercase}
+
+/* ---------- 06 folder tabs ---------- */
+.demo-folders{background:#f7f2e8}
+.folder-demo{flex:1;min-height:0;display:flex;flex-direction:column;padding:4px 14px 16px}
+.folder-tabs{display:flex;gap:3px;padding-left:8px;position:relative;z-index:6;flex:none}
+.folder-tab{height:28px;padding:0 11px;border-radius:8px 8px 0 0;font-size:8px;color:#4a4238;transition:filter .2s,transform .25s}
+.folder-tab:nth-child(1){background:#d8a489}
+.folder-tab:nth-child(2){background:#aabdb2}
+.folder-tab:nth-child(3){background:#b1c4c6}
+.folder-tab:nth-child(4){background:#b5aecb}
+.folder-tab:not(.is-active){filter:saturate(.55) brightness(.94);transform:translateY(4px)}
+.folder-tab.is-active{font-weight:600}
+.folder-stack{position:relative;flex:1;min-height:0;perspective:900px}
+.folder-sheet{
+  position:absolute;left:0;right:0;top:0;height:calc(100% - 10px);padding:15px;border-radius:0 13px 13px 13px;
+  transition:transform .5s var(--ease),opacity .3s,filter .3s;overflow:hidden;color:#382e28;
+}
+.sheet--plan{background:#d8a489}
+.sheet--stays{background:#aabdb2}
+.sheet--views{background:#b1c4c6}
+.sheet--notes{background:#b5aecb}
+.folder-sheet .ed-kicker{color:rgba(50,40,33,.55)}
+.folder-sheet h4{font-size:23px;line-height:1.08;letter-spacing:-.045em;font-weight:600;margin-top:5px}
+.folder-list{margin-top:15px;display:grid;gap:0}
+.folder-list li{display:flex;align-items:baseline;gap:8px;padding:8px 0;border-top:1px solid rgba(55,42,34,.14);font-size:9px;color:#4c3d34}
+.folder-list li span{min-width:36px;font-family:var(--mono);font-size:6px;color:rgba(60,45,36,.55);text-transform:uppercase;letter-spacing:.04em}
+.folder-art{height:118px;border-radius:9px;margin-top:15px}
+.folder-art--tall{height:190px;margin-top:13px}
+.folder-note{margin-top:11px;font-size:8px;line-height:1.65;color:rgba(52,40,33,.65)}
+.folder-checklist{margin-top:16px;display:grid;gap:10px}
+.folder-checklist li{display:flex;align-items:center;gap:7px;font-size:9px;color:#453a33}
+.folder-checklist i{width:12px;height:12px;border-radius:3px;border:1px solid rgba(53,41,34,.45);flex:none;position:relative}
+.folder-checklist li:nth-child(1) i::after,.folder-checklist li:nth-child(2) i::after{content:"";position:absolute;left:2px;top:1px;width:6px;height:3px;border-left:1px solid #453a33;border-bottom:1px solid #453a33;transform:rotate(-45deg)}
+
+/* ---------- 07 bubble picker ---------- */
+.demo-bubbles{background:#f4f0e5}
+.bubble-cloud{flex:1;min-height:0;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:4px;padding:4px 9px 0;overflow:hidden}
+.bubble{
+  position:relative;display:grid;place-items:center;flex:none;
+  width:var(--s);height:var(--s);border-radius:50%;
+  border:1px solid rgba(23,22,20,.12);background:rgba(255,253,248,.55);
+  color:#625a4e;font-size:8.5px;line-height:1.15;text-align:center;padding:4px;
+  transform:rotate(var(--r));
+  transition:width .3s var(--ease),height .3s var(--ease),transform .35s var(--ease),background .25s,color .25s,box-shadow .25s;
+}
+.bubble:hover{background:rgba(255,253,248,.85)}
+.bubble.is-selected{background:var(--accent);border-color:transparent;color:#f8fbfa;transform:rotate(0) scale(1.02);box-shadow:0 8px 18px -12px rgba(40,62,68,.7)}
+.bubble.is-selected::after{content:"✓";position:absolute;top:8%;right:12%;font-size:8px;line-height:1;color:rgba(255,255,255,.8)}
+.bubble-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 16px 15px;padding-top:11px;border-top:1px solid rgba(23,22,20,.08);font-family:var(--mono);font-size:6.5px;letter-spacing:.04em;color:#9d9384;text-transform:uppercase;flex:none}
+.bubble-foot b{color:#3b362e;font-weight:600;font-size:9px}
+.bubble-foot button{height:29px;padding:0 14px;border-radius:99px;background:#26221d;color:#f9f5ed;font-family:var(--sans);font-size:8.5px;letter-spacing:.01em;text-transform:none}
+
+/* ---------- 08 split drag ---------- */
+.demo-split{background:#f3efe5;color:#2c2822}
+.split-wrap{flex:1;min-height:0;display:flex;flex-direction:column}
+.split-wrap.is-dragging .split-top{transition:none}
+.split-wrap.is-dragging .split-handle i{background:var(--accent)}
+.split-top{position:relative;flex:none;height:var(--split);min-height:126px;overflow:hidden;transition:height .18s var(--ease)}
+.split-top::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(15,30,30,.55));z-index:1;pointer-events:none}
+.split-top-copy{position:absolute;left:15px;right:15px;bottom:14px;z-index:2;color:#fff}
+.split-top-copy .ed-kicker{color:rgba(255,255,255,.64)}
+.split-top-copy h4{font-size:22px;line-height:1.08;letter-spacing:-.04em;font-weight:500;margin-top:4px}
+.split-count{position:absolute;right:12px;top:12px;z-index:2;font-family:var(--mono);font-size:6px;letter-spacing:.08em;color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:3px 6px;-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
+.split-handle{position:relative;z-index:4;height:23px;flex:none;display:flex;align-items:center;justify-content:center;gap:4px;cursor:row-resize;touch-action:none;background:#f3efe5}
+.split-handle i{width:30px;height:4px;border-radius:99px;background:#c7beb0}
+.split-handle span{font-family:var(--mono);font-size:5.4px;letter-spacing:.09em;color:#a29889;text-transform:uppercase}
+.split-handle:focus-visible{outline-offset:1px}
+.split-bottom{flex:1;min-height:0;overflow:hidden;padding:10px 16px 12px;border-top:1px solid rgba(23,22,20,.08);background:#faf6ec}
+.split-bhead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.split-bhead h4{font-size:15px;line-height:1.1;letter-spacing:-.03em;font-weight:600;margin-top:2px}
+.split-bhead>span{font-family:var(--mono);font-size:6px;color:#a39a8b;letter-spacing:.04em}
+.split-list{margin-top:9px;display:grid}
+.split-list li{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid rgba(23,22,20,.07)}
+.split-list li>span{font-family:var(--serif);font-size:14px;line-height:1;color:#a49a8b;min-width:17px}
+.split-list b{display:block;font-size:8.5px;font-weight:500;color:#413b32}
+.split-list small{display:block;margin-top:1px;font-size:6.5px;color:#a3998a}
+.split-wrap.is-compact .split-top-copy h4{font-size:18px}
+.split-wrap.is-compact .split-list li:nth-child(n+3){display:none}
+
+/* ---------- responsive demo details ---------- */
+@media (max-width:760px){
+  .type-modes{gap:3px}
+  .ko-title{font-size:94px;bottom:84px}
+  .inline-title{font-size:29px}
+  .demo-inline.is-expanded .inline-pic{height:128px}
+  .bubble-cloud{padding-inline:5px}
+  .bubble{font-size:8px}
+  .folder-sheet{padding:13px}
+  .folder-sheet h4{font-size:21px}
+  .folder-art--tall{height:170px}
+}
+@media (max-width:380px){
+  .ko-title{font-size:82px;left:18px;right:18px}
+  .ko-caption{left:18px;right:18px}
+  .inline-body{padding-inline:15px}
+  .inline-title{font-size:27px}
+  .bubble{font-size:7.5px;gap:3px}
+  .split-top-copy h4{font-size:20px}
+  .folder-sheet h4{font-size:19px}
+  .folder-art--tall{height:150px}
+}
+</style>
+</head>
+<body>
+<a class="sr-only" href="#lab">跳到 Type Lab</a>
+
+<header class="topbar">
+  <div class="wrap topbar__in">
+    <a class="brand" href="selected-10.html" aria-label="点触 · 返回精选">
+      <span class="brand__mark">t</span>
+      <span class="brand__name">点触 <span>/ touch</span></span>
+    </a>
+    <span class="topic-label">Library 02 · Editorial Layout</span>
+    <div class="top-links">
+      <a class="pill-link" href="library.html">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>
+        <span>专题库</span>
+      </a>
+      <a class="pill-link pill-link--solid" href="#sources"><span>来源</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M8 3v9M3.7 8.2 8 12.5l4.3-4.3"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero__top mono"><span>Touch Library / Topic 02</span><span>8 type moves · 1 episode</span></div>
+      <div class="hero__main">
+        <div>
+          <h1>让内容，<em>互相回应</em></h1>
+          <p class="hero__lead">8 个让 App 和小程序质感提升的排版交互。<br><span>先处理内容之间的关系，<br>再让交互把它推动起来。</span></p>
+        </div>
+        <aside class="hero__aside">
+          <strong>关于这个专题</strong>
+          整理自抖音 @叨叨AI「交互/设计/动效」第 17 集。标题、图像、列表、日期、标签和分屏，各自让出一点空间，版面才开始呼吸。演示为重新实现，不是视频截屏。
+          <br><a href="#lab">进入 Type Lab <span aria-hidden="true">↓</span></a>
+        </aside>
+      </div>
+      <div class="hero__meta">
+        <div><b>08</b><span>排版交互</span></div>
+        <div><b>01</b><span>原视频来源</span></div>
+        <div><b>08</b><span>可复制提示词</span></div>
+        <div><b>100%</b><span>可上手演示</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lab" id="lab">
+    <div class="wrap">
+      <div class="lab__head reveal">
+        <div>
+          <p class="lab__kicker mono">Type Lab · 08 moves</p>
+          <h2>先在版面上，<span class="lab-h2-tail"><em>留出关系</em>。</span></h2>
+        </div>
+        <p class="lab__note">选一种排版方法，在同一块手机画布里试。标题、图片和列表不是三块积木，而是会互相让位的关系。</p>
+      </div>
+      <div class="type-modes" aria-label="排版方法列表">
+        <button class="mode-btn is-active" type="button" data-mode="knockout"><b>01</b><span>镂空大标题</span></button>
+        <button class="mode-btn" type="button" data-mode="inline"><b>02</b><span>标题里嵌小图</span></button>
+        <button class="mode-btn" type="button" data-mode="grid"><b>03</b><span>点一格撑成通栏</span></button>
+        <button class="mode-btn" type="button" data-mode="columns"><b>04</b><span>两列错速滚动</span></button>
+        <button class="mode-btn" type="button" data-mode="dates"><b>05</b><span>左栏日期吸住</span></button>
+        <button class="mode-btn" type="button" data-mode="folders"><b>06</b><span>档案夹标签页</span></button>
+        <button class="mode-btn" type="button" data-mode="bubbles"><b>07</b><span>圆泡堆叠选择</span></button>
+        <button class="mode-btn" type="button" data-mode="split"><b>08</b><span>拖动分屏比例</span></button>
+      </div>
+      <div class="type-grid">
+        <div class="type-copy reveal">
+          <div class="type-copy__no" id="typeNo">01</div>
+          <div class="type-copy__en" id="typeEn">Knockout title</div>
+          <h3 id="typeTitle">镂空大标题</h3>
+          <p class="type-desc" id="typeDesc">照片从大标题的字里透出来。点击标题，照片展开至全屏，再点一次缩回字里。</p>
+          <div class="type-why"><b>Why it works</b><p id="typeWhy">让标题不只是覆盖在图上，而是成为看图的窗口。</p></div>
+          <div class="type-prompt">
+            <div class="type-prompt__top">
+              <div>
+                <p class="type-prompt__label"><i></i>跟 AI 说 <span id="typeSource">/ Episode 17</span></p>
+                <h4 id="typePromptTitle">镂空大标题</h4>
+              </div>
+              <button class="copy-prompt" id="copyCurrent" type="button">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg>
+                <span>复制</span>
+              </button>
+            </div>
+            <p id="typePrompt">做一个详情页头图，大标题采用镂空效果，照片从字里透出；上下滑动时照片放大至全屏，再缩回字里。</p>
+            <span class="type-prompt__hint" id="typeHint">点大标题，让照片从字里展开 / 收回。</span>
+          </div>
+        </div>
+
+        <div class="type-stage reveal" id="typeStage">
+          <span class="stage-tag" id="stageTag">Knockout title</span>
+          <div class="type-phone">
+            <span class="type-notch" aria-hidden="true"></span>
+            <div class="type-screen" id="typeScreen">
+              <div class="demo-page demo-knockout is-active" data-demo="knockout">
+                <div class="ko-bg" aria-hidden="true"></div>
+                <div class="demo-status demo-status--light"><span>9:41</span><span class="demo-status__icons"><i></i><i></i><i></i></span></div>
+                <span class="ko-vol">VOL. 04 / NORTH</span>
+                <button class="ko-title" id="koTitle" type="button" aria-expanded="false" aria-label="展开镂空标题中的照片">
+                  <span>BER</span><span>GEN</span>
+                  <small>FIELD JOURNAL · 03 DAYS · 12 PLACES</small>
+                </button>
+                <button class="ko-full" id="koFull" type="button" aria-label="收回照片">
+                  <span class="ko-close">收起 <i aria-hidden="true">×</i></span>
+                  <span class="ko-photo-caption">Bergen · first light over Vågen</span>
+                </button>
+                <div class="ko-caption"><span>60°23′N · 5°19′E</span><span>Photo essay</span></div>
+              </div>
+
+              <div class="demo-page demo-inline" data-demo="inline">
+                <div class="demo-status"><span>9:41</span><span class="demo-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="ed-head"><span>FIELD JOURNAL</span><span>NO. 12</span></div>
+                <div class="inline-body">
+                  <p class="ed-kicker">WEST NORWAY · PHOTO ESSAY</p>
+                  <h3 class="inline-title" id="inlineTitle">
+                    Three days<button class="inline-pic" id="inlinePic" type="button" aria-expanded="false" aria-label="展开标题中的图片"><span class="photo photo--fjord" aria-hidden="true"></span><i aria-hidden="true">＋</i><em>Lofoten · 7 in the morning</em></button> in the fjords
+                  </h3>
+                  <div class="inline-meta"><span>Lofoten, 7 in the morning</span><span>8 min · 14 photos</span></div>
+                  <div class="inline-copy">
+                    <p>The water held the whole sky. We walked until the houses became small enough to fit between two words.</p>
+                    <span></span><span></span><span class="short"></span>
+                  </div>
+                  <p class="inline-pull">Some days are worth two pages.</p>
+                  <div class="inline-bottom"><span class="read-pill">Read story</span><span>Scroll to explore</span></div>
+                </div>
+              </div>
+
+              <div class="demo-page demo-columns" data-demo="columns">
+                <div class="demo-status"><span>9:41</span><span class="demo-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="ed-head"><span><strong>Gallery</strong> · 11 PHOTOS · 2 COLUMNS</span><span id="galleryProgress">0%</span></div>
+                <div class="col-scroll" id="colScroll">
+                  <div class="col-grid">
+                    <div class="col-col" id="colLeft">
+                      <figure class="col-card col-card--tall photo photo--night"><span>01</span><figcaption>City lights <small>Night · Vågen</small></figcaption></figure>
+                      <figure class="col-card col-card--short photo photo--bergen"><span>02</span><figcaption>Bryggen <small>Morning · 08:12</small></figcaption></figure>
+                      <figure class="col-card col-card--mid photo photo--fjord"><span>03</span><figcaption>Fjord blue <small>Noon · 13:40</small></figcaption></figure>
+                      <figure class="col-card col-card--short photo photo--forest"><span>04</span><figcaption>Forest loop <small>Afternoon</small></figcaption></figure>
+                    </div>
+                    <div class="col-col col-col--offset" id="colRight">
+                      <figure class="col-card col-card--short photo photo--coast"><span>05</span><figcaption>North sea <small>Windy · 10:20</small></figcaption></figure>
+                      <figure class="col-card col-card--tall photo photo--fjord"><span>06</span><figcaption>Quiet fjord <small>Blue hour</small></figcaption></figure>
+                      <figure class="col-card col-card--mid photo photo--night"><span>07</span><figcaption>Harbour <small>Late · 21:05</small></figcaption></figure>
+                      <figure class="col-card col-card--short photo photo--bergen"><span>08</span><figcaption>Rooftops <small>From above</small></figcaption></figure>
+                    </div>
+                  </div>
+                </div>
+                <p class="col-hint">两列同时滚动 · 速度不同</p>
+              </div>
+
+              <div class="demo-page demo-dates" data-demo="dates">
+                <div class="demo-status"><span>9:41</span><span class="demo-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="ed-head"><span><strong>Itinerary</strong> · BERGEN</span><span>4 DAYS</span></div>
+                <div class="schedule-scroll" id="scheduleScroll">
+                  <section class="schedule-day">
+                    <div class="day-rail"><b>14</b><span>MON</span><i aria-hidden="true"></i></div>
+                    <div class="day-events">
+                      <article class="event"><span class="ev-time">09:00</span><div><h4>Sunset viewpoint</h4><p>Walk up before the tour groups. Bring coffee.</p></div><span class="ev-dot"></span></article>
+                      <article class="event"><span class="ev-time">13:30</span><div><h4>Art museum</h4><p>Two floors, one very good room.</p></div><span class="ev-dot"></span></article>
+                      <article class="event"><span class="ev-time">19:30</span><div><h4>Coast train</h4><p>Window seat on the left.</p></div><span class="ev-dot"></span></article>
+                    </div>
+                  </section>
+                  <section class="schedule-day">
+                    <div class="day-rail"><b>15</b><span>TUE</span><i aria-hidden="true"></i></div>
+                    <div class="day-events">
+                      <article class="event"><span class="ev-time">08:30</span><div><h4>Bryggen walk</h4><p>Before the rain, if the forecast holds.</p></div><span class="ev-dot"></span></article>
+                      <article class="event"><span class="ev-time">12:00</span><div><h4>Cinnamon buns</h4><p>One for now, one for the ferry.</p></div><span class="ev-dot"></span></article>
+                      <article class="event"><span class="ev-time">17:00</span><div><h4>Harbour swim</h4><p>Cold. Briefly. Then sauna.</p></div><span class="ev-dot"></span></article>
+                    </div>
+                  </section>
+                  <section class="schedule-day">
+                    <div class="day-rail"><b>16</b><span>WED</span><i aria-hidden="true"></i></div>
+                    <div class="day-events">
+                      <article class="event"><span class="ev-time">09:15</span><div><h4>Ferry to Fløyen</h4><p>Stand outside, even if it rains.</p></div><span class="ev-dot"></span></article>
+                      <article class="event"><span class="ev-time">15:00</span><div><h4>Bookshop</h4><p>Look for the travel notes with pencil marks.</p></div><span class="ev-dot"></span></article>
+                      <article class="event"><span class="ev-time">20:00</span><div><h4>Late dinner</h4><p>Somewhere with a long table.</p></div><span class="ev-dot"></span></article>
+                    </div>
+                  </section>
+                  <section class="schedule-day">
+                    <div class="day-rail"><b>17</b><span>THU</span><i aria-hidden="true"></i></div>
+                    <div class="day-events">
+                      <article class="event"><span class="ev-time">09:30</span><div><h4>Kaffe &amp; avis</h4><p>Read the paper without checking the time.</p></div><span class="ev-dot"></span></article>
+                      <article class="event"><span class="ev-time">14:00</span><div><h4>Last ferry</h4><p>Sit on the quiet side and watch the town shrink.</p></div><span class="ev-dot"></span></article>
+                      <article class="event"><span class="ev-time">18:30</span><div><h4>Pack slowly</h4><p>Leave one page blank for next time.</p></div><span class="ev-dot"></span></article>
+                    </div>
+                  </section>
+                </div>
+                <p class="dates-hint">日期吸在左栏 · 下一天从下方推上来</p>
+              </div>
+
+              <div class="demo-page demo-folders" data-demo="folders">
+                <div class="demo-status"><span>9:41</span><span class="demo-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="ed-head"><span><strong>Trip binder</strong> · 4 SECTIONS</span><span>BERGEN</span></div>
+                <div class="folder-demo">
+                  <div class="folder-tabs" role="tablist" aria-label="档案夹标签">
+                    <button class="folder-tab is-active" type="button" data-folder="0" role="tab" aria-selected="true">Plan</button>
+                    <button class="folder-tab" type="button" data-folder="1" role="tab" aria-selected="false">Stays</button>
+                    <button class="folder-tab" type="button" data-folder="2" role="tab" aria-selected="false">Views</button>
+                    <button class="folder-tab" type="button" data-folder="3" role="tab" aria-selected="false">Notes</button>
+                  </div>
+                  <div class="folder-stack" id="folderStack">
+                    <article class="folder-sheet sheet--plan is-active">
+                      <p class="ed-kicker">01 / PLAN</p>
+                      <h4>Three days,<br>without rushing.</h4>
+                      <ul class="folder-list">
+                        <li><span>Day 1</span>Harbour + Bryggen</li>
+                        <li><span>Day 2</span>Fløyen forest loop</li>
+                        <li><span>Day 3</span>Ferry north, no plan</li>
+                      </ul>
+                      <div class="folder-art photo photo--bergen"></div>
+                    </article>
+                    <article class="folder-sheet sheet--stays">
+                      <p class="ed-kicker">02 / STAYS</p>
+                      <h4>A room<br>with a window.</h4>
+                      <div class="folder-art folder-art--tall photo photo--coast"></div>
+                      <p class="folder-note">Skuteviken · 3 nights<br>Check-in after 15:00.</p>
+                    </article>
+                    <article class="folder-sheet sheet--views">
+                      <p class="ed-kicker">03 / VIEWS</p>
+                      <h4>Blue hour,<br>from above.</h4>
+                      <div class="folder-art folder-art--tall photo photo--fjord"></div>
+                      <p class="folder-note">Fløibanen · sunset<br>Bring a warm layer.</p>
+                    </article>
+                    <article class="folder-sheet sheet--notes">
+                      <p class="ed-kicker">04 / NOTES</p>
+                      <h4>Small things<br>to remember.</h4>
+                      <ul class="folder-checklist">
+                        <li><i></i>Buy cardamom buns early</li>
+                        <li><i></i>Find the quiet bookshop</li>
+                        <li><i></i>Swim once, complain later</li>
+                        <li><i></i>Leave one afternoon empty</li>
+                      </ul>
+                      <p class="folder-note">The best part of a plan is the gap in it.</p>
+                    </article>
+                  </div>
+                </div>
+              </div>
+
+              <div class="demo-page demo-grid" data-demo="grid">
+                <div class="demo-status"><span>9:41</span><span class="demo-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="ed-head"><span><strong>Today</strong> · DAY 2 · BERGEN</span><span>12° / 9°</span></div>
+                <div class="grid-scroll">
+                  <div class="eg-hero photo photo--night"><div><span>City lights</span><small>Viewpoint · 1 h walk · Easy</small></div><i aria-hidden="true">↗</i></div>
+                  <div class="eg-grid" id="egGrid">
+                    <button class="eg-cell eg-cell--stops" type="button" data-tile="stops">
+                      <span class="eg-label">STOPS</span><b>6</b><small>planned</small>
+                      <span class="eg-extra"><em>Bryggen, Fjåk, Fløibanen, Skostredet, Nordnes, Vågen.</em><i>Open map →</i></span>
+                    </button>
+                    <button class="eg-cell eg-cell--weather" type="button" data-tile="weather">
+                      <span class="eg-label">WEATHER</span><b>9°</b><small>Cloudy</small>
+                      <span class="eg-extra"><em>Light rain after 16:00. Bring a thin shell.</em><i>Hourly forecast →</i></span>
+                    </button>
+                    <button class="eg-cell eg-cell--notes" type="button" data-tile="notes">
+                      <span class="eg-label">NOTES</span><b>4</b><small>small things</small>
+                      <span class="eg-extra"><em>Buy cardamom buns before noon. The line gets long after one.</em><i>Open notes →</i></span>
+                    </button>
+                    <button class="eg-cell eg-cell--forest photo photo--forest" type="button" data-tile="forest">
+                      <span class="eg-label">WALK</span><b>2.4<small>km</small></b><small>forest loop</small>
+                      <span class="eg-extra"><em>A quiet loop behind Mount Fløyen. One waterfall, no crowds.</em><i>Open route →</i></span>
+                    </button>
+                  </div>
+                  <p class="grid-tip">Tap a tile to stretch it into a full row.</p>
+                </div>
+              </div>
+
+              <div class="demo-page demo-bubbles" data-demo="bubbles">
+                <div class="demo-status"><span>9:41</span><span class="demo-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="ed-head"><span><strong>What do you like?</strong></span><span>PICK A FEW</span></div>
+                <div class="bubble-cloud" id="bubbleCloud" aria-label="选择你喜欢的主题">
+                  <button class="bubble bubble--coffee is-selected" type="button" data-bubble="Coffee" style="--s:74px;--r:-4deg">Coffee</button>
+                  <button class="bubble bubble--photos" type="button" data-bubble="Photos" style="--s:56px;--r:3deg">Photos</button>
+                  <button class="bubble bubble--museums" type="button" data-bubble="Museums" style="--s:62px;--r:-2deg">Museums</button>
+                  <button class="bubble bubble--art" type="button" data-bubble="Art" style="--s:45px;--r:5deg">Art</button>
+                  <button class="bubble bubble--food is-selected" type="button" data-bubble="Food" style="--s:66px;--r:2deg">Food</button>
+                  <button class="bubble bubble--hiking" type="button" data-bubble="Hiking" style="--s:55px;--r:-3deg">Hiking</button>
+                  <button class="bubble bubble--markets" type="button" data-bubble="Markets" style="--s:57px;--r:4deg">Markets</button>
+                  <button class="bubble bubble--parks" type="button" data-bubble="Parks" style="--s:44px;--r:-5deg">Parks</button>
+                  <button class="bubble bubble--music" type="button" data-bubble="Music" style="--s:45px;--r:2deg">Music</button>
+                  <button class="bubble bubble--beach" type="button" data-bubble="Beach" style="--s:48px;--r:-2deg">Beach</button>
+                  <button class="bubble bubble--trains is-selected" type="button" data-bubble="Trains" style="--s:63px;--r:-3deg">Trains</button>
+                </div>
+                <div class="bubble-foot"><span><b id="bubbleCount">3</b> picked</span><button type="button" id="bubbleContinue">Continue</button></div>
+              </div>
+
+              <div class="demo-page demo-split" data-demo="split">
+                <div class="demo-status demo-status--light"><span>9:41</span><span class="demo-status__icons"><i></i><i></i><i></i></span></div>
+                <div class="split-wrap" id="splitWrap" style="--split:55%">
+                  <div class="split-top photo photo--fjord">
+                    <div class="split-top-copy">
+                      <p class="ed-kicker">FJORD LOOP</p>
+                      <h4>Blue hour,<br>above the water.</h4>
+                    </div>
+                    <span class="split-count">04 / 08</span>
+                  </div>
+                  <div class="split-handle" id="splitHandle" role="separator" aria-orientation="horizontal" aria-valuemin="30" aria-valuemax="78" aria-valuenow="55" aria-label="拖动调整上下分屏比例" tabindex="0"><i aria-hidden="true"></i><span>drag</span></div>
+                  <div class="split-bottom">
+                    <div class="split-bhead"><div><p class="ed-kicker">STOPS</p><h4>The quiet route</h4></div><span>4 stops</span></div>
+                    <ul class="split-list">
+                      <li><span>01</span><div><b>Harbour walk</b><small>20 min · flat</small></div></li>
+                      <li><span>02</span><div><b>Lighthouse trail</b><small>45 min · coastal</small></div></li>
+                      <li><span>03</span><div><b>Art museum</b><small>1 h · indoors</small></div></li>
+                      <li><span>04</span><div><b>Coast train</b><small>35 min · window seat</small></div></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="stage-hint" id="stageHint">点大标题，让照片从字里展开</p>
+        </div>
+      </div>
+
+      <div class="library reveal">
+        <div class="library__head">
+          <div><h3>全部 8 条提示词</h3><p>按原视频顺序排列，可直接复制搬运。</p></div>
+          <button class="copy-all" id="copyAll" type="button">
+            <span>复制全部 8 条</span>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg>
+          </button>
+        </div>
+        <div class="prompt-grid" id="promptGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="next">
+    <div class="wrap next__inner">
+      <div><p>More in the touch library</p><h3>十个专题，<em>系列收齐</em>。</h3></div>
+      <a href="library.html">浏览 01—06 专题 <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer" id="sources">
+  <div class="wrap">
+    <div class="footer__grid">
+      <p class="footer__title">排版，是内容<em>之间的礼貌</em>。</p>
+      <div class="footer__meta">
+        <span>内容来源：抖音 @叨叨AI「交互/设计/动效」第 17 集（2026-10-16）。</span>
+        <a href="https://www.douyin.com/video/7697102567993697457" target="_blank" rel="noopener noreferrer">第 17 集 · 排版交互 ↗</a>
+        <span>8 条提示词依视频画面与章节要点整理，个别分句按画面语义补全；演示为按原意重新实现的交互样例。</span>
+      </div>
+    </div>
+    <div class="footer__base"><span>Touch Library · Topic 02 · 8 type moves</span><span>Made with restraint · 2026</span></div>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const modeButtons = $$('.mode-btn');
+  const pages = $$('.demo-page');
+  const stage = $('#typeStage');
+  const toast = $('#toast');
+  let toastTimer;
+  let currentMode = 'knockout';
+
+  const modes = {
+    knockout: {
+      no: '01', en: 'Knockout title', title: '镂空大标题',
+      desc: '照片从大标题的字里透出来。点击标题，照片展开至全屏，再点一次缩回字里。',
+      why: '让标题不只是覆盖在图上，而是成为看图的窗口。',
+      prompt: '做一个详情页头图，大标题采用镂空效果，照片从字里透出；上下滑动时照片放大至全屏，再缩回字里。',
+      hint: '点大标题，让照片从字里展开 / 收回。',
+      tag: 'Knockout title', tint: '#e9e4d7'
+    },
+    inline: {
+      no: '02', en: 'Inline image title', title: '标题里嵌小图',
+      desc: '一行大标题中间嵌进一张与字等高的圆角小图。点击图片，它原地展开成整宽大图，上下文字平滑让位；再次点击收回。',
+      why: '一张小图嵌进句子里，句子的节奏也跟着变了。图不是插图，它是标题的一部分。',
+      prompt: '做一个大标题，在一行字中间嵌入与字等高的圆角小图，点击后小图原地展开成整宽大图，上下两行文字平滑让位，再次点击收回。',
+      hint: '点标题里的小图，看它展开成整宽。',
+      tag: 'Inline image', tint: '#efe7da'
+    },
+    grid: {
+      no: '03', en: 'Expanding grid', title: '点一格撑成通栏',
+      desc: '点击任意一格，它横向扩展成整行高度，其他格子顺势让位，展开更完整的图文内容；再点一次收回。',
+      why: '让内容自己改变体量，版面就不必靠更多分区来承载。想看的东西，自己长出来。',
+      prompt: '做一个可展开的格子布局，点击任意一格横向扩展成整行高度，其他格子顺势让位，展开更完整的图文内容，再次点击收回。',
+      hint: '点任意一张格子，看它撑成整行。',
+      tag: 'Expanding grid', tint: '#e6e6db'
+    },
+    columns: {
+      no: '04', en: 'Offset columns', title: '两列错速滚动',
+      desc: '左右两列照片同时滚动，但速度不同。图片渐渐错开，静止的画廊有了一点时间差。',
+      why: '两列错开速度，静止的版面也有了一点时间差。用户看到的不是一张列表，而是一段流动。',
+      prompt: '做一个两列错速滚动的画廊，页面滚动时左右两列同时移动但速度不同，图片互相错开，形成时差效果。',
+      hint: '在手机画布里向上滑，两列不会一起对齐。',
+      tag: 'Offset columns', tint: '#e3e9e5'
+    },
+    dates: {
+      no: '05', en: 'Sticky date rail', title: '左栏日期吸住',
+      desc: '日程页左侧窄栏放着超大日期。向下滚动时，当前日期吸附在顶部，直到下一天的日期从下方推上来。',
+      why: '日期不离开视线，日程就有了锚点。滚到哪里，都知道自己正在哪一天。',
+      prompt: '做一个日程页，左侧窄栏放超大日期并吸顶，向下滚动时当前日期停在顶部，直到下一天的日期从下方推上来，完成自然切换。',
+      hint: '在画布里向下滚，观察左栏日期切换。',
+      tag: 'Sticky date rail', tint: '#e9e4da'
+    },
+    folders: {
+      no: '06', en: 'Folder tabs', title: '档案夹标签页',
+      desc: '几页内容像档案夹一样前后叠放，只露出标签。点击标签，对应页抽到最前面，其他页面后退。',
+      why: '标签是入口，叠放是秩序。抽出一页，其他页自然后退；层级感不靠封面，而靠关系。',
+      prompt: '做一个档案夹式的标签页，几页内容前后叠放、只露出标签；点击某个标签时，对应页面抽到最前面，其余页面后退并稍微缩小。',
+      hint: '点 Plan / Stays / Views / Notes 抽出一页。',
+      tag: 'Folder tabs', tint: '#e8e2d8'
+    },
+    bubbles: {
+      no: '07', en: 'Bubble picker', title: '圆泡堆叠选择',
+      desc: '选项被做成大小不一的圆泡，紧密堆在一起。点击后选中的圆放大并填充主色，周围的圆被挤开，再重新靠拢。',
+      why: '选择不是一排方框，而是一簇可以被拨开的东西。兴趣被选中时，整个版面都跟着呼吸一下。',
+      prompt: '做一个圆泡选择器，选项是大小不一的圆并紧密堆叠，点击后选中的圆放大并填充主色，周围的圆被挤开后重新靠拢。',
+      hint: '点几个圆泡，再点一次取消选择。',
+      tag: 'Bubble picker', tint: '#e8e4dc'
+    },
+    split: {
+      no: '08', en: 'Split drag', title: '拖动分屏比例',
+      desc: '屏幕上下分区，中间放一枚可拖动的把手。拖动时实时改变上下比例，内容重新排布，松手后吸附到合适的停靠点。',
+      why: '比例不是预设，是用户当下决定的重点。想看照片就多给上面一点，想看清单就往下拖。',
+      prompt: '做一个上下分屏页面，中间放可拖动的把手，拖动时实时改变上下区域比例，内容随之重新排布，松手后吸附到合适的停靠点。',
+      hint: '上下拖动中间把手，松手会自动吸附。',
+      tag: 'Split drag', tint: '#e3e8e5'
+    }
+  };
+  const order = ['knockout', 'inline', 'grid', 'columns', 'dates', 'folders', 'bubbles', 'split'];
+
+  function showToast(message) {
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add('is-on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-on'), 1900);
+  }
+  async function copyText(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+      throw new Error('clipboard');
+    } catch (err) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        ta.remove();
+        return ok;
+      } catch (fallback) { return false; }
+    }
+  }
+  function escapeHtml(value) {
+    return value.replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  }
+
+  const typeNo = $('#typeNo');
+  const typeEn = $('#typeEn');
+  const typeTitle = $('#typeTitle');
+  const typeDesc = $('#typeDesc');
+  const typeWhy = $('#typeWhy');
+  const typePrompt = $('#typePrompt');
+  const typePromptTitle = $('#typePromptTitle');
+  const typeHint = $('#typeHint');
+  const stageTag = $('#stageTag');
+  const stageHint = $('#stageHint');
+  const copyCurrent = $('#copyCurrent');
+  const modeRail = $('.type-modes');
+
+  /* ---------- 01 knockout ---------- */
+  const knockoutPage = $('[data-demo="knockout"]');
+  const koTitle = $('#koTitle');
+  const koFull = $('#koFull');
+  function setKnockout(next) {
+    knockoutPage.classList.toggle('is-expanded', next);
+    koTitle.setAttribute('aria-expanded', String(next));
+    if (next) koFull.focus({ preventScroll: true });
+  }
+  koTitle.addEventListener('click', () => setKnockout(true));
+  koFull.addEventListener('click', () => {
+    setKnockout(false);
+    koTitle.focus({ preventScroll: true });
+  });
+
+  /* ---------- 02 inline image ---------- */
+  const inlinePage = $('[data-demo="inline"]');
+  const inlinePic = $('#inlinePic');
+  function setInline(next) {
+    inlinePage.classList.toggle('is-expanded', next);
+    inlinePic.setAttribute('aria-expanded', String(next));
+  }
+  inlinePic.addEventListener('click', () => setInline(!inlinePage.classList.contains('is-expanded')));
+
+  /* ---------- 03 expanding grid ---------- */
+  const gridCells = $$('.eg-cell');
+  function collapseGrid() {
+    gridCells.forEach(cell => {
+      cell.classList.remove('is-expanded');
+      cell.setAttribute('aria-expanded', 'false');
+    });
+  }
+  gridCells.forEach(cell => {
+    cell.setAttribute('aria-expanded', 'false');
+    cell.addEventListener('click', () => {
+      const open = cell.classList.contains('is-expanded');
+      collapseGrid();
+      if (!open) {
+        cell.classList.add('is-expanded');
+        cell.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  /* ---------- 04 columns ---------- */
+  const colScroll = $('#colScroll');
+  const colLeft = $('#colLeft');
+  const colRight = $('#colRight');
+  const galleryProgress = $('#galleryProgress');
+  function syncColumns() {
+    if (!colScroll) return;
+    const max = Math.max(1, colScroll.scrollHeight - colScroll.clientHeight);
+    const y = colScroll.scrollTop;
+    colLeft.style.transform = `translateY(${-y * .16}px)`;
+    colRight.style.transform = `translateY(${-y * .05}px)`;
+    galleryProgress.textContent = `${Math.min(99, Math.round((y / max) * 100))}%`;
+  }
+  colScroll.addEventListener('scroll', syncColumns, { passive: true });
+
+  /* ---------- 05 dates ---------- */
+  const scheduleScroll = $('#scheduleScroll');
+
+  /* ---------- 06 folders ---------- */
+  const folderTabs = $$('.folder-tab');
+  const folderSheets = $$('.folder-sheet');
+  let activeFolder = 0;
+  function setFolder(index) {
+    activeFolder = index;
+    folderTabs.forEach((tab, i) => {
+      const on = i === index;
+      tab.classList.toggle('is-active', on);
+      tab.setAttribute('aria-selected', String(on));
+      tab.tabIndex = on ? 0 : -1;
+    });
+    folderSheets.forEach((sheet, i) => {
+      const on = i === index;
+      const diff = i - index;
+      sheet.classList.toggle('is-active', on);
+      sheet.style.zIndex = String(on ? 4 : 3 - Math.min(2, Math.abs(diff)));
+      sheet.style.transform = on
+        ? 'translateY(0) translateX(0) scale(1) rotate(0)'
+        : `translateY(${8 + Math.abs(diff) * 7}px) translateX(${diff * 4}px) scale(${1 - Math.abs(diff) * .022}) rotate(${diff * 1.1}deg)`;
+      sheet.style.opacity = on ? '1' : '.9';
+      sheet.style.filter = on ? 'none' : 'saturate(.82)';
+    });
+  }
+  folderTabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => setFolder(index));
+  });
+  $('.folder-tabs').addEventListener('keydown', event => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    const delta = event.key === 'ArrowRight' ? 1 : -1;
+    const next = (activeFolder + delta + folderTabs.length) % folderTabs.length;
+    setFolder(next);
+    folderTabs[next].focus();
+  });
+
+  /* ---------- 07 bubbles ---------- */
+  const bubbleButtons = $$('.bubble');
+  const bubbleCount = $('#bubbleCount');
+  const bubbleContinue = $('#bubbleContinue');
+  function syncBubbles() {
+    const selected = bubbleButtons.filter(btn => btn.classList.contains('is-selected'));
+    bubbleCount.textContent = String(selected.length);
+    bubbleButtons.forEach(btn => btn.setAttribute('aria-pressed', String(btn.classList.contains('is-selected'))));
+  }
+  bubbleButtons.forEach(btn => {
+    btn.setAttribute('aria-pressed', String(btn.classList.contains('is-selected')));
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('is-selected');
+      syncBubbles();
+    });
+  });
+  bubbleContinue.addEventListener('click', () => {
+    const picked = bubbleButtons.filter(btn => btn.classList.contains('is-selected')).map(btn => btn.dataset.bubble);
+    showToast(picked.length ? `已选 ${picked.join(' / ')}` : '还没有选择主题');
+  });
+
+  /* ---------- 08 split drag ---------- */
+  const splitWrap = $('#splitWrap');
+  const splitHandle = $('#splitHandle');
+  let splitValue = 55;
+  let splitDragging = false;
+  function setSplit(next) {
+    splitValue = Math.min(78, Math.max(30, next));
+    splitWrap.style.setProperty('--split', `${splitValue}%`);
+    splitHandle.setAttribute('aria-valuenow', String(Math.round(splitValue)));
+    splitWrap.classList.toggle('is-compact', splitValue > 68);
+    splitHandle.setAttribute('aria-valuetext', `上 ${Math.round(splitValue)}%，下 ${Math.round(100 - splitValue)}%`);
+  }
+  function splitFromPointer(event) {
+    const rect = splitWrap.getBoundingClientRect();
+    return ((event.clientY - rect.top) / rect.height) * 100;
+  }
+  splitHandle.addEventListener('pointerdown', event => {
+    if (event.button !== 0) return;
+    splitDragging = true;
+    splitWrap.classList.add('is-dragging');
+    splitHandle.setPointerCapture(event.pointerId);
+    setSplit(splitFromPointer(event));
+  });
+  splitHandle.addEventListener('pointermove', event => {
+    if (!splitDragging) return;
+    event.preventDefault();
+    setSplit(splitFromPointer(event));
+  });
+  function finishSplit() {
+    if (!splitDragging) return;
+    splitDragging = false;
+    splitWrap.classList.remove('is-dragging');
+    const stops = [34, 55, 72];
+    const nearest = stops.reduce((best, value) => Math.abs(value - splitValue) < Math.abs(best - splitValue) ? value : best, stops[0]);
+    setSplit(nearest);
+  }
+  splitHandle.addEventListener('pointerup', finishSplit);
+  splitHandle.addEventListener('pointercancel', finishSplit);
+  splitHandle.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+    event.preventDefault();
+    setSplit(splitValue + (event.key === 'ArrowDown' ? 4 : -4));
+  });
+
+  /* ---------- mode switching ---------- */
+  function resetModeState(id) {
+    if (id !== 'knockout') setKnockout(false);
+    if (id !== 'inline') setInline(false);
+    collapseGrid();
+    if (id === 'columns') {
+      colScroll.scrollTop = 0;
+      syncColumns();
+    }
+    if (id === 'dates' && scheduleScroll) scheduleScroll.scrollTop = 0;
+    if (id === 'folders') setFolder(0);
+    if (id === 'bubbles') {
+      bubbleButtons.forEach(btn => btn.classList.toggle('is-selected', ['Coffee', 'Food', 'Trains'].includes(btn.dataset.bubble)));
+      syncBubbles();
+    }
+    if (id === 'split') setSplit(55);
+  }
+  function setMode(id) {
+    if (!modes[id]) return;
+    currentMode = id;
+    const mode = modes[id];
+    pages.forEach(page => page.classList.toggle('is-active', page.dataset.demo === id));
+    modeButtons.forEach(btn => {
+      const on = btn.dataset.mode === id;
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-pressed', String(on));
+      if (on && modeRail.scrollWidth > modeRail.clientWidth) {
+        const left = btn.offsetLeft - modeRail.clientWidth / 2 + btn.offsetWidth / 2;
+        modeRail.scrollTo({ left: Math.max(0, left), behavior: reduceMotion ? 'auto' : 'smooth' });
+      }
+    });
+    typeNo.textContent = mode.no;
+    typeEn.textContent = mode.en;
+    typeTitle.textContent = mode.title;
+    typeDesc.textContent = mode.desc;
+    typeWhy.textContent = mode.why;
+    typePrompt.textContent = mode.prompt;
+    typePromptTitle.textContent = mode.title;
+    typeHint.textContent = mode.hint;
+    stageTag.textContent = mode.tag;
+    stageHint.textContent = mode.hint;
+    stage.style.setProperty('--tint', mode.tint);
+    resetModeState(id);
+    requestAnimationFrame(() => {
+      if (id === 'columns') syncColumns();
+    });
+  }
+  modeButtons.forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
+
+  /* ---------- prompt copy + library ---------- */
+  copyCurrent.addEventListener('click', async () => {
+    const ok = await copyText(modes[currentMode].prompt);
+    const label = copyCurrent.querySelector('span');
+    if (!ok) { showToast('复制失败，请检查浏览器权限'); return; }
+    copyCurrent.classList.add('is-done');
+    label.textContent = '已复制';
+    showToast('提示词已复制');
+    setTimeout(() => { copyCurrent.classList.remove('is-done'); label.textContent = '复制'; }, 1500);
+  });
+  const promptGrid = $('#promptGrid');
+  promptGrid.innerHTML = order.map(id => {
+    const m = modes[id];
+    return `<article class="prompt-card">
+      <div class="prompt-card__top"><span class="prompt-card__no">${m.no}</span><span class="src-tag">Ep. 17</span></div>
+      <h4>${m.title}</h4>
+      <p>${escapeHtml(m.prompt)}</p>
+      <button type="button" data-copy-mode="${id}"><svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg><span>复制</span></button>
+    </article>`;
+  }).join('');
+  $$('[data-copy-mode]', promptGrid).forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const ok = await copyText(modes[btn.dataset.copyMode].prompt);
+      if (!ok) { showToast('复制失败，请检查浏览器权限'); return; }
+      const label = btn.querySelector('span');
+      btn.classList.add('is-done');
+      label.textContent = '已复制';
+      showToast('提示词已复制');
+      setTimeout(() => { btn.classList.remove('is-done'); label.textContent = '复制'; }, 1500);
+    });
+  });
+  $('#copyAll').addEventListener('click', async () => {
+    const text = order.map((id, i) => `${i + 1}. ${modes[id].title}\n${modes[id].prompt}`).join('\n\n');
+    const ok = await copyText(text);
+    if (!ok) { showToast('复制失败，请检查浏览器权限'); return; }
+    showToast('8 条提示词已全部复制');
+    const label = $('#copyAll span');
+    const original = label.textContent;
+    label.textContent = '已复制全部 8 条';
+    setTimeout(() => { label.textContent = original; }, 1700);
+  });
+
+  /* ---------- reveal + init ---------- */
+  const reveals = $$('.reveal');
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .08, rootMargin: '0px 0px -5% 0px' });
+    reveals.forEach(item => observer.observe(item));
+  } else {
+    reveals.forEach(item => item.classList.add('in-view'));
+  }
+  setMode('knockout');
+  setFolder(0);
+  syncBubbles();
+  setSplit(55);
+  syncColumns();
+})();
+</script>
+</body>
+</html>
