@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="touch Episode 03：7 种手指还没松开就给出回应的高级交互，全部可操作，附可复制的 AI 提示词。">
+<title>手还没松开，界面已经在回应 · touch Ep.03</title>
+<style>
+:root{--bg:#f5f3ee;--paper:#fbfaf7;--ink:#171614;--ink-soft:#403c36;--muted:#6d675e;--faint:#8f887c;--line:rgba(23,22,20,.13);--line-soft:rgba(23,22,20,.075);--accent:#9a5741;--accent-soft:#f1e7e0;--accent-deep:#7a4232;--sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","STSong",serif;--mono:"SFMono-Regular",ui-monospace,Consolas,"Liberation Mono",monospace;--ease:cubic-bezier(.22,.8,.24,1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}body.is-locked{overflow:hidden}::selection{background:#ecd8ce;color:#3a1f18}a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}h1,h2,h3,h4,p,ul{margin:0}ul{padding:0;list-style:none}svg{display:block}:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.wrap{width:min(1180px,calc(100% - 56px));margin-inline:auto}.mono{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+/* topbar */ .topbar{position:sticky;top:0;z-index:50;background:rgba(245,243,238,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--line-soft)}.topbar__in{height:66px;display:flex;align-items:center;gap:22px}.brand{display:flex;align-items:center;gap:11px}.brand__mark{width:29px;height:29px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:14px}.brand__name{font-size:13px;font-weight:600}.brand__name span{color:var(--muted);font-weight:400}.top-label{padding-left:18px;border-left:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}.top-actions{margin-left:auto;display:flex;gap:8px}.pill-link,.pill-dark{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 12px;font-size:11.5px;white-space:nowrap}.pill-link{border:1px solid var(--line);color:var(--muted)}.pill-link:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}.pill-dark{background:var(--ink);color:var(--paper);border:1px solid var(--ink);padding:8px 15px}.pill-link svg,.pill-dark svg{width:11px;height:11px;flex:none}
+/* hero */ .hero{padding:76px 0 0;overflow:hidden}.hero__top{display:flex;justify-content:space-between;gap:24px;color:var(--muted)}.hero h1{margin-top:30px;font-size:clamp(48px,8.2vw,106px);line-height:.96;letter-spacing:-.065em;font-weight:600}.hero h1 em{display:block;font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent);letter-spacing:-.05em;white-space:nowrap}.hero__lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(34px,8vw,110px);align-items:end;margin-top:36px;padding-bottom:38px}.hero__lead{font-size:clamp(17px,2vw,23px);line-height:1.55;letter-spacing:-.015em;max-width:27em;color:var(--ink-soft)}.hero__lead span{color:var(--muted)}.hero__aside{color:var(--muted);font-size:12.5px;line-height:1.85;padding-bottom:3px}.hero__aside strong{display:block;color:var(--ink);font-weight:500;font-size:12px;margin-bottom:7px}.hero__aside a{display:inline-flex;margin-top:9px;border-bottom:1px solid var(--line);padding-bottom:1px;color:var(--ink-soft)}.hero__meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}.hero__meta div{padding:17px 0 20px;border-right:1px solid var(--line-soft)}.hero__meta div:last-child{border-right:0}.hero__meta div:not(:first-child){padding-left:clamp(14px,2.4vw,30px)}.hero__meta b{display:block;font-family:var(--serif);font-size:26px;line-height:1.1;font-weight:400}.hero__meta span{display:block;margin-top:5px;font-size:11px;color:var(--muted)}
+/* nav */ .toc{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:30px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.toc a{display:inline-flex;gap:5px;align-items:baseline;padding:5px 8px;border-radius:999px;font-size:10px;color:var(--muted)}.toc a:hover{background:rgba(23,22,20,.05);color:var(--ink)}.toc a b{font-family:var(--mono);font-size:7px;color:var(--faint);font-weight:400}.toc .note{margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+/* grid */ .components{padding-top:44px}.comp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-top:1px solid var(--line);padding-top:20px}.comp-head h2{font-size:clamp(28px,3.4vw,42px);line-height:1.08;letter-spacing:-.045em}.comp-head h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--muted)}.comp-head p{margin-top:6px;font-size:12px;color:var(--muted);max-width:42em}.comp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}.comp{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:19px;background:var(--paper);overflow:hidden;transition:border-color .2s}.comp:hover{border-color:rgba(23,22,20,.26)}.comp__head{display:flex;align-items:flex-start;gap:11px;padding:16px 18px 12px}.comp__no{font-family:var(--mono);font-size:9px;color:var(--accent);padding-top:2px}.comp__title{flex:1;min-width:0}.comp__title h3{font-size:16px;line-height:1.25;letter-spacing:-.03em;font-weight:600}.comp__title h3 em{font-family:var(--serif);font-style:italic;font-weight:400;font-size:11px;color:var(--muted);margin-left:4px}.comp__title p{margin-top:3px;font-size:10.5px;line-height:1.6;color:var(--muted)}.comp__src{font-family:var(--mono);font-size:7px;color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:4px 7px}.stage{position:relative;margin:0 10px;min-height:270px;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:16px;overflow:hidden;isolation:isolate}.stage--clay{background:linear-gradient(145deg,#f0e4da,#f6f0e7 58%,#eadfd5)}.stage--mist{background:linear-gradient(145deg,#e5ebe8,#f0f2ec 58%,#e4e5da)}.stage--sage{background:linear-gradient(145deg,#e3ece4,#eef1e8 58%,#e6e8da)}.stage--ink{background:radial-gradient(115% 110% at 20% 0,#332f29,#1d1b17 62%);color:#f4efe4}.stage--sand{background:linear-gradient(145deg,#efe9de,#f7f2e9 58%,#ebe3d4)}.stage--lilac{background:linear-gradient(145deg,#eae5f0,#f2edf1 58%,#e7e3da)}.comp__foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px 15px;margin-top:auto}.comp__hint{font-size:10px;line-height:1.5;color:var(--muted)}.prompt-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:9.5px;color:var(--ink-soft);flex:none}.prompt-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}.prompt-btn svg{width:8px;height:8px}
+/* shared bits */ .tiny-label{font-family:var(--mono);font-size:5px;letter-spacing:.09em;text-transform:uppercase;color:#9a9080}
+.g-phone{position:relative;width:min(100%,206px);height:268px;border-radius:22px;background:#fbf7ef;border:1px solid rgba(23,22,20,.2);box-shadow:0 24px 38px -28px rgba(23,22,20,.55),inset 0 0 0 3px rgba(255,255,255,.5);overflow:hidden;color:#2e2922;touch-action:none;user-select:none}
+.phone-status{height:22px;display:flex;align-items:center;justify-content:space-between;padding:0 11px;font-family:var(--mono);font-size:5px;color:#6d6457;letter-spacing:.03em}
+.mini-reset{border:1px solid var(--line);border-radius:99px;padding:4px 8px;font-size:8px;color:var(--muted);background:rgba(251,250,247,.86)}
+.mini-reset:hover{color:var(--ink);border-color:rgba(23,22,20,.3)}
+/* 1 takeback */ .back-phone{background:#f5eee3}
+.back-under{position:absolute;inset:22px 0 0;padding:12px 13px;display:flex;flex-direction:column;gap:7px;background:#f2ebdf}
+.back-under b{font-size:15px;letter-spacing:-.03em;margin-bottom:3px}
+.back-under .under-row{height:34px;border-radius:8px;background:#fbf6ed;border:1px solid rgba(23,22,20,.07);display:flex;align-items:center;gap:7px;padding:0 8px;font-size:7px;color:#786f5f}
+.back-under .under-row i{width:18px;height:18px;border-radius:5px;background:#ddc9b4;flex:none}
+.back-sheet{position:absolute;inset:22px 0 0;background:#fbf7ef;border-left:1px solid rgba(23,22,20,.12);padding:11px 12px;cursor:grab;touch-action:none;will-change:transform;box-shadow:-12px 0 22px -20px rgba(23,22,20,.4);z-index:2}
+.back-sheet.is-dragging{cursor:grabbing;transition:none}
+.back-sheet.is-snap{transition:transform .42s var(--ease)}
+.back-sheet.is-done{transform:translateX(106%)!important;transition:transform .48s var(--ease)}
+.back-art{height:78px;border-radius:9px;margin:3px 0 9px;background:linear-gradient(135deg,#d9b48d,#b57c58 55%,#7d5543);position:relative;overflow:hidden}
+.back-art::before,.back-art::after{content:"";position:absolute;left:-10%;right:-10%;height:34px;border:1px solid rgba(255,255,255,.38);border-radius:50%;top:16px}
+.back-art::after{top:29px;left:-3%;right:8%}
+.back-art span{position:absolute;left:8px;bottom:7px;color:rgba(255,255,255,.8);font-family:var(--mono);font-size:4.5px;letter-spacing:.08em}
+.back-sheet b{display:block;font-size:17px;line-height:1.15;letter-spacing:-.035em;margin-top:2px}
+.back-sheet p{font-size:7px;color:#8a7f6f;margin-top:2px}
+.back-stats{display:flex;gap:6px;margin-top:10px}
+.back-stats span{flex:1;background:#f2ece1;border-radius:7px;padding:6px;font-size:5.5px;color:#928776}
+.back-stats b{display:block;font-family:var(--serif);font-size:15px;font-weight:400;color:#3b352b;margin-bottom:1px}
+.back-handle{position:absolute;left:7px;top:50%;width:12px;height:38px;border-radius:99px;background:#e7dccb;transform:translateY(-50%);display:grid;place-items:center;font-size:7px;color:#8f8372;z-index:3}
+.gesture-readout{position:absolute;left:9px;right:9px;bottom:8px;display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:5.5px;color:#7f7566;z-index:4;background:rgba(251,247,239,.9);border-radius:5px;padding:3px 5px;pointer-events:none}
+.gesture-readout b{font-weight:400;color:#7b5b49}
+.back-phone.is-returned .gesture-readout{color:#5d7a63}
+.back-phone .mini-reset{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:4}
+/* 2 escape */ .escape-panel{width:min(100%,252px);border-radius:15px;background:#fbf9f2;border:1px solid rgba(23,22,20,.09);padding:13px;box-shadow:0 20px 30px -26px rgba(23,22,20,.45)}
+.escape-head{display:flex;flex-direction:column;gap:2px}
+.escape-head b{font-size:14px;letter-spacing:-.03em}
+.escape-list{display:grid;gap:1px;margin:9px 0 12px}
+.escape-list div{display:flex;align-items:center;justify-content:space-between;height:25px;border-bottom:1px solid rgba(23,22,20,.055);font-size:7px;color:#6f675a}
+.escape-list div:last-child{border-bottom:0}
+.escape-list em{font-style:normal;font-family:var(--mono);font-size:5px;color:#9b9183}
+.escape-list i{width:10px;height:10px;border:1px solid #7c9689;border-radius:3px;display:inline-grid;place-items:center;margin-right:6px;font-style:normal;font-size:6px;color:#fff;background:#7c9689}
+.hold-btn{position:relative;width:100%;height:36px;border-radius:99px;background:#23241f;color:#f3eee2;font-size:8px;letter-spacing:.01em;transition:transform .18s var(--ease),background .2s,color .2s,box-shadow .2s;touch-action:none;overflow:hidden}
+.hold-btn::after{content:"";position:absolute;inset:3px;border-radius:99px;border:1px solid rgba(255,255,255,.12);pointer-events:none}
+.hold-btn.is-pressed{transform:scale(.975);background:#11120f;box-shadow:0 0 0 4px rgba(35,36,31,.08)}
+.hold-btn.is-escaped{background:#e9e4d9;color:#8d8374;transform:scale(.985);box-shadow:none}
+.hold-btn.is-escaped::after{border-color:rgba(23,22,20,.08)}
+.hold-btn.is-done{background:#5f7f6f;color:#f6f1e7}
+.escape-state{text-align:center;font-size:6.5px;line-height:1.5;color:#9a9080;margin-top:8px;min-height:20px}
+/* 3 diff text */ .diff-panel{width:min(100%,270px);border-radius:14px;background:#fbf9f2;border:1px solid rgba(23,22,20,.09);padding:13px;box-shadow:0 20px 30px -26px rgba(23,22,20,.45)}
+.diff-tabs{display:flex;background:#efe9df;border-radius:8px;padding:3px;gap:2px}
+.diff-tabs button{flex:1;height:25px;border-radius:6px;font-size:6.5px;color:#8c8272;white-space:nowrap;transition:background .2s,color .2s,box-shadow .2s}
+.diff-tabs button.is-on{background:#fbf9f2;color:#2f2a22;font-weight:500;box-shadow:0 2px 5px rgba(60,48,30,.08)}
+.diff-head{display:flex;align-items:flex-end;gap:8px;margin-top:12px}
+.diff-title{font-size:17px;line-height:1.2;letter-spacing:-.04em;color:#2b261e;min-height:22px;white-space:nowrap;font-weight:500}
+.diff-title .char{display:inline-block;transform-origin:50% 70%}
+.diff-title .char.is-flip{animation:charFlip .44s var(--ease)}
+@keyframes charFlip{0%{transform:rotateX(88deg) translateY(-2px);opacity:.2}55%{opacity:1}100%{transform:none;opacity:1}}
+.diff-title .sep{font-family:var(--serif);font-style:italic;color:#9a8c79;font-weight:400;padding:0 3px}
+.digit{display:inline-block;height:21px;overflow:hidden;vertical-align:bottom;font-variant-numeric:tabular-nums;margin-left:2px}
+.digit__strip{display:flex;flex-direction:column;transition:transform .45s var(--ease)}
+.digit__strip i{height:21px;line-height:21px;font-style:normal;font-family:var(--serif);font-size:19px;font-weight:400;color:#6d4a3a}
+.diff-count-label{font-size:7px;color:#9a9080;padding-bottom:3px}
+.diff-art{display:flex;align-items:flex-end;gap:5px;height:64px;border-bottom:1px solid #e7dfd2;margin-top:10px;padding-bottom:3px}
+.diff-art i{flex:1;height:var(--h);background:#d9c8b4;border-radius:3px 3px 0 0;transition:height .45s var(--ease),background .3s}
+.diff-art i.is-hot{background:#8d6a53}
+.diff-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:9px}
+.diff-meta div{background:#f2ece1;border-radius:6px;padding:5px 6px;font-size:5.5px;color:#978c7c}
+.diff-meta b{display:block;font-family:var(--serif);font-size:14px;font-weight:400;color:#3c352b;margin-top:1px}
+.diff-note{font-family:var(--mono);font-size:4.8px;letter-spacing:.05em;color:#a09381;margin-top:8px}
+/* 4 axis lock */ .axis-phone{width:min(100%,214px);height:268px;border-radius:22px;background:#f8f3ea;border:1px solid rgba(255,255,255,.16);overflow:hidden;position:relative;touch-action:none;user-select:none;box-shadow:0 24px 40px -28px rgba(0,0,0,.6),inset 0 0 0 3px rgba(255,255,255,.06)}
+.axis-phone .phone-status{color:#b3a999;height:21px}
+.axis-phone .phone-status .axis-badge{font-family:var(--mono);font-size:5px;color:#d8c6b1;letter-spacing:.08em}
+.axis-scroll{position:absolute;left:0;right:0;top:21px;bottom:0;overflow:hidden;padding:9px 11px 14px}
+.axis-hero b{display:block;font-size:17px;letter-spacing:-.035em;color:#332c24;line-height:1.15;margin-top:2px}
+.axis-hero p{font-size:6.5px;color:#8f8372;margin-top:2px}
+.axis-viewport{overflow:hidden;border-radius:9px;margin-top:9px;background:#e9dfd0}
+.axis-track{display:flex;will-change:transform}
+.axis-slide{flex:0 0 100%;height:82px;position:relative;display:flex;align-items:flex-end;padding:8px;color:#fff;font-size:9px;letter-spacing:-.02em;background:linear-gradient(135deg,#b47d5d,#7c523f)}
+.axis-slide:nth-child(2){background:linear-gradient(135deg,#7f988a,#4d655a)}
+.axis-slide:nth-child(3){background:linear-gradient(135deg,#9b8b6f,#665a47)}
+.axis-slide::before{content:"";position:absolute;inset:14px 22px 26px;border:1px solid rgba(255,255,255,.3);border-radius:50% 50% 0 0}
+.axis-slide span{position:relative;z-index:1}
+.axis-dots{display:flex;gap:3px;justify-content:center;padding:6px 0 2px}
+.axis-dots i{width:3px;height:3px;border-radius:50%;background:#cfc2ae;transition:width .25s,background .25s}
+.axis-dots i.is-on{width:10px;border-radius:99px;background:#8a6a54}
+.axis-lines{display:grid;gap:6px;margin-top:7px}
+.axis-lines span{display:block;height:5px;border-radius:99px;background:#e9e1d4}
+.axis-lines span:nth-child(2){width:74%}.axis-lines span:nth-child(3){width:88%}.axis-lines span:nth-child(4){width:56%}.axis-lines span:nth-child(5){width:80%}
+.axis-foot{display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px;padding-top:7px;border-top:1px solid rgba(23,22,20,.08)}
+.axis-foot span{font-family:var(--mono);font-size:4.5px;color:#9a9080}
+.axis-foot b{font-family:var(--serif);font-size:16px;font-weight:400;color:#3b342a}
+.axis-flash{position:absolute;left:9px;right:9px;bottom:9px;border-radius:99px;background:rgba(25,24,20,.82);color:#f1e9dc;font-family:var(--mono);font-size:5px;letter-spacing:.08em;text-align:center;padding:5px 8px;opacity:0;transition:opacity .2s;z-index:4;pointer-events:none}
+.axis-flash.is-on{opacity:1}
+/* 5 catch */ .catch-board{position:relative;width:min(100%,286px);height:224px;touch-action:none;user-select:none}
+.catch-col{position:absolute;top:17px;width:104px;bottom:38px;border-radius:11px;border:1px dashed rgba(23,22,20,.16);background:rgba(251,250,247,.44);padding:8px}
+.catch-col:nth-child(1){left:0}.catch-col:nth-child(2){right:0}
+.catch-col>b{display:block;font-family:var(--mono);font-size:4.8px;letter-spacing:.08em;color:#a09584;margin-bottom:5px;font-weight:400}
+.catch-ghost{position:absolute;left:8px;right:8px;top:25px;height:88px;border-radius:8px;border:1px solid rgba(23,22,20,.08);background:#f2ece2;opacity:.6}
+.catch-card{position:absolute;left:0;top:42px;width:104px;height:88px;border-radius:9px;background:linear-gradient(135deg,#2e2a24,#1c1a16);color:#f4eee1;padding:9px;text-align:left;box-shadow:0 14px 24px -16px rgba(0,0,0,.7);z-index:3;touch-action:none;cursor:grab;will-change:transform}
+.catch-card:active{cursor:grabbing}
+.catch-card b{display:block;font-size:14px;letter-spacing:-.03em;margin-top:3px}
+.catch-card p{font-size:5.5px;color:#b8ad9a;margin-top:2px}
+.catch-card .tiny-label{color:#c2b29b}
+.catch-card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;border-radius:0 0 8px 8px;background:linear-gradient(90deg,#d6a55c,#a36c38);opacity:.9}
+.catch-readout{position:absolute;left:0;bottom:9px;font-family:var(--mono);font-size:5px;letter-spacing:.08em;color:#8d8171}
+.catch-go{position:absolute;right:0;bottom:2px;border:1px solid var(--line);border-radius:99px;padding:5px 9px;font-size:8px;color:#5e5547;background:#fbf8f0}
+.catch-go:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.catch-reset{position:absolute;right:68px;bottom:2px;display:none}
+.catch-board.is-settled .catch-reset{display:inline-flex}
+/* 6 project */ .project-panel{width:min(100%,276px);border-radius:14px;background:#faf7f0;border:1px solid rgba(23,22,20,.09);padding:12px;box-shadow:0 20px 30px -26px rgba(23,22,20,.45)}
+.project-head{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid #ece4d7;padding-bottom:7px}
+.project-head b{font-family:var(--serif);font-size:20px;font-weight:400;color:#4c3b33;line-height:1}
+.project-head b small{font-family:var(--mono);font-size:6px;color:#a09584;letter-spacing:.06em}
+.project-viewport{overflow:hidden;margin-top:9px;touch-action:none}
+.project-track{display:flex;gap:6px;will-change:transform;padding:3px 0 6px}
+.project-card{flex:0 0 82%;height:108px;border-radius:9px;background:#f1e9dd;border:1px solid rgba(23,22,20,.08);padding:9px;position:relative;transition:border-color .2s,box-shadow .2s,transform .25s;color:#4c4236}
+.project-card::before{content:"";position:absolute;left:9px;right:9px;top:8px;height:28px;border-radius:5px;background:linear-gradient(90deg,var(--tone,#cbb095),#e2d3bd);opacity:.65}
+.project-card b{font-family:var(--serif);font-size:17px;font-weight:400;display:block;margin-top:42px;line-height:1.1}
+.project-card p{font-family:var(--mono);font-size:4.5px;color:#9a8f7e;margin-top:3px}
+.project-card.is-target{border-color:#9a6f56;box-shadow:0 0 0 2px rgba(154,111,86,.32);transform:translateY(-2px)}
+.project-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:5px}
+.project-foot span{font-size:6px;line-height:1.5;color:#9a9080;max-width:19em}
+.project-dots{display:flex;gap:3px;flex:none}
+.project-dots i{width:4px;height:4px;border-radius:50%;background:#d5c9b9}
+.project-dots i.is-on{background:#9a6f56}
+/* 7 rubber */ .rubber-phone{width:min(100%,212px);height:268px;border-radius:22px;background:#fbf7ef;border:1px solid rgba(23,22,20,.16);overflow:hidden;position:relative;touch-action:none;user-select:none;box-shadow:0 24px 38px -28px rgba(23,22,20,.5)}
+.rubber-phone .phone-status{height:22px}.rubber-phone .phone-status .rubber-badge{font-family:var(--mono);font-size:4.5px;color:#8f8474;letter-spacing:.08em}
+.rubber-view{position:absolute;inset:22px 0 0;overflow:hidden}
+.rubber-content{will-change:transform;padding:10px 11px 14px;min-height:100%}
+.rubber-indicator{height:16px;display:flex;align-items:center;justify-content:center;color:#a79580;font-size:9px;opacity:.45;transition:opacity .2s;margin-bottom:1px}
+.rubber-indicator.is-on{opacity:1}
+.rubber-head b{display:block;font-size:16px;letter-spacing:-.035em;margin-top:2px;color:#332d25}
+.rubber-list{display:grid;gap:3px;margin-top:8px}
+.rubber-row{height:27px;border-radius:7px;background:#f2ebe0;display:flex;align-items:center;gap:7px;padding:0 8px;font-size:7px;color:#5d5548}
+.rubber-row i{font-family:var(--mono);font-size:4.5px;font-style:normal;color:#a19380}
+.rubber-row b{font-weight:500;font-size:7.5px}
+.rubber-row span{margin-left:auto;font-family:var(--mono);font-size:4.8px;color:#a19380}
+.rubber-card{margin-top:7px;border-radius:8px;background:#2b2822;color:#f3ecdf;padding:8px;display:flex;align-items:flex-end;justify-content:space-between}
+.rubber-card span{font-family:var(--mono);font-size:4.5px;color:#b1a692}
+.rubber-card b{font-family:var(--serif);font-size:17px;font-weight:400;line-height:1}
+/* dialog */ dialog.prompt-dialog{width:min(520px,calc(100% - 32px));border:1px solid rgba(23,22,20,.15);border-radius:17px;padding:22px;background:var(--paper);color:var(--ink);box-shadow:0 30px 70px -30px rgba(23,22,20,.45)}dialog::backdrop{background:rgba(18,17,15,.45);backdrop-filter:blur(3px)}.dialog-top{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:7px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}.dialog-close{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:14px;color:var(--muted)}.prompt-dialog h3{font-size:22px;line-height:1.2;letter-spacing:-.035em;margin-top:14px}.prompt-dialog h3 em{font-family:var(--serif);font-style:italic;font-weight:400;font-size:13px;color:var(--muted);margin-left:5px}.prompt-dialog p{margin-top:12px;padding:12px 14px;background:var(--accent-soft);border-radius:9px;font-size:12px;line-height:1.75;color:var(--ink-soft)}.dialog-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}.dialog-foot span{font-family:var(--mono);font-size:7px;color:var(--faint)}.dialog-copy{display:inline-flex;gap:6px;align-items:center;border-radius:999px;background:var(--ink);color:var(--paper);padding:8px 12px;font-size:10px}.toast{position:fixed;left:50%;bottom:28px;z-index:120;transform:translate(-50%,12px);background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 15px;font-size:11px;opacity:0;visibility:hidden;transition:opacity .25s,transform .3s,visibility .25s;pointer-events:none}.toast.is-open{opacity:1;visibility:visible;transform:translate(-50%,0)}
+/* next/footer */ .next{border-top:1px solid var(--line);padding:32px 0;margin-top:54px}.next__inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}.next p{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}.next h3{margin-top:8px;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.035em}.next h3 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}.next a{border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:10.5px;color:var(--muted)}.footer{border-top:1px solid var(--line);padding:48px 0 36px}.footer__grid{display:flex;justify-content:space-between;gap:34px;flex-wrap:wrap}.footer__title{font-family:var(--serif);font-size:clamp(23px,3vw,31px);line-height:1.25}.footer__title em{font-style:italic}.footer__meta{display:grid;gap:9px;font-size:11px;color:var(--muted);max-width:450px}.footer__meta a{border-bottom:1px solid var(--line);width:fit-content;padding-bottom:2px}.footer__base{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:30px;padding-top:14px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+@media(max-width:900px){.hero__lower{grid-template-columns:1fr;gap:24px}.comp-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.wrap{width:calc(100% - 36px)}.topbar__in{height:58px;gap:10px}.brand__name,.top-label{display:none}.pill-link{padding:6px 10px;font-size:10px}.pill-dark{padding:7px 11px;font-size:10px}.pill-dark svg{display:none}.hero{padding-top:48px}.hero__top{font-size:8px}.hero h1{font-size:clamp(40px,11.6vw,60px)}.hero h1 em{white-space:normal}.hero__lower{margin-top:26px;padding-bottom:30px}.hero__lead{font-size:16px}.hero__meta{grid-template-columns:1fr 1fr}.hero__meta div{padding:14px 0}.hero__meta div:nth-child(2){border-right:0}.hero__meta div:nth-child(3),.hero__meta div:nth-child(4){border-top:1px solid var(--line-soft)}.hero__meta div:not(:first-child){padding-left:0}.hero__meta div:nth-child(even){padding-left:14px}.hero__meta b{font-size:22px}.toc{gap:2px;margin-top:22px}.toc a{font-size:9px;padding:4px 6px}.toc .note{width:100%;margin-left:0;margin-top:4px}.components{padding-top:34px}.comp-head{display:block}.comp-head p{font-size:11px}.comp-grid{gap:10px;margin-top:16px}.comp{border-radius:16px}.comp__head{padding:14px 15px 10px}.comp__title h3{font-size:15px}.comp__title p{font-size:10px}.comp__src{display:none}.stage{margin:0 8px;min-height:270px;padding:13px;border-radius:12px}.comp__foot{padding:10px 15px 14px}.prompt-btn{font-size:9px}.comp__hint{font-size:9px}.next,.footer{padding:30px 0}.footer__grid{flex-direction:column;gap:20px}}
+@media(max-width:380px){.stage{padding:10px}.g-phone,.axis-phone,.rubber-phone{width:196px}.diff-tabs button{font-size:6px}.project-card{flex-basis:86%}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="sr-only" href="#components">跳到交互</a>
+<header class="topbar"><div class="wrap topbar__in"><a class="brand" href="library.html"><span class="brand__mark">t</span><span class="brand__name">点触 <span>/ touch</span></span></a><span class="top-label">Episode 03 · Gesture craft</span><div class="top-actions"><a class="pill-link" href="library.html"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 8H3M7 4 3 8l4 4"/></svg><span>专题库</span></a><button class="pill-dark" type="button" id="copyAll"><span>复制 7 条</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg></button></div></div></header>
+<main>
+  <section class="hero"><div class="wrap">
+    <div class="hero__top mono"><span>Touch Library / Episode 03</span><span>7 gestures · 01 Episode</span></div>
+    <h1>手还没松开，<em>界面已经在回应。</em></h1>
+    <div class="hero__lower"><p class="hero__lead">第 3 集 · 7 种 App 和小程序的高级交互。<br><span>滑动、按住、松手——每一个动作，<br>都在手指离开前给出答案。</span></p><aside class="hero__aside"><strong>关于这一页</strong>整理自抖音 @叨叨AI「交互/设计/动效」第 3 集（2026-09-06）。7 个手势全部做成可操作样片；原片未出提示词卡，提示词依据原片动作与标注还原。<br><a href="library.html">返回专题库 ↗</a></aside></div>
+    <div class="hero__meta"><div><b>07</b><span>手势交互</span></div><div><b>01</b><span>原视频来源</span></div><div><b>07</b><span>可复制提示词</span></div><div><b>100%</b><span>可真实操作</span></div></div>
+    <nav class="toc" aria-label="交互索引"><a href="#g1"><b>01</b>滑到一半返回</a><a href="#g2"><b>02</b>落在按钮上</a><a href="#g3"><b>03</b>换到文字</a><a href="#g4"><b>04</b>横竖滑动</a><a href="#g5"><b>05</b>回到卡片上</a><a href="#g6"><b>06</b>松手前知道停哪</a><a href="#g7"><b>07</b>拉到头还能再拉</a><span class="note">Ep.03 · 7 gestures</span></nav>
+  </div></section>
+  <section class="wrap components" id="components">
+    <div class="comp-head"><div><h2>判定发生在，<em>松手之前</em></h2><p>每一项都用鼠标或手指直接操作；重点不是动画结束，而是动作进行中的反馈。</p></div></div>
+    <div class="comp-grid">
+      <article class="comp" id="g1"><div class="comp__head"><span class="comp__no">01</span><div class="comp__title"><h3>滑到一半返回 <em>Takeback</em></h3><p>页面是走还是退，看你松手那一下的位移与速度。</p></div><span class="comp__src">Ep.03</span></div>
+        <div class="stage stage--clay"><div class="g-phone back-phone" id="backPhone"><div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="back-under"><span class="tiny-label">BACK · 收藏</span><b>我的路线</b><div class="under-row"><i></i><span>冰川段 · 9.6 km</span></div><div class="under-row"><i></i><span>林线段 · 6.1 km</span></div><div class="under-row"><i></i><span>露营段 · 3.2 km</span></div></div>
+          <div class="back-sheet" id="backSheet" aria-label="可向右拖动返回上一页"><span class="back-handle" aria-hidden="true">›</span><div class="back-art"><span>RIDGE · 3 DAYS</span></div><span class="tiny-label">TRAIL · 9.6 KM</span><b>冰川段</b><p>3 小时 40 分 · 两次爬升</p><div class="back-stats"><span><b>620</b>爬升 m</span><span><b>2</b>补给点</span><span><b>3:40</b>预计用时</span></div></div>
+          <div class="gesture-readout"><b id="backPct">0%</b><span id="backState">DRAG →</span></div>
+          <button class="mini-reset" type="button" id="backReset" hidden>重置样片</button>
+        </div></div>
+        <div class="comp__foot"><span class="comp__hint">从卡片左缘往右拖；快甩走完，带回弹回</span><button class="prompt-btn" data-prompt="0">提示词</button></div></article>
+
+      <article class="comp" id="g2"><div class="comp__head"><span class="comp__no">02</span><div class="comp__title"><h3>落在按钮上 <em>Escape</em></h3><p>按住之后滑出按钮，按钮变浅，松手不算数。</p></div><span class="comp__src">Ep.03</span></div>
+        <div class="stage stage--mist"><div class="escape-panel"><div class="escape-head"><span class="tiny-label">PREFLIGHT · 出发前检查</span><b>今天走哪一段</b></div><div class="escape-list"><div><span><i>✓</i>装备清点</span><em>5 / 5 已核对</em></div><div><span><i>✓</i>天气窗口</span><em>09:00—15:00</em></div><div><span><i>✓</i>随行人员</span><em>3 人已确认</em></div><div><span><i>✓</i>补给配额</span><em>2 处已装满</em></div></div><button class="hold-btn" type="button" id="holdBtn"><span>按住开始记录</span></button><p class="escape-state" id="escapeState">按住按钮，再把手指滑出去试试</p></div></div>
+        <div class="comp__foot"><span class="comp__hint">按住 → 滑出 → 滑回 → 松手，分别看结果</span><button class="prompt-btn" data-prompt="1">提示词</button></div></article>
+
+      <article class="comp" id="g3"><div class="comp__head"><span class="comp__no">03</span><div class="comp__title"><h3>换到文字 <em>Diff text</em></h3><p>只让变的字翻牌，没变的字原地不动。</p></div><span class="comp__src">Ep.03</span></div>
+        <div class="stage stage--sage"><div class="diff-panel"><div class="diff-tabs" id="diffTabs" role="tablist" aria-label="路线筛选"><button class="is-on" type="button" role="tab" aria-selected="true" data-label="全部" data-count="5">全部</button><button type="button" role="tab" aria-selected="false" data-label="冰川段" data-count="3">冰川段</button><button type="button" role="tab" aria-selected="false" data-label="林线段" data-count="2">林线段</button><button type="button" role="tab" aria-selected="false" data-label="露营段" data-count="1">露营段</button></div><div class="diff-head"><div class="diff-title" id="diffTitle" aria-live="polite"></div><span class="diff-count-label">段路线</span></div><div class="diff-art" id="diffArt" aria-hidden="true"></div><div class="diff-meta"><div>完成<b id="diffDone">2</b></div><div>待走<b id="diffTodo">3</b></div><div>总里程<b id="diffKm">50.0</b></div></div><div class="diff-note">只有变化的字会翻牌 · 数字滚动更新</div></div></div>
+        <div class="comp__foot"><span class="comp__hint">切换四个筛选，盯住标题与数字</span><button class="prompt-btn" data-prompt="2">提示词</button></div></article>
+
+      <article class="comp" id="g4"><div class="comp__head"><span class="comp__no">04</span><div class="comp__title"><h3>横竖滑动 <em>Axis lock</em></h3><p>最初的 12px 决定方向，锁定后怎么抖都不改。</p></div><span class="comp__src">Ep.03</span></div>
+        <div class="stage stage--ink"><div class="axis-phone" id="axisPhone"><div class="phone-status"><span>9:41</span><span class="axis-badge" id="axisBadge">AXIS —</span></div><div class="axis-scroll" id="axisScroll"><div class="axis-hero"><span class="tiny-label">RIDGE OPS · 本周</span><b>冰川段</b><p>9.6 km · 爬升 620 m</p></div><div class="axis-viewport" id="axisViewport"><div class="axis-track" id="axisTrack"><div class="axis-slide"><span>冰川段 · 01</span></div><div class="axis-slide"><span>林线段 · 02</span></div><div class="axis-slide"><span>露营段 · 03</span></div></div></div><div class="axis-dots" id="axisDots"><i class="is-on"></i><i></i><i></i></div><div class="axis-lines"><span></span><span></span><span></span><span></span><span></span></div><div class="axis-foot"><span>WEEK TOTAL</span><b>50.0 km</b></div><div class="axis-lines"><span></span><span></span><span></span></div></div><div class="axis-flash" id="axisFlash">横向 · 切换卡片</div></div></div>
+        <div class="comp__foot"><span class="comp__hint">在手机里横拖、竖拖；前 12px 定方向</span><button class="prompt-btn" data-prompt="3">提示词</button></div></article>
+
+      <article class="comp" id="g5"><div class="comp__head"><span class="comp__no">05</span><div class="comp__title"><h3>回到卡片上 <em>Catch</em></h3><p>卡片飞到一半也能按住，当场停在手指下面。</p></div><span class="comp__src">Ep.03</span></div>
+        <div class="stage stage--sand"><div class="catch-board" id="catchBoard"><div class="catch-col"><b>TODAY · 今天</b><div class="catch-ghost"></div></div><div class="catch-col"><b>DONE · 已完成</b></div><button class="catch-card" type="button" id="catchCard"><span class="tiny-label">DAY 3 · 周三</span><b>冰川段</b><p>9.6 km · 15.7 km/h</p></button><div class="catch-readout" id="catchReadout" role="status" aria-live="polite">READY · 点「飞过去」</div><button class="catch-reset mini-reset" type="button" id="catchReset">重置</button><button class="catch-go" type="button" id="catchGo">飞过去 →</button></div></div>
+        <div class="comp__foot"><span class="comp__hint">点「飞过去」，在飞行途中按住卡片</span><button class="prompt-btn" data-prompt="4">提示词</button></div></article>
+
+      <article class="comp" id="g6"><div class="comp__head"><span class="comp__no">06</span><div class="comp__title"><h3>松手前就知道停哪 <em>Project</em></h3><p>拖动时就算好落点，提前高亮目标，松手直接到位。</p></div><span class="comp__src">Ep.03</span></div>
+        <div class="stage stage--lilac"><div class="project-panel"><div class="project-head"><span class="tiny-label">PROJECTED · 将落在</span><b><span id="projIndex">01</span> <small>/ 05</small></b></div><div class="project-viewport" id="projViewport"><div class="project-track" id="projTrack"><article class="project-card" style="--tone:#c9aa88"><b>冰川段</b><p>01 · 9.6 KM</p></article><article class="project-card" style="--tone:#9cae9f"><b>林线段</b><p>02 · 6.1 KM</p></article><article class="project-card" style="--tone:#c4ad84"><b>露营段</b><p>03 · 3.2 KM</p></article><article class="project-card" style="--tone:#a9a1bd"><b>五台段</b><p>04 · 8.8 KM</p></article><article class="project-card" style="--tone:#b79484"><b>检查点</b><p>05 · 4.4 KM</p></article></div></div><div class="project-foot"><span id="projHint">拖动卡片，松手前看落点</span><div class="project-dots" id="projDots"><i class="is-on"></i><i></i><i></i><i></i><i></i></div></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">慢拖与快甩，落点会不一样</span><button class="prompt-btn" data-prompt="5">提示词</button></div></article>
+
+      <article class="comp" id="g7"><div class="comp__head"><span class="comp__no">07</span><div class="comp__title"><h3>拉到头还能再拉 <em>Rubber band</em></h3><p>到顶后继续拉有阻尼，松手自动弹回。</p></div><span class="comp__src">Ep.03</span></div>
+        <div class="stage stage--clay"><div class="rubber-phone" id="rubberPhone"><div class="phone-status"><span>9:41</span><span class="rubber-badge" id="rubberBadge">TOP</span></div><div class="rubber-view" id="rubberView"><div class="rubber-content" id="rubberContent"><div class="rubber-indicator" id="rubberIndicator"><span>↓</span></div><div class="rubber-head"><span class="tiny-label">WEEK 42 · 本周</span><b>五条路线</b></div><div class="rubber-list"><div class="rubber-row"><i>01</i><b>冰川段</b><span>9.6 km</span></div><div class="rubber-row"><i>02</i><b>林线段</b><span>6.1 km</span></div><div class="rubber-row"><i>03</i><b>露营段</b><span>3.2 km</span></div><div class="rubber-row"><i>04</i><b>五台段</b><span>8.8 km</span></div></div><div class="rubber-card"><span>WEEK TOTAL<br>本周总计</span><b>50.0 km</b></div></div></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">往下拉列表，感受阻尼，然后松手</span><button class="prompt-btn" data-prompt="6">提示词</button></div></article>
+    </div>
+  </section>
+</main>
+<section class="next"><div class="wrap next__inner"><div><p>Episode 03 complete</p><h3>下一集：<em>10 种高级交互</em></h3></div><a href="episode-04-details.html">打开 Ep.04 按下之后 <span aria-hidden="true">↗</span></a></div></section>
+<footer class="footer"><div class="wrap"><div class="footer__grid"><p class="footer__title">不是你点完，<br>它才<em>开始</em>。</p><div class="footer__meta"><span>内容来源：抖音 @叨叨AI「交互/设计/动效」第 3 集（7 种 App 和小程序的高级交互，2026-09-06）。</span><a href="https://www.douyin.com/video/7682275972318787505" target="_blank" rel="noopener noreferrer">查看原片 ↗</a><span>页面中的演示为按原意重新实现的交互样例；原片未出提示词卡，提示词依据原片动作与标注还原。</span></div></div><div class="footer__base"><span>Touch Library · Episode 03</span><span>Made with restraint · 2026</span></div></div></footer>
+<dialog class="prompt-dialog" id="promptDialog"><div class="dialog-top"><span id="dialogSource">EP.03 / 01</span><button class="dialog-close" type="button" id="dialogClose" aria-label="关闭">×</button></div><h3 id="dialogTitle">滑到一半返回 <em>Takeback</em></h3><p id="dialogText"></p><div class="dialog-foot"><span>依据原片动作与标注还原</span><button class="dialog-copy" type="button" id="dialogCopy"><svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg><span>复制提示词</span></button></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const prompts = [
+    { title: '滑到一半返回', en: 'Takeback', text: '做一个滑到一半可返回的页面转场：从左侧边缘拖动页面，松手时按位移和速度共同判定，向前甩就继续返回，往回带就弹回原位。' },
+    { title: '落在按钮上', en: 'Escape', text: '做一个按下后可以反悔的按钮：按住时按钮加深下沉，手指滑出按钮就变浅抬起，松手不算数；滑回来再松手才触发。' },
+    { title: '换到文字', en: 'Diff text', text: '做一个筛选切换标题：只让发生变化的文字做翻牌动画，没变的字保持在原地，数字滚动更新。' },
+    { title: '横竖滑动', en: 'Axis lock', text: '做一个横竖手势分流的区域：手指移动最初的十二个像素决定方向，横向拖就切换卡片，纵向拖就让页面滚动，锁定后抖动不改判。' },
+    { title: '回到卡片上', en: 'Catch', text: '做一个飞行中的卡片：卡片飞出时随时可以用手指按住，按下的瞬间停在手指下面，然后可以继续拖动，不必等动画结束。' },
+    { title: '松手前就知道停哪', en: 'Project', text: '做一个松手前就显示落点的滑动卡片：拖动过程中按位移和速度算出它要停在第几张，提前高亮目标，松手直接到位。' },
+    { title: '拉到头还能再拉', en: 'Rubber band', text: '做一个到头还能再拉的列表：到顶后继续下拉只跟随一小段并逐渐变慢，松手自动弹回顶部。' }
+  ];
+
+  const toast = $('#toast');
+  let toastTimer;
+  const showToast = message => {
+    toast.textContent = message;
+    toast.classList.add('is-open');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-open'), 1800);
+  };
+  const copyText = async text => {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch (err) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand('copy'); ta.remove(); return ok;
+      } catch (err2) { return false; }
+    }
+  };
+  const dialog = $('#promptDialog');
+  let activePrompt = 0;
+  const openPrompt = index => {
+    activePrompt = Number(index);
+    const item = prompts[activePrompt];
+    $('#dialogTitle').innerHTML = `${item.title} <em>${item.en}</em>`;
+    $('#dialogText').textContent = item.text;
+    $('#dialogSource').textContent = `EP.03 / ${String(activePrompt + 1).padStart(2, '0')}`;
+    dialog.showModal();
+    document.body.classList.add('is-locked');
+  };
+  const closeDialog = () => {
+    dialog.close();
+    document.body.classList.remove('is-locked');
+  };
+  $$('.prompt-btn').forEach(btn => btn.addEventListener('click', () => openPrompt(btn.dataset.prompt)));
+  $('#dialogClose').addEventListener('click', closeDialog);
+  dialog.addEventListener('close', () => document.body.classList.remove('is-locked'));
+  dialog.addEventListener('click', e => {
+    const rect = dialog.getBoundingClientRect();
+    if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) closeDialog();
+  });
+  $('#dialogCopy').addEventListener('click', async () => {
+    const ok = await copyText(prompts[activePrompt].text);
+    showToast(ok ? '提示词已复制' : '复制失败，请检查浏览器权限');
+  });
+  $('#copyAll').addEventListener('click', async () => {
+    const text = prompts.map((item, i) => `${String(i + 1).padStart(2, '0')}. ${item.title}\n${item.text}`).join('\n\n');
+    const ok = await copyText(text);
+    showToast(ok ? '7 条提示词已全部复制' : '复制失败，请检查浏览器权限');
+  });
+
+  const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
+  const grab = (el, id) => { try { el.setPointerCapture(id); } catch (err) {} };
+
+  /* 01 takeback */
+  const backPhone = $('#backPhone');
+  if (backPhone) {
+    const sheet = $('#backSheet');
+    const pct = $('#backPct');
+    const state = $('#backState');
+    const reset = $('#backReset');
+    let dragging = false, startX = 0, dx = 0, startTime = 0, lastX = 0, lastTime = 0, velocity = 0, done = false;
+    const width = () => backPhone.clientWidth;
+    const setLabel = () => {
+      const p = Math.round(clamp(dx / width(), 0, 1) * 100);
+      pct.textContent = `${p}%`;
+      const willGo = p >= 36 || velocity > .55;
+      state.textContent = done ? 'RETURN' : p ? (willGo ? 'RELEASE → BACK' : 'RELEASE ← SNAP') : 'DRAG →';
+    };
+    const finish = ok => {
+      sheet.classList.remove('is-dragging');
+      sheet.classList.add('is-snap');
+      if (ok) {
+        done = true;
+        sheet.classList.add('is-done');
+        backPhone.classList.add('is-returned');
+        reset.hidden = false;
+        state.textContent = 'RETURN';
+        pct.textContent = '100%';
+        showToast('已返回上一页 · 点「重置样片」再来');
+      } else {
+        sheet.style.transform = 'translateX(0)';
+        dx = 0; velocity = 0;
+        setTimeout(() => { if (!done) { sheet.classList.remove('is-snap'); setLabel(); } }, 430);
+      }
+    };
+    sheet.addEventListener('pointerdown', e => {
+      if (done || e.button > 0) return;
+      dragging = true;
+      startX = lastX = e.clientX;
+      startTime = lastTime = performance.now();
+      dx = 0; velocity = 0;
+      sheet.classList.remove('is-snap');
+      sheet.classList.add('is-dragging');
+      grab(sheet, e.pointerId);
+      setLabel();
+    });
+    sheet.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      dx = clamp(e.clientX - startX, 0, width() * .86);
+      sheet.style.transform = `translateX(${dx}px)`;
+      const now = performance.now();
+      velocity = (e.clientX - lastX) / Math.max(now - lastTime, 1);
+      lastX = e.clientX; lastTime = now;
+      setLabel();
+    });
+    const endBack = () => {
+      if (!dragging) return;
+      dragging = false;
+      finish(dx / width() >= .36 || velocity > .55);
+    };
+    sheet.addEventListener('pointerup', endBack);
+    sheet.addEventListener('pointercancel', endBack);
+    reset.addEventListener('click', () => {
+      sheet.classList.remove('is-snap', 'is-done');
+      sheet.style.transform = 'translateX(0)';
+      backPhone.classList.remove('is-returned');
+      done = false; dx = 0; velocity = 0; reset.hidden = true;
+      setLabel();
+    });
+    setLabel();
+  }
+
+  /* 02 escape */
+  const holdBtn = $('#holdBtn');
+  if (holdBtn) {
+    const state = $('#escapeState');
+    let pressed = false;
+    const label = holdBtn.querySelector('span');
+    const inButton = e => {
+      const r = holdBtn.getBoundingClientRect();
+      return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+    };
+    holdBtn.addEventListener('pointerdown', e => {
+      if (holdBtn.classList.contains('is-done')) return;
+      pressed = true;
+      grab(holdBtn, e.pointerId);
+      holdBtn.classList.add('is-pressed');
+      holdBtn.classList.remove('is-escaped');
+      label.textContent = '松开结束 · 滑出可取消';
+      state.textContent = '已按住；现在把手指滑出按钮';
+    });
+    holdBtn.addEventListener('pointermove', e => {
+      if (!pressed) return;
+      const inside = inButton(e);
+      holdBtn.classList.toggle('is-escaped', !inside);
+      label.textContent = inside ? '松开结束 · 滑出可取消' : '已滑出 · 松手不算数';
+      state.textContent = inside ? '在按钮内，松手会触发' : '在按钮外，松手不触发；滑回来还能救';
+    });
+    const release = e => {
+      if (!pressed) return;
+      pressed = false;
+      const inside = inButton(e);
+      holdBtn.classList.remove('is-pressed');
+      if (inside) {
+        holdBtn.classList.remove('is-escaped');
+        holdBtn.classList.add('is-done');
+        label.textContent = '已开始记录 ✓';
+        state.textContent = '松手有效 · 动作已触发';
+        showToast('开始记录');
+        setTimeout(() => {
+          holdBtn.classList.remove('is-done');
+          label.textContent = '按住开始记录';
+          state.textContent = '按住按钮，再把手指滑出去试试';
+        }, 1500);
+      } else {
+        holdBtn.classList.remove('is-escaped');
+        label.textContent = '按住开始记录';
+        state.textContent = '已取消 · 在按钮外松手不算数';
+        showToast('已取消，没有触发');
+      }
+    };
+    holdBtn.addEventListener('pointerup', release);
+    holdBtn.addEventListener('pointercancel', release);
+  }
+
+  /* 03 diff text */
+  const diffTitle = $('#diffTitle');
+  if (diffTitle) {
+    const tabs = $$('#diffTabs button');
+    const data = {
+      '全部': { count: 5, done: 2, todo: 3, km: '50.0', heights: [42, 68, 51, 33, 61], hot: 4 },
+      '冰川段': { count: 3, done: 2, todo: 1, km: '16.0', heights: [58, 72, 40, 22, 15], hot: 0 },
+      '林线段': { count: 2, done: 1, todo: 1, km: '11.5', heights: [34, 63, 30, 18, 10], hot: 1 },
+      '露营段': { count: 1, done: 1, todo: 0, km: '3.2', heights: [45, 22, 16, 9, 6], hot: 2 }
+    };
+    let current = '全部';
+    const art = $('#diffArt');
+    art.innerHTML = data['全部'].heights.map(h => `<i style="--h:${h}px"></i>`).join('');
+    const render = (label, animate) => {
+      if (label === current && animate) return;
+      const oldChars = Array.from(diffTitle.dataset.label || '');
+      diffTitle.innerHTML = '';
+      Array.from(label).forEach((ch, i) => {
+        const span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = ch;
+        if (animate && oldChars[i] !== ch) span.classList.add('is-flip');
+        diffTitle.appendChild(span);
+      });
+      diffTitle.dataset.label = label;
+      diffTitle.setAttribute('aria-label', `${label}，${data[label].count} 段`);
+      const sep = document.createElement('span');
+      sep.className = 'sep';
+      sep.textContent = '·';
+      diffTitle.appendChild(sep);
+      const digit = document.createElement('span');
+      digit.className = 'digit';
+      digit.setAttribute('aria-hidden', 'true');
+      const strip = document.createElement('span');
+      strip.className = 'digit__strip';
+      strip.innerHTML = Array.from({ length: 10 }, (_, n) => `<i>${n}</i>`).join('');
+      digit.appendChild(strip);
+      diffTitle.appendChild(digit);
+      requestAnimationFrame(() => { strip.style.transform = `translateY(-${data[label].count * 21}px)`; });
+      current = label;
+      $('#diffDone').textContent = data[label].done;
+      $('#diffTodo').textContent = data[label].todo;
+      $('#diffKm').textContent = data[label].km;
+      $$('i', art).forEach((bar, i) => {
+        bar.style.setProperty('--h', `${data[label].heights[i]}px`);
+        bar.classList.toggle('is-hot', i === data[label].hot);
+      });
+    };
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      tabs.forEach(item => {
+        item.classList.toggle('is-on', item === tab);
+        item.setAttribute('aria-selected', String(item === tab));
+      });
+      render(tab.dataset.label, true);
+    }));
+    render('全部', false);
+  }
+
+  /* 04 axis lock */
+  const axisPhone = $('#axisPhone');
+  if (axisPhone) {
+    const scroll = $('#axisScroll');
+    const viewport = $('#axisViewport');
+    const track = $('#axisTrack');
+    const dots = $$('#axisDots i');
+    const badge = $('#axisBadge');
+    const flash = $('#axisFlash');
+    const slides = $$('.axis-slide', track);
+    let index = 0, axis = null, dragging = false;
+    let startX = 0, startY = 0, startScroll = 0, startOffset = 0, offset = 0, startTime = 0, lastX = 0, lastTime = 0, velocity = 0;
+    const width = () => viewport.clientWidth;
+    const min = () => -(slides.length - 1) * width();
+    const paint = (animate = false) => {
+      track.style.transition = animate ? 'transform .42s var(--ease)' : 'none';
+      track.style.transform = `translateX(${offset}px)`;
+      dots.forEach((dot, i) => dot.classList.toggle('is-on', i === index));
+    };
+    const showAxis = dir => {
+      badge.textContent = dir === 'x' ? 'AXIS X' : 'AXIS Y';
+      flash.textContent = dir === 'x' ? '横向 · 切换卡片' : '纵向 · 滚动页面';
+      flash.classList.add('is-on');
+      clearTimeout(showAxis.timer);
+      showAxis.timer = setTimeout(() => flash.classList.remove('is-on'), 900);
+    };
+    axisPhone.addEventListener('pointerdown', e => {
+      if (e.button > 0) return;
+      dragging = true; axis = null;
+      startX = e.clientX; startY = e.clientY;
+      startScroll = scroll.scrollTop; startOffset = offset;
+      startTime = lastTime = performance.now(); lastX = e.clientX; velocity = 0;
+      grab(axisPhone, e.pointerId);
+      track.style.transition = 'none';
+    });
+    axisPhone.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dx = e.clientX - startX, dy = e.clientY - startY;
+      if (!axis) {
+        if (Math.max(Math.abs(dx), Math.abs(dy)) < 12) return;
+        axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+        showAxis(axis);
+        axisPhone.classList.add(axis === 'x' ? 'is-x' : 'is-y');
+      }
+      if (axis === 'x') {
+        offset = startOffset + dx;
+        const max = 0, low = min();
+        if (offset > max) offset = max + (offset - max) * .28;
+        if (offset < low) offset = low + (offset - low) * .28;
+        paint(false);
+        const now = performance.now();
+        velocity = (e.clientX - lastX) / Math.max(now - lastTime, 1);
+        lastX = e.clientX; lastTime = now;
+      } else {
+        scroll.scrollTop = startScroll - dy;
+      }
+    });
+    const endAxis = () => {
+      if (!dragging) return;
+      dragging = false;
+      axisPhone.classList.remove('is-x', 'is-y');
+      if (axis === 'x') {
+        const step = width();
+        let target = Math.round(-offset / step);
+        if (velocity < -.5) target = Math.ceil(-offset / step);
+        if (velocity > .5) target = Math.floor(-offset / step);
+        index = clamp(target, 0, slides.length - 1);
+        offset = -index * step;
+        paint(true);
+        showAxis('x');
+      }
+      axis = null;
+    };
+    axisPhone.addEventListener('pointerup', endAxis);
+    axisPhone.addEventListener('pointercancel', endAxis);
+    window.addEventListener('resize', () => { offset = -index * width(); paint(false); });
+    paint(false);
+  }
+
+  /* 05 catch */
+  const catchBoard = $('#catchBoard');
+  if (catchBoard) {
+    const card = $('#catchCard');
+    const go = $('#catchGo');
+    const reset = $('#catchReset');
+    const readout = $('#catchReadout');
+    const boardW = () => catchBoard.clientWidth;
+    let travel = 0;
+    const setTravel = () => {
+      const board = catchBoard.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+      travel = board.width - (cardRect.left - board.left) - cardRect.width - 2;
+    };
+    let animation = null, flying = false, dragging = false;
+    let startClientX = 0, baseX = 0, x = 0;
+    const setX = value => {
+      x = value;
+      card.style.transform = `translateX(${x}px)`;
+    };
+    const settle = target => {
+      card.animate([{ transform: `translateX(${x}px)` }, { transform: `translateX(${target}px)` }], { duration: 320, easing: 'cubic-bezier(.22,.8,.24,1)' });
+      setX(target);
+      catchBoard.classList.add('is-settled');
+      readout.textContent = target > travel / 2 ? 'DONE · 已落在右边' : 'BACK · 回到左边';
+    };
+    const launch = () => {
+      if (flying) return;
+      setTravel();
+      catchBoard.classList.remove('is-settled');
+      flying = true;
+      readout.textContent = 'IN FLIGHT · 半途可以按住';
+      animation = card.animate([{ transform: `translateX(${x}px)` }, { transform: `translateX(${travel}px)` }], { duration: 1000, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'forwards' });
+      animation.onfinish = () => {
+        if (!flying) return;
+        flying = false; setX(travel);
+        catchBoard.classList.add('is-settled');
+        readout.textContent = 'DONE · 已落在右边';
+      };
+    };
+    go.addEventListener('click', launch);
+    card.addEventListener('pointerdown', e => {
+      if (e.button > 0) return;
+      setTravel();
+      if (flying && animation) {
+        const matrix = new DOMMatrixReadOnly(getComputedStyle(card).transform);
+        const currentX = matrix.m41;
+        animation.cancel();
+        animation = null;
+        flying = false;
+        setX(currentX);
+        readout.textContent = 'CAUGHT · 停在手指下面';
+      }
+      dragging = true;
+      startClientX = e.clientX;
+      baseX = x;
+      grab(card, e.pointerId);
+    });
+    card.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      setX(clamp(baseX + e.clientX - startClientX, 0, travel));
+    });
+    const endCatch = () => {
+      if (!dragging) return;
+      dragging = false;
+      settle(x > travel / 2 ? travel : 0);
+      showToast(x > travel / 2 ? '卡片落在右边' : '卡片回到左边');
+    };
+    card.addEventListener('pointerup', endCatch);
+    card.addEventListener('pointercancel', endCatch);
+    reset.addEventListener('click', () => {
+      if (flying && animation) { animation.cancel(); animation = null; flying = false; }
+      setX(0);
+      catchBoard.classList.remove('is-settled');
+      readout.textContent = 'READY · 点「飞过去」';
+    });
+  }
+
+  /* 06 projection */
+  const projViewport = $('#projViewport');
+  if (projViewport) {
+    const track = $('#projTrack');
+    const cards = $$('.project-card', track);
+    const dots = $$('#projDots i');
+    const indexOut = $('#projIndex');
+    const hint = $('#projHint');
+    let index = 0, projected = 0, offset = 0, dragging = false;
+    let startX = 0, startOffset = 0, lastX = 0, lastTime = 0, velocity = 0;
+    const gap = 6;
+    const step = () => (cards[0].getBoundingClientRect().width + gap);
+    const min = () => -(cards.length - 1) * step();
+    const paint = animate => {
+      track.style.transition = animate ? 'transform .42s var(--ease)' : 'none';
+      track.style.transform = `translateX(${offset}px)`;
+      cards.forEach((card, i) => card.classList.toggle('is-target', i === projected));
+      dots.forEach((dot, i) => dot.classList.toggle('is-on', i === index));
+      indexOut.textContent = String(projected + 1).padStart(2, '0');
+    };
+    const projectedIndex = () => {
+      const push = clamp(velocity * 120, -step(), step());
+      const raw = (-offset - push) / step();
+      return clamp(Math.round(raw), 0, cards.length - 1);
+    };
+    projViewport.addEventListener('pointerdown', e => {
+      if (e.button > 0) return;
+      dragging = true;
+      startX = lastX = e.clientX;
+      startOffset = offset;
+      lastTime = performance.now();
+      velocity = 0;
+      grab(projViewport, e.pointerId);
+      hint.textContent = '正在计算落点…';
+    });
+    projViewport.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      offset = clamp(startOffset + e.clientX - startX, min() - 20, 20);
+      if (offset > 0) offset *= .3;
+      if (offset < min()) offset = min() + (offset - min()) * .3;
+      const now = performance.now();
+      velocity = (e.clientX - lastX) / Math.max(now - lastTime, 1);
+      lastX = e.clientX; lastTime = now;
+      projected = projectedIndex();
+      paint(false);
+    });
+    const endProject = () => {
+      if (!dragging) return;
+      dragging = false;
+      projected = projectedIndex();
+      index = projected;
+      offset = -index * step();
+      paint(true);
+      hint.textContent = velocity < -.35 ? '快甩加一张 · 已直接到位' : '松手即到位 · 目标已提前高亮';
+      showToast(`停在第 ${index + 1} 张`);
+    };
+    projViewport.addEventListener('pointerup', endProject);
+    projViewport.addEventListener('pointercancel', endProject);
+    window.addEventListener('resize', () => { offset = -index * step(); paint(false); });
+    paint(false);
+  }
+
+  /* 07 rubber band */
+  const rubberPhone = $('#rubberPhone');
+  if (rubberPhone) {
+    const view = $('#rubberView');
+    const content = $('#rubberContent');
+    const badge = $('#rubberBadge');
+    const indicator = $('#rubberIndicator');
+    let dragging = false, startY = 0, pull = 0;
+    const apply = value => {
+      pull = value;
+      content.style.transform = `translateY(${value}px)`;
+      indicator.classList.toggle('is-on', value > 10);
+      indicator.querySelector('span').style.transform = `rotate(${Math.round(value * 2.2)}deg)`;
+      badge.textContent = value > 8 ? 'OVERSCROLL' : 'TOP';
+    };
+    view.addEventListener('pointerdown', e => {
+      if (e.button > 0) return;
+      dragging = true;
+      startY = e.clientY;
+      grab(view, e.pointerId);
+      content.style.transition = 'none';
+    });
+    view.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dy = Math.max(0, e.clientY - startY);
+      const damped = 120 * (1 - 1 / (1 + dy / 90));
+      apply(damped);
+    });
+    const endRubber = () => {
+      if (!dragging) return;
+      dragging = false;
+      const from = pull;
+      const start = performance.now();
+      const spring = () => {
+        const t = clamp((performance.now() - start) / 460, 0, 1);
+        const ease = 1 - Math.pow(1 - t, 3);
+        apply(from * (1 - ease));
+        if (t < 1) requestAnimationFrame(spring);
+        else apply(0);
+      };
+      requestAnimationFrame(spring);
+    };
+    view.addEventListener('pointerup', endRubber);
+    view.addEventListener('pointercancel', endRubber);
+  }
+})();
+</script>
+</body>
+</html>

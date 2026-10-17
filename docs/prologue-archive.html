@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="touch 第 1—6 集章节索引：54 条交互章节与可复制 AI 提示词。">
+<title>第 1—6 集章节索引 · touch 专题</title>
+<style>
+:root{
+  --bg:#f5f3ee;--paper:#fbfaf7;--ink:#171614;--ink-soft:#403c36;--muted:#6d675e;--faint:#8f887c;
+  --line:rgba(23,22,20,.13);--line-soft:rgba(23,22,20,.075);
+  --accent:#4b5f68;--accent-deep:#374a52;--accent-soft:#e6ebeb;
+  --sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","STSong",serif;
+  --mono:"SFMono-Regular",ui-monospace,Consolas,"Liberation Mono",monospace;
+  --ease:cubic-bezier(.22,.8,.24,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:#d8e2e1;color:#182322}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+h1,h2,h3,h4,p,ol,ul{margin:0}
+ol,ul{padding:0;list-style:none}
+svg{display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{width:min(1180px,calc(100% - 56px));margin-inline:auto}
+.mono{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,243,238,.86);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--line-soft)}
+.topbar__in{height:66px;display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:11px;flex:none}
+.brand__mark{width:29px;height:29px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:14px;line-height:1}
+.brand__name{font-size:13px;font-weight:600;letter-spacing:.02em}.brand__name span{color:var(--muted);font-weight:400}
+.top-label{padding-left:18px;border-left:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.pill-link,.pill-dark{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 12px;font-size:11.5px;white-space:nowrap;transition:border-color .25s,color .25s,background .25s}
+.pill-link{border:1px solid var(--line);color:var(--muted)}.pill-link:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}
+.pill-dark{background:var(--ink);color:var(--paper);border:1px solid var(--ink);padding:8px 15px}.pill-dark:hover{background:#000}
+.pill-link svg,.pill-dark svg{width:11px;height:11px;flex:none}
+.hero{padding:78px 0 0;overflow:hidden}
+.hero__top{display:flex;justify-content:space-between;gap:24px;color:var(--muted)}
+.hero__top span:last-child{text-align:right}
+.hero h1{margin-top:34px;font-size:clamp(54px,9.4vw,124px);line-height:.94;letter-spacing:-.065em;font-weight:600}
+.hero h1 em{display:block;font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.05em;color:var(--accent);white-space:nowrap}
+.hero__lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(34px,8vw,110px);align-items:end;margin-top:40px;padding-bottom:42px}
+.hero__lead{font-size:clamp(17px,2vw,24px);line-height:1.55;letter-spacing:-.015em;max-width:25em;color:var(--ink-soft)}
+.hero__lead span{color:var(--muted)}
+.hero__aside{padding-bottom:4px;color:var(--muted);font-size:12.5px;line-height:1.85}
+.hero__aside strong{display:block;color:var(--ink);font-weight:500;font-size:12px;margin-bottom:8px}
+.hero__aside a{display:inline-flex;align-items:center;gap:4px;margin-top:10px;color:var(--ink-soft);border-bottom:1px solid var(--line);padding-bottom:1px}
+.hero__aside a:hover{color:var(--accent);border-color:var(--accent)}
+.hero__meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.hero__meta div{padding:18px 0 21px;border-right:1px solid var(--line-soft)}.hero__meta div:last-child{border-right:0}
+.hero__meta div:not(:first-child){padding-left:clamp(14px,2.4vw,30px)}
+.hero__meta b{display:block;font-family:var(--serif);font-size:27px;line-height:1.1;font-weight:400;letter-spacing:-.02em}
+.hero__meta span{display:block;margin-top:5px;font-size:11px;color:var(--muted)}
+.ep-nav{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:34px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ep-nav a{display:inline-flex;align-items:baseline;gap:5px;padding:5px 9px;border-radius:999px;font-size:10.5px;color:var(--muted);transition:background .2s,color .2s}
+.ep-nav a:hover{background:rgba(23,22,20,.05);color:var(--ink)}
+.ep-nav a b{font-family:var(--mono);font-size:7px;color:var(--faint);font-weight:400}
+.ep-nav .nav-note{margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.archive-note{display:flex;align-items:flex-start;justify-content:space-between;gap:28px;margin-top:26px;padding:16px 18px;border:1px solid rgba(75,95,104,.16);border-radius:13px;background:var(--accent-soft)}
+.archive-note p{font-size:11.5px;line-height:1.8;color:var(--ink-soft);max-width:56em}
+.archive-note span{font-family:var(--mono);font-size:7px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase;white-space:nowrap;padding-top:2px}
+.ep{padding-top:58px;scroll-margin-top:84px}
+.ep-head{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:24px;align-items:end;border-top:1px solid var(--line);padding-top:20px}
+.ep-no{font-family:var(--serif);font-style:italic;font-size:58px;line-height:.88;color:var(--accent);letter-spacing:-.04em}
+.ep-title h2{font-size:clamp(26px,3.3vw,40px);line-height:1.1;letter-spacing:-.045em;font-weight:600}
+.ep-title h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--muted);font-size:.6em;margin-left:6px}
+.ep-title p{margin-top:8px;font-size:12px;line-height:1.7;color:var(--muted);max-width:44em}
+.ep-source{display:flex;flex-direction:column;align-items:flex-end;gap:7px;font-family:var(--mono);font-size:7px;color:var(--faint);white-space:nowrap}
+.ep-source a{border:1px solid var(--line);border-radius:999px;padding:6px 9px;color:var(--muted);transition:border-color .2s,color .2s}
+.ep-source a:hover{border-color:var(--ink);color:var(--ink)}
+.ep-source a.ep-lab{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.ep-meta{margin-top:14px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:7px;letter-spacing:.06em;color:var(--faint);text-transform:uppercase}
+.ep-meta i{display:block;width:22px;height:1px;background:var(--line);font-style:normal}
+.ep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.p-card{position:relative;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:13px;background:var(--paper);padding:14px 15px;transition:border-color .2s,background .2s,transform .25s var(--ease)}
+.p-card:hover{border-color:rgba(23,22,20,.27);background:#fdfcf8;transform:translateY(-1px)}
+.p-card__top{display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:6px;color:var(--faint);letter-spacing:.06em}
+.p-card h3{font-size:13.5px;line-height:1.3;letter-spacing:-.025em;font-weight:600;margin-top:7px}
+.p-card h3 em{font-family:var(--serif);font-style:italic;font-weight:400;font-size:11px;color:var(--muted);margin-left:4px}
+.p-card p.desc{margin-top:4px;font-size:10px;line-height:1.65;color:var(--muted);flex:1}
+.p-card p.prompt{margin-top:8px;font-size:9.5px;line-height:1.65;color:var(--ink-soft);background:var(--accent-soft);border-radius:7px;padding:7px 8px}
+.p-card__foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;padding-top:8px;border-top:1px solid var(--line-soft)}
+.p-card__foot span{font-family:var(--mono);font-size:6px;letter-spacing:.04em;color:var(--faint)}
+.copy-mini{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;padding:4px 7px;font-size:8px;color:var(--muted);transition:background .2s,color .2s,border-color .2s}
+.copy-mini:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.copy-mini svg{width:8px;height:8px}
+.ep-sep{grid-column:1/-1;font-family:var(--mono);font-size:7px;letter-spacing:.08em;color:var(--faint);padding:3px 0 0;text-transform:uppercase}
+.next{border-top:1px solid var(--line);padding:34px 0;margin-top:64px}
+.next__inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.next p{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}
+.next h3{margin-top:9px;font-size:clamp(20px,2.6vw,28px);line-height:1.25;letter-spacing:-.035em;font-weight:600}
+.next h3 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+.next a{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:9px 13px;font-size:11px;color:var(--muted)}
+.next a:hover{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.footer{border-top:1px solid var(--line);padding:52px 0 38px}
+.footer__grid{display:flex;justify-content:space-between;gap:36px;flex-wrap:wrap}
+.footer__title{font-family:var(--serif);font-size:clamp(23px,3vw,32px);line-height:1.25;letter-spacing:-.025em}
+.footer__title em{font-style:italic}
+.footer__meta{display:grid;gap:10px;font-size:11px;color:var(--muted);max-width:460px}
+.footer__meta a{width:fit-content;border-bottom:1px solid var(--line);padding-bottom:2px}.footer__meta a:hover{color:var(--ink);border-color:var(--ink)}
+.footer__base{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:34px;padding-top:15px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.toast{position:fixed;left:50%;bottom:30px;z-index:120;transform:translate(-50%,12px);background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 15px;font-size:11.5px;opacity:0;visibility:hidden;transition:opacity .25s,transform .3s var(--ease),visibility .25s;box-shadow:0 14px 28px -14px rgba(0,0,0,.5);pointer-events:none}
+.toast.is-open{opacity:1;visibility:visible;transform:translate(-50%,0)}
+@media (max-width:760px){
+  .wrap{width:calc(100% - 36px)}
+  .topbar__in{height:58px;gap:10px}.brand__name,.top-label{display:none}
+  .pill-link{padding:6px 10px;font-size:10px}.pill-dark{padding:7px 11px;font-size:10px}.pill-dark svg{display:none}
+  .hero{padding-top:50px}.hero__top{font-size:8px;letter-spacing:.08em}
+  .hero h1{font-size:clamp(44px,13vw,64px)}.hero h1 em{white-space:normal}
+  .hero__lower{grid-template-columns:1fr;gap:26px;margin-top:28px;padding-bottom:34px}.hero__lead{font-size:16.5px}
+  .hero__meta{grid-template-columns:1fr 1fr}.hero__meta div{padding:15px 0}
+  .hero__meta div:nth-child(2){border-right:0}.hero__meta div:nth-child(3),.hero__meta div:nth-child(4){border-top:1px solid var(--line-soft)}
+  .hero__meta div:not(:first-child){padding-left:0}.hero__meta div:nth-child(even){padding-left:14px}.hero__meta b{font-size:23px}
+  .ep-nav{gap:3px;margin-top:22px}.ep-nav a{font-size:9.5px;padding:5px 7px}.ep-nav .nav-note{width:100%;margin-left:0;margin-top:6px}
+  .archive-note{display:block;padding:13px 14px}.archive-note span{display:block;margin-top:8px}
+  .ep{padding-top:42px;scroll-margin-top:72px}
+  .ep-head{grid-template-columns:52px 1fr;gap:14px;padding-top:16px}
+  .ep-no{font-size:42px}.ep-title h2{font-size:25px}.ep-title h2 em{display:block;font-size:12px;margin:3px 0 0}
+  .ep-title p{font-size:11px}.ep-source{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;margin-top:4px}
+  .ep-grid{grid-template-columns:1fr;gap:8px;margin-top:12px}
+  .p-card{padding:12px 13px}.p-card h3{font-size:13px}.p-card p.desc{font-size:9.5px}
+  .next,.footer{padding:32px 0}.footer__grid{flex-direction:column;gap:22px}
+}
+</style>
+</head>
+<body>
+<a class="sr-only" href="#archive">跳到章节索引</a>
+<header class="topbar"><div class="wrap topbar__in">
+  <a class="brand" href="library.html" aria-label="点触 · 返回专题库"><span class="brand__mark">t</span><span class="brand__name">点触 <span>/ touch</span></span></a>
+  <span class="top-label">Library Index · Episodes 01—06</span>
+  <div class="top-actions"><a class="pill-link" href="library.html"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg><span>专题库</span></a><button class="pill-dark" type="button" id="copyAll"><span>复制 54 条</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg></button></div>
+</div></header>
+<main>
+  <section class="hero"><div class="wrap">
+    <div class="hero__top mono"><span>Touch Library / Episodes 01—06</span><span>06 Episodes · 54 Chapters</span></div>
+    <h1>从第 1 集，<em>重新看起。</em></h1>
+    <div class="hero__lower">
+      <p class="hero__lead">早期六集的 54 条交互章节，补进资料库。<br><span>不是补几个旧视频，<br>而是把整个交互系列的起点接回来。</span></p>
+      <aside class="hero__aside"><strong>关于这六集</strong>第 1—6 集以档案方式收录：完整章节索引、可复制的提示词、每一集的原片入口。提示词按章节要点整理，不冒充逐字原卡。<br><a href="#archive">进入章节索引 ↓</a></aside>
+    </div>
+    <div class="hero__meta"><div><b>06</b><span>早期剧集</span></div><div><b>54</b><span>交互章节</span></div><div><b>54</b><span>可复制提示词</span></div><div><b>06</b><span>原片入口</span></div></div>
+    <nav class="ep-nav" id="epNav" aria-label="第 1—6 集索引"><span class="nav-note">One library · From the beginning</span></nav>
+  </div></section>
+  <div class="wrap"><div class="archive-note"><p>这一页采用档案格式：六集完整章节索引与可复制提示词。第 4 集标题为「10 种」，原片章节索引可见 9 条；其余集数按原片章节收录。第 1—6 集已全部上线，共 54 个交互样片；每一集都可以进入完整专题页操作。</p><span>Archive mode · Ep.01—06 lab live</span></div></div>
+  <section class="wrap" id="archive"></section>
+</main>
+<section class="next"><div class="wrap next__inner"><div><p>Episodes 01—06 live</p><h3>第 1—6 集，<em>全部上线</em>。</h3></div><a href="episode-06-charts.html">打开 Ep.06 图表专题 <span aria-hidden="true">↗</span></a></div></section>
+<footer class="footer"><div class="wrap">
+  <div class="footer__grid"><p class="footer__title">从第 1 集开始，<br>把<em>基础</em>补齐。</p><div class="footer__meta"><span>内容来源：抖音 @叨叨AI「交互/设计/动效」第 1—6 集（2026-09-02—2026-09-17）。</span><a href="https://www.douyin.com/user/MS4wLjABAAAAyZGEXNbk6ytvhzzpS_H3EtijOU7jP4tFu5OdbWtUUxCgSjUBo3y086wkzqk7jm5x" target="_blank" rel="noopener noreferrer">查看创作者主页 ↗</a><span>章节索引采用档案格式：章节索引与提示词按原片章节要点整理，不是视频截屏；每集保留原片入口。第 1—6 集都已转成完整交互专题，共 54 个可操作样片。</span></div></div>
+  <div class="footer__base"><span>Touch Library · Episodes 01—06</span><span>Made with restraint · 2026</span></div>
+</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const episodes = [
+    {
+      no: '01', short: '组件', date: '2026-09-12', en: 'Components', lab: 'episode-01-components.html', video: 'https://www.douyin.com/video/7684503363891844986',
+      title: '10 种组件提升 App 与小程序的质感',
+      desc: '基础组件决定页面是否精致。折叠、分段、滑动确认、翻转卡片、操作型卡片、筛选胶囊、进度卡片、底部操作栏、智能输入框、顶部标签页。',
+      items: [
+        { t: '折叠卡片', d: '卡片高度、内容、箭头同时变化，避免展开生硬。' },
+        { t: '分段控件', d: '选中块跟随位移，内容区同步横向切换，不留空窗。' },
+        { t: '滑动确认', d: '滑过八成才触发，不到就回弹，减少误触。' },
+        { t: '翻转卡片', d: '正面放核心信息，背面放规则说明，翻转中途换面。' },
+        { t: '操作型卡片', d: '加减开关、滑块就地生效并回显结果。' },
+        { t: '筛选胶囊', d: '选中态用实底，超出宽度横向滚动。' },
+        { t: '进度卡片', d: '节点分三种状态，当前节点高亮并展开详情。' },
+        { t: '底部操作栏', d: '左边关键信息右边主按钮，避开底部安全区。' },
+        { t: '智能输入框', d: '日期与时间自动分隔，右侧常驻单位与字数。' },
+        { t: '顶部标签页', d: '指示条跟随点击与横向滚动同步移动，切换时内容不闪动。' }
+      ]
+    },
+    {
+      no: '02', short: '选择器', date: '2026-09-10', en: 'Selectors', lab: 'episode-02-selectors.html', video: 'https://www.douyin.com/video/7683829160623809145',
+      title: '选择器的 10 种交互细节',
+      desc: '一个下拉框，藏着 10 种交互逻辑。选项多少、有没有层级、要留几个值，决定你该用哪一种。',
+      items: [
+        { t: '单选下拉', d: '选项少且固定，选完后框里只留一个值，适合状态或优先级排序。' },
+        { t: '分组下拉', d: '选项多且可分类，加入组标题，滚动时固定在顶部。' },
+        { t: '可搜索下拉', d: '选项多且可搜索，支持本地筛选、键盘操作，无匹配项时显示提示。' },
+        { t: '远程搜索下拉', d: '选项多且需远程加载，处理加载中、空结果和请求失败状态。' },
+        { t: '多选选择器', d: '选完后保留多个结果，已选内容以可删除块显示，超过三行后折叠。' },
+        { t: '树形选择器', d: '适用于有层级结构的数据，父子联动，半选状态使用单独样式。' },
+        { t: '日期区间选择器', d: '选择两个互相约束的值，预览范围，可分别修改起止日期。' },
+        { t: '可新建选择器', d: '清单内容会变化，无匹配项时显示新建选项，创建前清理空格并检查重名。' },
+        { t: '拆分按钮', d: '选出来的是动作或入口，用拆分按钮区分主次动作。' },
+        { t: '多列导航', d: '把层级入口拆成多列，逐级展开，选择后回填并收起。' }
+      ]
+    },
+    {
+      no: '03', short: '手势', date: '2026-09-06', en: 'Advanced', lab: 'episode-03-gestures.html', video: 'https://www.douyin.com/video/7682275972318787505',
+      title: '7 种 App 和小程序的高级交互',
+      desc: '高级交互还可以体现在：手指还没松开时，界面一直在响应你。',
+      items: [
+        { t: '滑到一半返回', d: '页面返回取决于松手时的力度，甩出去继续前进，往回带则退回。' },
+        { t: '落在按钮上', d: '按钮随手指位置变浅，滑远了自己抬起，松手不算数。' },
+        { t: '换到文字', d: '切换筛选条件时只让变化的字动，没变的字留在原地，数字翻牌滚动。' },
+        { t: '横竖滑动', d: '先判断方向，往哪边走得多就判给哪边，之后抖动也不改。' },
+        { t: '回到卡片上', d: '卡片停在手指底下，当场可以继续拖，而不是飞完才理人。' },
+        { t: '松手前就知道停哪', d: '手还没松开，屏幕已经标出会停在第几张，加一点力就能多翻一张。' },
+        { t: '拉到头还能再拉', d: '列表到顶后继续拉有阻力，松手自动弹回。' }
+      ]
+    },
+    {
+      no: '04', short: '细节', date: '2026-09-04', en: 'Interactions', lab: 'episode-04-details.html', video: 'https://www.douyin.com/video/7681518315952578299',
+      title: '10 种 App 小程序高级交互设计',
+      desc: '按下、移动、让位、落点，每一步都要有回应。原片章节索引可见 9 条，按可见记录收录。',
+      items: [
+        { t: '主题切换', d: '以手指按下点为圆心，圆形铺满全屏，两套页面真实存在，裁切不缩放。' },
+        { t: '拖拽排序', d: '按住一行往上拖，其余行主动让开，落点索引重新计算，让位是软的、错开的。' },
+        { t: '批量勾选', d: '点一下全选，四条错峰依次落下，打勾瞬间带弹性放大。' },
+        { t: '滑杆吸附', d: '拖动配速目标，松手滑块带惯性往前滑过一点，再被最近刻度拉回。' },
+        { t: '文本展开', d: '点开折叠文本，容器高度随内容变化，箭头旋转 180 度。' },
+        { t: '步骤条', d: '完成一步，进度先冲过一点再往回收一点，带回弹。' },
+        { t: '开关联动', d: '拨动一个开关，相邻开关跟着轻轻震一下，提示它们是同一组设置。' },
+        { t: '卡片堆叠', d: '划走卡片，卡片沿曲线飞向角落图标，同时缩小、旋转、变淡；往上滚时被后面卡片压成一摞。' },
+        { t: '标签选择', d: '点中标签，标签放大突出，旁边标签主动让出一点位置。' }
+      ]
+    },
+    {
+      no: '05', short: '动效', date: '2026-09-02', en: 'Motion', lab: 'episode-05-motion.html', video: 'https://www.douyin.com/video/7680772480919567985',
+      title: '8 种交互动效，让 App 质感直接拉满',
+      desc: '磁吸、形变、视差、手势转场、物理碰撞……这些动效背后，都有一套清晰的设计逻辑。原片画面实际出现 8 段动效，章节索引漏掉「滚动聚焦」，按可见画面补入。',
+      items: [
+        { t: '磁吸', d: '元素靠近目标时先产生阻力，接近后快速贴合，距离越近吸力越明显。' },
+        { t: '液态形变', d: '拖动卡片时产生形变，形变与运动状态相关，停下来时恢复。' },
+        { t: '3D 视差', d: '不同层级的运动速度不同，产生空间感，适合内容型 App。' },
+        { t: '滚动聚焦', d: '列表滚动时，越靠近视口中心的条目越突出，停下后惯性吸附到中心。' },
+        { t: '流体 Tab', d: '底部 Tab 切换时背景前缘快、后沿慢，中间拉长再回弹。' },
+        { t: '图片展开', d: '图片从局部到全屏展开，只改变裁切范围，保持视觉连续。' },
+        { t: '手势驱动转场', d: '页面转场由手势控制，动画进度跟随指尖，超过阈值才完成。' },
+        { t: '物理碰撞', d: '元素碰撞时加入推挤、回弹，重的推不动、轻的弹得远。' }
+      ]
+    },
+    {
+      no: '06', short: '图表', date: '2026-09-17', en: 'Charts', lab: 'episode-06-charts.html', video: 'https://www.douyin.com/video/7686337733195482235',
+      title: '10 个图表交互控件提升 App 和小程序质感',
+      desc: '从进度、打卡到趋势和占比，让数据不只「能看」，还会动、会反馈。',
+      items: [
+        { t: '活动圆环', d: '活动圆环展示目标进度，中心数字同步增长，超出部分叠加深色。' },
+        { t: '打卡热力格', d: '打卡热力格展示记录，点击格子弹出当天详情。' },
+        { t: '仪表盘', d: '指针从左扫到当前位置，刻度分三段颜色。' },
+        { t: '柱状图', d: '切换周和月时柱高平滑过渡，按住某根时其余变暗并显示数值。' },
+        { t: '专注分段图', d: '按阶段区分高度和颜色，横向滑动时顶部显示当前时刻和阶段。' },
+        { t: '范围折线图', d: '切换范围时线条平滑变形，面积渐变同步过渡。' },
+        { t: '目标线', d: '拖动目标线时过线的柱子高亮，顶部实时显示达标天数。' },
+        { t: '分段占比条', d: '点击某段时抽出并显示名称和百分比。' },
+        { t: '环形占比图', d: '点击某段外移高亮，中心显示该段名称和百分比。' },
+        { t: '气泡图', d: '横纵轴表示两个维度，气泡大小表示第三维，点按气泡显示详情。' }
+      ]
+    }
+  ];
+
+  const total = episodes.reduce((sum, ep) => sum + ep.items.length, 0);
+  const promptOf = item => `做一个「${item.t}」交互：${item.d}`;
+  const allText = () => episodes.map(ep => `EP.${ep.no} ${ep.title}\n` + ep.items.map((item, i) => `${String(i + 1).padStart(2, '0')}. ${item.t}\n${promptOf(item)}`).join('\n')).join('\n\n');
+
+  const archive = $('#archive');
+  const nav = $('#epNav');
+  const episodeNav = episodes.map(ep => `<a href="#ep-${ep.no}"><b>${ep.no}</b>${ep.short}</a>`).join('');
+  nav.insertAdjacentHTML('afterbegin', episodeNav);
+
+  archive.innerHTML = episodes.map(ep => {
+    const cards = ep.items.map((item, i) => `
+      <article class="p-card">
+        <div class="p-card__top"><span>${ep.no} / ${String(i + 1).padStart(2, '0')}</span><span>${ep.items.length} chapters</span></div>
+        <h3>${item.t}</h3>
+        <p class="desc">${item.d}</p>
+        <p class="prompt">${promptOf(item)}</p>
+        <div class="p-card__foot"><span>按章节要点整理</span><button class="copy-mini" type="button" data-copy="${ep.no}-${i}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg>复制</button></div>
+      </article>`).join('');
+    return `<section class="ep" id="ep-${ep.no}">
+      <div class="ep-head">
+        <span class="ep-no">${ep.no}</span>
+        <div class="ep-title"><h2>${ep.title} <em>${ep.en}</em></h2><p>${ep.desc}</p></div>
+        <div class="ep-source"><span>${ep.date} · ${ep.items.length} chapters</span><a href="${ep.video}" target="_blank" rel="noopener noreferrer">第 ${Number(ep.no)} 集原片 ↗</a>${ep.lab ? `<a href="${ep.lab}" class="ep-lab">进入交互专题 ↗</a>` : ''}</div>
+      </div>
+      <div class="ep-meta"><i></i><span>Episode ${ep.no} / ${ep.items.length} entries / ${ep.items.length} prompts</span></div>
+      <div class="ep-grid">${cards}</div>
+    </section>`;
+  }).join('');
+
+  const toast = $('#toast');
+  let toastTimer;
+  const showToast = message => {
+    toast.textContent = message;
+    toast.classList.add('is-open');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-open'), 1900);
+  };
+  const copyText = async text => {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch (err) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand('copy'); ta.remove(); return ok;
+      } catch (err2) { return false; }
+    }
+  };
+  const findItem = key => {
+    const [no, index] = key.split('-');
+    const ep = episodes.find(item => item.no === no);
+    return ep ? ep.items[Number(index)] : null;
+  };
+  archive.addEventListener('click', async event => {
+    const btn = event.target.closest('[data-copy]');
+    if (!btn) return;
+    const item = findItem(btn.dataset.copy);
+    if (!item) return;
+    const ok = await copyText(promptOf(item));
+    showToast(ok ? '提示词已复制' : '复制失败，请检查浏览器权限');
+  });
+  $('#copyAll').addEventListener('click', async () => {
+    const ok = await copyText(allText());
+    showToast(ok ? `${total} 条提示词已全部复制` : '复制失败，请检查浏览器权限');
+  });
+  const heroCounts = $$('.hero__meta b');
+  if (heroCounts[1]) heroCounts[1].textContent = String(total);
+  if (heroCounts[2]) heroCounts[2].textContent = String(total);
+  $('#copyAll span').textContent = `复制 ${total} 条`;
+})();
+</script>
+</body>
+</html>

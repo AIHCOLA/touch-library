@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="touch Episode 06：10 个图表交互控件，全部可操作；提示词逐条取自原片提示词卡。">
+<title>让数据，动起来回答 · touch Ep.06</title>
+<style>
+:root{--bg:#f5f3ee;--paper:#fbfaf7;--ink:#171614;--ink-soft:#403c36;--muted:#6d675e;--faint:#8f887c;--line:rgba(23,22,20,.13);--line-soft:rgba(23,22,20,.075);--accent:#5b6850;--accent-soft:#e8ece4;--accent-deep:#43513b;--sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","STSong",serif;--mono:"SFMono-Regular",ui-monospace,Consolas,"Liberation Mono",monospace;--ease:cubic-bezier(.22,.8,.24,1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}body.is-locked{overflow:hidden}::selection{background:#dce4d7;color:#24301f}a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}h1,h2,h3,h4,p,ul{margin:0}ul{padding:0;list-style:none}svg{display:block}:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.wrap{width:min(1180px,calc(100% - 56px));margin-inline:auto}.mono{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,243,238,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--line-soft)}.topbar__in{height:66px;display:flex;align-items:center;gap:22px}.brand{display:flex;align-items:center;gap:11px}.brand__mark{width:29px;height:29px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:14px}.brand__name{font-size:13px;font-weight:600}.brand__name span{color:var(--muted);font-weight:400}.top-label{padding-left:18px;border-left:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}.top-actions{margin-left:auto;display:flex;gap:8px}.pill-link,.pill-dark{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 12px;font-size:11.5px;white-space:nowrap}.pill-link{border:1px solid var(--line);color:var(--muted)}.pill-link:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}.pill-dark{background:var(--ink);color:var(--paper);border:1px solid var(--ink);padding:8px 15px}.pill-link svg,.pill-dark svg{width:11px;height:11px;flex:none}
+.hero{padding:76px 0 0;overflow:hidden}.hero__top{display:flex;justify-content:space-between;gap:24px;color:var(--muted)}.hero h1{margin-top:30px;font-size:clamp(48px,8.8vw,112px);line-height:.95;letter-spacing:-.065em;font-weight:600}.hero h1 em{display:block;font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent);letter-spacing:-.05em;white-space:nowrap}.hero__lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(34px,8vw,110px);align-items:end;margin-top:36px;padding-bottom:38px}.hero__lead{font-size:clamp(17px,2vw,23px);line-height:1.55;letter-spacing:-.015em;max-width:27em;color:var(--ink-soft)}.hero__lead span{color:var(--muted)}.hero__aside{color:var(--muted);font-size:12.5px;line-height:1.85;padding-bottom:3px}.hero__aside strong{display:block;color:var(--ink);font-weight:500;font-size:12px;margin-bottom:7px}.hero__aside a{display:inline-flex;margin-top:9px;border-bottom:1px solid var(--line);padding-bottom:1px;color:var(--ink-soft)}.hero__meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}.hero__meta div{padding:17px 0 20px;border-right:1px solid var(--line-soft)}.hero__meta div:last-child{border-right:0}.hero__meta div:not(:first-child){padding-left:clamp(14px,2.4vw,30px)}.hero__meta b{display:block;font-family:var(--serif);font-size:26px;line-height:1.1;font-weight:400}.hero__meta span{display:block;margin-top:5px;font-size:11px;color:var(--muted)}
+.toc{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:30px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.toc a{display:inline-flex;gap:5px;align-items:baseline;padding:5px 8px;border-radius:999px;font-size:10px;color:var(--muted)}.toc a:hover{background:rgba(23,22,20,.05);color:var(--ink)}.toc a b{font-family:var(--mono);font-size:7px;color:var(--faint);font-weight:400}.toc .note{margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.components{padding-top:44px}.comp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-top:1px solid var(--line);padding-top:20px}.comp-head h2{font-size:clamp(28px,3.4vw,42px);line-height:1.08;letter-spacing:-.045em}.comp-head h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--muted)}.comp-head p{margin-top:6px;font-size:12px;color:var(--muted);max-width:42em}.comp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}.comp{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:19px;background:var(--paper);overflow:hidden;transition:border-color .2s}.comp:hover{border-color:rgba(23,22,20,.26)}.comp__head{display:flex;align-items:flex-start;gap:11px;padding:16px 18px 12px}.comp__no{font-family:var(--mono);font-size:9px;color:var(--accent);padding-top:2px}.comp__title{flex:1;min-width:0}.comp__title h3{font-size:16px;line-height:1.25;letter-spacing:-.03em;font-weight:600}.comp__title h3 em{font-family:var(--serif);font-style:italic;font-weight:400;font-size:11px;color:var(--muted);margin-left:4px}.comp__title p{margin-top:3px;font-size:10.5px;line-height:1.6;color:var(--muted)}.comp__src{font-family:var(--mono);font-size:7px;color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:4px 7px}.stage{position:relative;margin:0 10px;min-height:318px;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:16px;overflow:hidden;isolation:isolate}.stage--linen{background:linear-gradient(145deg,#efe9dd,#f7f2e8 58%,#eae3d5)}.stage--pine{background:linear-gradient(145deg,#e1e9e1,#eff2e9 58%,#e4e6d8)}.stage--dark{background:radial-gradient(115% 110% at 18% 0,#2f312c,#1b1c18 62%);color:#f4efe4}.stage--shell{background:linear-gradient(145deg,#ece6dc,#f6f1e8 58%,#e8e1d4)}.stage--peach{background:linear-gradient(145deg,#f0e2d5,#f7efe5 58%,#ecdccd)}.stage--sage{background:linear-gradient(145deg,#e4ebe2,#eff2e9 58%,#e5e6d7)}.comp__foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px 15px;margin-top:auto}.comp__hint{font-size:10px;line-height:1.5;color:var(--muted)}.prompt-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:9.5px;color:var(--ink-soft);flex:none}.prompt-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}.prompt-btn svg{width:8px;height:8px}
+/* chart base */
+.chart-panel{width:min(100%,300px);border-radius:12px;background:#171b17;border:1px solid rgba(255,255,255,.13);padding:11px;color:#f4f0e4;box-shadow:0 26px 36px -28px rgba(0,0,0,.7);position:relative;overflow:hidden}
+.chart-panel::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.026) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.026) 1px,transparent 1px);background-size:22px 22px;pointer-events:none}
+.chart-panel>*{position:relative;z-index:1}
+.chart-head{display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:9px}
+.chart-no{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.55);display:grid;place-items:center;font-family:var(--mono);font-size:4.5px;color:#f2eee2;flex:none}
+.chart-head b{font-size:7px;font-weight:600;letter-spacing:-.01em}
+.chart-head .chart-eng{font-family:var(--mono);font-size:4.5px;color:#7f877b;letter-spacing:.08em;text-transform:uppercase}
+.chart-head .chart-icon{margin-left:auto;width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.22);position:relative;flex:none}
+.chart-head .chart-icon::after{content:"";position:absolute;left:50%;top:50%;width:1px;height:7px;background:rgba(255,255,255,.55);transform:translate(-50%,-100%) rotate(30deg);transform-origin:bottom}
+.chart-label{font-family:var(--mono);font-size:4.6px;letter-spacing:.06em;color:#7f877b;text-transform:uppercase}
+.chart-replay{margin-top:6px;border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:4px 8px;font-family:var(--mono);font-size:4.6px;color:#c2c1b4;letter-spacing:.05em}
+.chart-replay:hover{background:rgba(255,255,255,.1);color:#f2eee2}
+/* 1 rings */
+.rings-panel{min-height:246px}
+.rings-body{display:grid;grid-template-columns:1.12fr 1fr;gap:7px;align-items:center}
+.rings-wrap{position:relative;display:grid;place-items:center}
+.rings-svg{width:100%;max-width:152px;overflow:visible}
+.rings-svg circle{fill:none;stroke-linecap:butt;transform:rotate(-90deg);transform-origin:60px 60px;transition:stroke-width .2s,opacity .2s}
+.rings-svg .ring-base{stroke:#2b302a;stroke-width:8}
+.rings-svg .ring-a{stroke:#e3a23d;stroke-width:8}
+.rings-svg .ring-over{stroke:#8c6429;stroke-width:8}
+.rings-svg .ring-b{stroke:#e8e5d8;stroke-width:7}
+.rings-svg .ring-c{stroke:#aebda4;stroke-width:7}
+.rings-svg .is-emphasis{stroke-width:11!important}
+.rings-center{position:absolute;text-align:center;color:#f3efe4;pointer-events:none}
+.rings-center b{display:block;font-family:var(--serif);font-size:23px;font-weight:400;line-height:1}
+.rings-center span{display:block;font-family:var(--mono);font-size:4.3px;color:#9aa193;margin-top:3px}
+.rings-legend{display:grid;gap:7px}
+.rings-legend button{display:grid;grid-template-columns:auto 1fr auto;gap:4px;align-items:center;text-align:left;color:#c9c7b9;font-family:var(--mono);font-size:4.5px}
+.rings-legend i{width:5px;height:5px;border-radius:50%;grid-row:span 2}
+.rings-legend b{font-size:9px;color:#f2eee3;font-family:var(--sans);font-weight:500;justify-self:end}
+.rings-legend small{grid-column:2/-1;font-size:4px;color:#798173;font-family:var(--mono);margin-top:-3px}
+.rings-legend button:hover b,.rings-legend button:focus-visible b{color:#e3a23d}
+/* 2 heatmap */
+.heat-panel{min-height:246px}
+.heat-month{display:flex;justify-content:space-between;font-family:var(--mono);font-size:4px;color:#7f877b;margin-top:4px;padding:0 1px}
+.heat-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:2px;margin-top:4px;position:relative;z-index:2}
+.heat-cell{width:100%;aspect-ratio:1;border-radius:2px;background:#2a2f28;padding:0;transition:transform .14s,outline-color .14s;outline:1px solid transparent;outline-offset:1px}
+.heat-cell[data-level="1"]{background:#373d33}
+.heat-cell[data-level="2"]{background:#5a604c}
+.heat-cell[data-level="3"]{background:#8c8b63}
+.heat-cell[data-level="4"]{background:#8fc0b3}
+.heat-cell:hover{transform:scale(1.28);outline-color:rgba(255,255,255,.55)}
+.heat-cell.is-on{outline-color:#f3efe3}
+.heat-detail{position:absolute;right:11px;top:84px;width:92px;border-radius:7px;background:#f3eee2;color:#23271d;padding:6px 7px;box-shadow:0 12px 18px -14px rgba(0,0,0,.8);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s,transform .25s var(--ease);transform:translateY(4px);z-index:4}
+.heat-detail.is-open{opacity:1;visibility:visible;transform:none}
+.heat-detail b{font-family:var(--mono);font-size:4.2px;letter-spacing:.05em;color:#8d8271}
+.heat-detail strong{display:block;font-family:var(--serif);font-size:17px;font-weight:400;line-height:1.15;margin-top:1px}
+.heat-detail span{font-size:4.5px;color:#6d6558}
+.heat-foot{display:flex;align-items:center;justify-content:space-between;margin-top:7px;gap:6px}
+.heat-legend{display:flex;align-items:center;gap:2px;font-family:var(--mono);font-size:3.9px;color:#7f877b}
+.heat-legend i{width:5px;height:5px;border-radius:1px}
+.heat-streak{text-align:right;font-family:var(--mono);font-size:4px;color:#7f877b;line-height:1.4}
+.heat-streak b{display:block;font-family:var(--sans);font-size:8px;color:#eeeadd;font-weight:500;letter-spacing:.02em}
+/* 3 gauge */
+.gauge-panel{min-height:250px}
+.gauge-stage{position:relative;height:146px;margin-top:2px}
+.gauge-svg{width:100%;height:auto;overflow:visible}
+.gauge-needle{transform-origin:100px 100px;transform:rotate(-90deg);will-change:transform}
+.gauge-score{position:absolute;left:0;right:0;bottom:7px;text-align:center;color:#f3efe3}
+.gauge-score b{display:block;font-family:var(--serif);font-size:25px;line-height:1;font-weight:400}
+.gauge-score span{display:block;font-family:var(--mono);font-size:4.3px;letter-spacing:.1em;color:#df7b67;margin-top:2px}
+.gauge-labels{position:absolute;left:9px;right:9px;top:70px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:4.2px;color:#858b7e}
+.gauge-foot{display:flex;align-items:center;justify-content:space-between;margin-top:3px}
+.gauge-scale{font-family:var(--mono);font-size:4px;color:#7f877b}
+/* 4 bars */
+.bars-panel{min-height:256px}
+.bars-top{display:flex;align-items:flex-end;justify-content:space-between;gap:6px}
+.bars-top .chart-label{display:block;margin-bottom:1px}
+.bars-top b{display:block;font-family:var(--serif);font-size:19px;font-weight:400;line-height:1.1}
+.seg-mini{display:flex;background:#272c26;border-radius:99px;padding:2px;flex:none}
+.seg-mini button{border-radius:99px;padding:4px 7px;font-family:var(--mono);font-size:4.2px;letter-spacing:.04em;color:#8d9586;transition:background .2s,color .2s}
+.seg-mini button.is-on{background:#e8e4d7;color:#23281f}
+.bars-plot{position:relative;height:116px;display:flex;align-items:flex-end;gap:5px;margin-top:13px;padding-top:14px}
+.bar{position:relative;flex:1;height:100%;display:flex;align-items:flex-end;background:none;border-radius:4px}
+.bar i{display:block;width:100%;height:var(--h);background:#4b5046;border-radius:4px 4px 1px 1px;transition:height .5s var(--ease),background .2s,opacity .2s}
+.bars-plot.is-held .bar:not(.is-held) i{opacity:.25}
+.bar.is-held i{background:#9fb9cc}
+.bar:focus-visible i{opacity:1;background:#9fb9cc}
+.bar-tip{position:absolute;top:0;left:0;transform:translate(-50%,-100%);border-radius:4px;background:#f4efe4;color:#252a21;padding:2px 5px;font-family:var(--mono);font-size:4.4px;white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s;z-index:4;pointer-events:none}
+.bar-tip.is-on{opacity:1;visibility:visible}
+.bars-caption{font-family:var(--mono);font-size:4.3px;color:#7f877b;margin-top:7px;line-height:1.5}
+/* 5 focus chart */
+.focus-chart{min-height:256px}
+.focus-main{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.focus-time{font-family:var(--serif);font-size:21px;line-height:1;color:#f3efe4}
+.focus-phase{font-family:var(--mono);font-size:4.5px;border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:3px 6px;color:#aebda4;letter-spacing:.05em}
+.focus-plot{position:relative;height:126px;margin-top:8px;touch-action:none;cursor:ew-resize}
+.focus-axis{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;font-family:var(--mono);font-size:4px;color:#7f877b}
+.focus-blocks{position:absolute;left:0;right:0;top:0;bottom:18px}
+.focus-rail{position:absolute;left:0;right:0;bottom:24px;height:1px;background:rgba(255,255,255,.12)}
+.fblock{position:absolute;border-radius:4px;opacity:.9;transition:transform .25s,opacity .2s}
+.fblock[data-level="deep"]{background:#c4c764}
+.fblock[data-level="normal"]{background:#aab99f}
+.fblock[data-level="break"]{background:#6f746c}
+.fblock.is-active{transform:translateY(-2px);opacity:1;box-shadow:0 0 0 1px rgba(255,255,255,.35)}
+.focus-playhead{position:absolute;top:0;bottom:18px;width:1px;background:rgba(255,255,255,.7);left:84%;pointer-events:none;z-index:3}
+.focus-playhead i{position:absolute;left:50%;bottom:var(--dot,32px);width:8px;height:8px;border-radius:50%;background:#f3efe3;border:2px solid #242a23;transform:translate(-50%,50%);box-shadow:0 0 0 1px rgba(255,255,255,.4)}
+.focus-legend{display:flex;gap:8px;margin-top:7px;font-family:var(--mono);font-size:4px;color:#7f877b;flex-wrap:wrap}
+.focus-legend span{display:inline-flex;align-items:center;gap:3px}
+.focus-legend i{width:4px;height:4px;border-radius:1px}
+/* 6 range line */
+.line-panel{min-height:250px}
+.line-top{display:flex;align-items:flex-end;justify-content:space-between;gap:6px}
+.line-top .chart-label{display:block;margin-bottom:1px}
+.line-top b{display:block;font-family:var(--serif);font-size:21px;font-weight:400;line-height:1.05}
+.line-svg{width:100%;height:auto;margin-top:4px;overflow:visible}
+.line-axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:4px;color:#7f877b;margin-top:1px;padding:0 3px}
+.line-caption{font-family:var(--mono);font-size:4.2px;color:#7f877b;margin-top:7px}
+/* 7 goal */
+.goal-panel{min-height:258px}
+.goal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.goal-top .chart-label{display:block;margin-bottom:1px}
+.goal-days{font-family:var(--serif);font-size:22px;line-height:1;font-weight:400}
+.goal-days small{font-family:var(--mono);font-size:5px;color:#7f877b}
+.goal-badge{border:1px solid rgba(255,255,255,.16);border-radius:99px;padding:3px 6px;font-family:var(--mono);font-size:4.2px;color:#e3a23d}
+.goal-plot{position:relative;height:142px;margin-top:6px}
+.goal-bars{position:absolute;inset:6px 3px 18px;display:flex;align-items:flex-end;gap:5px}
+.goal-bar{flex:1;height:100%;display:flex;align-items:flex-end;position:relative}
+.goal-bar i{display:block;width:100%;height:var(--h);background:#4b5046;border-radius:3px 3px 1px 1px;transition:background .2s,height .45s var(--ease)}
+.goal-bar.is-hit i{background:#e28752}
+.goal-bar span{position:absolute;left:50%;bottom:-13px;transform:translateX(-50%);font-family:var(--mono);font-size:3.8px;color:#7f877b}
+.goal-line{position:absolute;left:0;right:0;bottom:78%;border-top:1px dashed #e8dfcf;cursor:ns-resize;z-index:3;touch-action:none}
+.goal-line::before{content:"GOAL";position:absolute;left:0;top:-11px;font-family:var(--mono);font-size:3.7px;color:#e3a23d;letter-spacing:.06em}
+.goal-handle{position:absolute;right:-5px;top:50%;width:12px;height:12px;border-radius:50%;background:#f2eee2;border:2px solid #23281f;transform:translateY(-50%);box-shadow:0 2px 4px rgba(0,0,0,.4)}
+/* 8 stacked */
+.stacked-panel{min-height:236px}
+.stack-head{display:flex;align-items:flex-end;justify-content:space-between;gap:6px}
+.stack-head .chart-label{display:block;margin-bottom:1px}
+.stack-head b{font-family:var(--serif);font-size:21px;font-weight:400;line-height:1.1}
+.stack-wrap{position:relative;margin-top:13px}
+.stack-tip{position:absolute;bottom:calc(100% + 6px);left:38%;transform:translateX(-50%);border-radius:4px;background:#f4efe4;color:#252a21;padding:3px 6px;font-family:var(--mono);font-size:4.4px;white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .18s,visibility .18s;z-index:4;pointer-events:none}
+.stack-tip.is-on{opacity:1;visibility:visible}
+.stack-bar{display:flex;gap:3px;height:28px;align-items:stretch}
+.stack-seg{height:28px;border-radius:3px;flex:none;transition:transform .28s var(--ease),opacity .22s,box-shadow .22s;position:relative;outline-offset:2px}
+.stack-seg.is-out{transform:translateY(-6px);box-shadow:0 6px 8px -6px rgba(0,0,0,.7)}
+.stack-bar.has-out .stack-seg:not(.is-out){opacity:.38}
+.stack-legend{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin-top:11px}
+.stack-legend button{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:4.5px;color:#aeb4a5;text-align:left}
+.stack-legend i{width:5px;height:5px;border-radius:50%;flex:none}
+.stack-legend b{margin-left:auto;font-family:var(--mono);font-size:4.5px;color:#eae5d9;font-weight:400}
+.stack-legend button.is-on span{color:#f4efe4}
+/* 9 share ring */
+.share-panel{min-height:248px}
+.share-body{display:grid;grid-template-columns:1.12fr 1fr;gap:8px;align-items:center}
+.share-donut{position:relative;display:grid;place-items:center}
+.share-svg{width:100%;max-width:142px;overflow:visible;transform:rotate(-90deg);overflow:visible}
+.share-svg circle{fill:none;stroke-width:16;transition:stroke-dasharray .7s ease,stroke-width .2s,transform .28s var(--ease),opacity .2s}
+.share-seg{cursor:pointer}
+.share-seg:hover{stroke-width:19}
+.share-seg.is-active{stroke-width:20}
+.share-center{position:absolute;text-align:center;color:#f3efe3;pointer-events:none}
+.share-center b{display:block;font-family:var(--serif);font-size:21px;font-weight:400;line-height:1}
+.share-center span{display:block;font-family:var(--mono);font-size:4.2px;color:#aeb4a5;margin-top:3px;letter-spacing:.04em}
+.share-legend{display:grid;gap:7px}
+.share-legend button{display:grid;grid-template-columns:auto 1fr auto;gap:4px;align-items:center;font-family:var(--mono);font-size:4.5px;color:#aeb4a5;text-align:left}
+.share-legend i{width:5px;height:5px;border-radius:50%}
+.share-legend b{font-family:var(--mono);font-size:4.6px;font-weight:400;color:#eae5d9}
+.share-legend button.is-on span{color:#f4efe4}
+/* 10 bubble */
+.bubble-panel{min-height:228px}
+.bubble-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.bubble-hint{font-family:var(--mono);font-size:4.3px;color:#e3a23d}
+.bubble-area{position:relative;height:172px;margin-top:4px;touch-action:manipulation}
+.bubble{position:absolute;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#20261d;font-family:var(--sans);will-change:transform;transition:transform .48s var(--ease),opacity .28s,box-shadow .25s;border:0;padding:0}
+.bubble b{font-size:6px;font-weight:600;line-height:1.15}
+.bubble small{font-family:var(--mono);font-size:4px;letter-spacing:.02em;opacity:.72;margin-top:1px}
+.bubble.is-focus{box-shadow:0 0 0 2px rgba(244,239,228,.8),0 12px 18px -12px rgba(0,0,0,.8);z-index:5}
+.bubble-1{left:39%;top:27%;width:88px;height:88px;background:#c1b286}
+.bubble-2{left:6%;top:39%;width:64px;height:64px;background:#98a5ba}
+.bubble-3{right:9%;top:13%;width:52px;height:52px;background:#b7c5af}
+.bubble-4{right:7%;top:57%;width:40px;height:40px;background:#e9e3d4;color:#3f4639}
+.bubble-5{left:23%;top:64%;width:48px;height:48px;background:#a7a095;color:#25291f}
+.bubble-6{right:29%;top:63%;width:36px;height:36px;background:#e6ddd1;color:#42493c}
+/* dialog/toast */
+dialog.prompt-dialog{width:min(520px,calc(100% - 32px));border:1px solid rgba(23,22,20,.15);border-radius:17px;padding:22px;background:var(--paper);color:var(--ink);box-shadow:0 30px 70px -30px rgba(23,22,20,.45)}dialog::backdrop{background:rgba(18,17,15,.45);backdrop-filter:blur(3px)}.dialog-top{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:7px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}.dialog-close{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:14px;color:var(--muted)}.prompt-dialog h3{font-size:22px;line-height:1.2;letter-spacing:-.035em;margin-top:14px}.prompt-dialog h3 em{font-family:var(--serif);font-style:italic;font-weight:400;font-size:13px;color:var(--muted);margin-left:5px}.prompt-dialog p{margin-top:12px;padding:12px 14px;background:var(--accent-soft);border-radius:9px;font-size:12px;line-height:1.75;color:var(--ink-soft)}.dialog-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}.dialog-foot span{font-family:var(--mono);font-size:7px;color:var(--faint)}.dialog-copy{display:inline-flex;gap:6px;align-items:center;border-radius:999px;background:var(--ink);color:var(--paper);padding:8px 12px;font-size:10px}.toast{position:fixed;left:50%;bottom:28px;z-index:120;transform:translate(-50%,12px);background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 15px;font-size:11px;opacity:0;visibility:hidden;transition:opacity .25s,transform .3s,visibility .25s;pointer-events:none}.toast.is-open{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.next{border-top:1px solid var(--line);padding:32px 0;margin-top:54px}.next__inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}.next p{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}.next h3{margin-top:8px;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.035em}.next h3 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}.next a{border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:10.5px;color:var(--muted)}.footer{border-top:1px solid var(--line);padding:48px 0 36px}.footer__grid{display:flex;justify-content:space-between;gap:34px;flex-wrap:wrap}.footer__title{font-family:var(--serif);font-size:clamp(23px,3vw,31px);line-height:1.25}.footer__title em{font-style:italic}.footer__meta{display:grid;gap:9px;font-size:11px;color:var(--muted);max-width:450px}.footer__meta a{border-bottom:1px solid var(--line);width:fit-content;padding-bottom:2px}.footer__base{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:30px;padding-top:14px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+@media(max-width:900px){.hero__lower{grid-template-columns:1fr;gap:24px}.comp-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.wrap{width:calc(100% - 36px)}.topbar__in{height:58px;gap:10px}.brand__name,.top-label{display:none}.pill-link{padding:6px 10px;font-size:10px}.pill-dark{padding:7px 11px;font-size:10px}.pill-dark svg{display:none}.hero{padding-top:48px}.hero__top{font-size:8px}.hero h1{font-size:clamp(42px,12vw,60px)}.hero h1 em{white-space:normal}.hero__lower{margin-top:26px;padding-bottom:30px}.hero__lead{font-size:16px}.hero__meta{grid-template-columns:1fr 1fr}.hero__meta div{padding:14px 0}.hero__meta div:nth-child(2){border-right:0}.hero__meta div:nth-child(3),.hero__meta div:nth-child(4){border-top:1px solid var(--line-soft)}.hero__meta div:not(:first-child){padding-left:0}.hero__meta div:nth-child(even){padding-left:14px}.hero__meta b{font-size:22px}.toc{gap:2px;margin-top:22px}.toc a{font-size:9px;padding:4px 6px}.toc .note{width:100%;margin-left:0;margin-top:4px}.components{padding-top:34px}.comp-head{display:block}.comp-head p{font-size:11px}.comp-grid{gap:10px;margin-top:16px}.comp{border-radius:16px}.comp__head{padding:14px 15px 10px}.comp__title h3{font-size:15px}.comp__title p{font-size:10px}.comp__src{display:none}.stage{margin:0 8px;min-height:318px;padding:13px;border-radius:12px}.comp__foot{padding:10px 15px 14px}.prompt-btn{font-size:9px}.comp__hint{font-size:9px}.next,.footer{padding:30px 0}.footer__grid{flex-direction:column;gap:20px}}
+@media(max-width:380px){.stage{padding:10px}.chart-panel{padding:9px}.rings-body{gap:4px}.bubble-1{width:82px;height:82px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="sr-only" href="#components">跳到图表</a>
+<header class="topbar"><div class="wrap topbar__in"><a class="brand" href="library.html"><span class="brand__mark">t</span><span class="brand__name">点触 <span>/ touch</span></span></a><span class="top-label">Episode 06 · Charts</span><div class="top-actions"><a class="pill-link" href="library.html"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 8H3M7 4 3 8l4 4"/></svg><span>专题库</span></a><button class="pill-dark" type="button" id="copyAll"><span>复制 10 条</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg></button></div></div></header>
+<main>
+  <section class="hero"><div class="wrap">
+    <div class="hero__top mono"><span>Touch Library / Episode 06</span><span>10 chart controls · 01 Episode</span></div>
+    <h1>让数据，<em>动起来回答。</em></h1>
+    <div class="hero__lower"><p class="hero__lead">第 6 集 · 10 个图表交互控件。<br><span>从进度、打卡到趋势和占比，<br>让数据不只「能看」，还会动、会反馈。</span></p><aside class="hero__aside"><strong>关于这一页</strong>整理自抖音 @叨叨AI「交互/设计/动效」第 6 集（2026-09-17）。10 个控件全部做成可操作样片；提示词逐条取自原片提示词卡。<br><a href="library.html">返回专题库 ↗</a></aside></div>
+    <div class="hero__meta"><div><b>10</b><span>图表控件</span></div><div><b>01</b><span>原视频来源</span></div><div><b>10</b><span>原片提示词</span></div><div><b>100%</b><span>可真实操作</span></div></div>
+    <nav class="toc" aria-label="图表索引"><a href="#c1"><b>01</b>活动圆环</a><a href="#c2"><b>02</b>打卡热力格</a><a href="#c3"><b>03</b>仪表盘</a><a href="#c4"><b>04</b>柱状图</a><a href="#c5"><b>05</b>专注分段图</a><a href="#c6"><b>06</b>范围折线图</a><a href="#c7"><b>07</b>目标线</a><a href="#c8"><b>08</b>分段占比条</a><a href="#c9"><b>09</b>环形占比图</a><a href="#c10"><b>10</b>气泡图</a><span class="note">Ep.06 · 10 charts</span></nav>
+  </div></section>
+  <section class="wrap components" id="components">
+    <div class="comp-head"><div><h2>数据不只「能看」，<em>还会反馈</em></h2><p>十个样片都能操作：进入、按住、拖动、切换与点击，看看图表怎么回答。</p></div></div>
+    <div class="comp-grid">
+      <article class="comp" id="c1"><div class="comp__head"><span class="comp__no">01</span><div class="comp__title"><h3>活动圆环 <em>Rings</em></h3><p>一圈一个目标，超出的那段深一档。</p></div><span class="comp__src">Ep.06</span></div>
+        <div class="stage stage--dark"><div class="chart-panel rings-panel"><div class="chart-head"><span class="chart-no">01</span><b>Tally</b><span class="chart-eng">Insights</span><span class="chart-icon"></span></div><span class="chart-label">ACTIVITY RINGS</span><div class="rings-body"><div class="rings-wrap"><svg class="rings-svg" viewBox="0 0 120 120" aria-label="活动圆环：移动 124%，锻炼 78%，站立 58%"><circle class="ring-base" cx="60" cy="60" r="50"/><circle class="ring-a" id="ringA" cx="60" cy="60" r="50"/><circle class="ring-over" id="ringOver" cx="60" cy="60" r="50"/><circle class="ring-base" cx="60" cy="60" r="37"/><circle class="ring-b" id="ringB" cx="60" cy="60" r="37"/><circle class="ring-base" cx="60" cy="60" r="24"/><circle class="ring-c" id="ringC" cx="60" cy="60" r="24"/></svg><div class="rings-center"><b id="ringCount">0</b><span>KCAL</span></div></div><div class="rings-legend"><button type="button" data-ring="a"><i style="background:#e3a23d"></i><span>MOVE</span><b>124%</b><small>620 / 500 kcal</small></button><button type="button" data-ring="b"><i style="background:#e8e5d8"></i><span>EXERCISE</span><b>78%</b><small>47 / 60 min</small></button><button type="button" data-ring="c"><i style="background:#aebda4"></i><span>STAND</span><b>58%</b><small>7 / 12 hrs</small></button></div></div><button class="chart-replay" type="button" id="ringsReplay">重播增长</button></div></div>
+        <div class="comp__foot"><span class="comp__hint">点「重播增长」，看从零画到当前值</span><button class="prompt-btn" data-prompt="0">提示词</button></div></article>
+
+      <article class="comp" id="c2"><div class="comp__head"><span class="comp__no">02</span><div class="comp__title"><h3>打卡热力格 <em>Heatmap</em></h3><p>一年铺成一面格子，断档一眼可见。</p></div><span class="comp__src">Ep.06</span></div>
+        <div class="stage stage--pine"><div class="chart-panel heat-panel"><div class="chart-head"><span class="chart-no">02</span><b>Tally</b><span class="chart-eng">Insights</span><span class="chart-icon"></span></div><span class="chart-label">STREAK HEATMAP</span><div class="heat-month"><span>JUN</span><span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span></div><div class="heat-grid" id="heatGrid"></div><div class="heat-detail" id="heatDetail"><b id="heatDate">SEP 12</b><strong id="heatSessions">3</strong><span>SESSIONS · 当天记录</span></div><div class="heat-foot"><div class="heat-legend">LESS <i style="background:#2a2f28"></i><i style="background:#5a604c"></i><i style="background:#8c8b63"></i><i style="background:#8fc0b3"></i> MORE</div><div class="heat-streak">STREAK<b>26 DAYS</b></div></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点任意一天，看当天的记录详情</span><button class="prompt-btn" data-prompt="1">提示词</button></div></article>
+
+      <article class="comp" id="c3"><div class="comp__head"><span class="comp__no">03</span><div class="comp__title"><h3>仪表盘 <em>Gauge</em></h3><p>只看一个数，半圆比数字更直观。</p></div><span class="comp__src">Ep.06</span></div>
+        <div class="stage stage--dark"><div class="chart-panel gauge-panel"><div class="chart-head"><span class="chart-no">03</span><b>Tally</b><span class="chart-eng">Insights</span><span class="chart-icon"></span></div><span class="chart-label">SCORE GAUGE</span><div class="gauge-stage"><svg class="gauge-svg" viewBox="0 0 200 122"><path d="M 20 100 A 80 80 0 0 1 180 100" pathLength="100" fill="none" stroke="#4a4d45" stroke-width="16" stroke-linecap="butt" stroke-dasharray="33 100" stroke-dashoffset="0"/><path d="M 20 100 A 80 80 0 0 1 180 100" pathLength="100" fill="none" stroke="#dc7462" stroke-width="16" stroke-dasharray="33 100" stroke-dashoffset="-33"/><path d="M 20 100 A 80 80 0 0 1 180 100" pathLength="100" fill="none" stroke="#4a4d45" stroke-width="16" stroke-dasharray="34 100" stroke-dashoffset="-66"/><g class="gauge-needle" id="gaugeNeedle"><line x1="100" y1="100" x2="100" y2="40" stroke="#f3efe3" stroke-width="3" stroke-linecap="round"/><circle cx="100" cy="100" r="5" fill="#f3efe3"/></g></svg><div class="gauge-labels"><span>LOW</span><span>NORMAL</span><span>HIGH</span></div><div class="gauge-score"><b id="gaugeScore">64</b><span>NORMAL</span></div></div><div class="gauge-foot"><span class="gauge-scale">FOCUS SCORE · 0—100</span><button class="chart-replay" type="button" id="gaugeReplay">重测</button></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点「重测」，指针扫入并轻微回弹</span><button class="prompt-btn" data-prompt="2">提示词</button></div></article>
+
+      <article class="comp" id="c4"><div class="comp__head"><span class="comp__no">04</span><div class="comp__title"><h3>柱状图 <em>Bars</em></h3><p>周月切换平滑过渡，按住看值。</p></div><span class="comp__src">Ep.06</span></div>
+        <div class="stage stage--shell"><div class="chart-panel bars-panel"><div class="chart-head"><span class="chart-no">04</span><b>Tally</b><span class="chart-eng">Insights</span><span class="chart-icon"></span></div><div class="bars-top"><div><span class="chart-label">DAILY AVG</span><b id="barAvg">46 MIN</b></div><div class="seg-mini" id="barsView"><button class="is-on" type="button" data-view="week">WEEK</button><button type="button" data-view="month">MONTH</button></div></div><div class="bars-plot" id="barsPlot"><button class="bar" type="button" aria-label="周一 34 分钟" data-week="34" data-month="52" data-label="MON"><i style="--h:34%"></i></button><button class="bar" type="button" aria-label="周二 48 分钟" data-week="48" data-month="38" data-label="TUE"><i style="--h:48%"></i></button><button class="bar" type="button" aria-label="周三 30 分钟" data-week="30" data-month="66" data-label="WED"><i style="--h:30%"></i></button><button class="bar" type="button" aria-label="周四 57 分钟" data-week="57" data-month="48" data-label="THU"><i style="--h:57%"></i></button><button class="bar" type="button" aria-label="周五 42 分钟" data-week="42" data-month="72" data-label="FRI"><i style="--h:42%"></i></button><button class="bar" type="button" aria-label="周六 71 分钟" data-week="71" data-month="58" data-label="SAT"><i style="--h:71%"></i></button><button class="bar" type="button" aria-label="周日 54 分钟" data-week="54" data-month="40" data-label="SUN"><i style="--h:54%"></i></button><div class="bar-tip" id="barTip">57 MIN</div></div><p class="bars-caption">按住任意一根柱子，其余变暗并显示数值。</p></div></div>
+        <div class="comp__foot"><span class="comp__hint">切周/月看柱高过渡，按住某根看值</span><button class="prompt-btn" data-prompt="3">提示词</button></div></article>
+
+      <article class="comp" id="c5"><div class="comp__head"><span class="comp__no">05</span><div class="comp__title"><h3>专注分段图 <em>Focus</em></h3><p>一天排成一条时间轴，横向滑动看时刻。</p></div><span class="comp__src">Ep.06</span></div>
+        <div class="stage stage--dark"><div class="chart-panel focus-chart"><div class="chart-head"><span class="chart-no">05</span><b>Tally</b><span class="chart-eng">Insights</span><span class="chart-icon"></span></div><div class="focus-main"><div><span class="chart-label">FOCUS BLOCKS</span><div class="focus-time" id="focusTime">16:20</div></div><span class="focus-phase" id="focusPhase">NORMAL</span></div><div class="focus-plot" id="focusPlot"><div class="focus-blocks"><div class="focus-rail"></div><div id="focusBlocks"></div><div class="focus-playhead" id="focusPlayhead"><i></i></div></div><div class="focus-axis"><span>09:00</span><span>11:00</span><span>13:00</span><span>15:00</span><span>17:00</span></div></div><div class="focus-legend"><span><i style="background:#6f746c"></i>BREAK 1H 20M</span><span><i style="background:#aab99f"></i>NORMAL 4H 30M</span><span><i style="background:#c4c764"></i>DEEP 2H 10M</span></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">在图上横向拖动，看顶部时刻与阶段</span><button class="prompt-btn" data-prompt="4">提示词</button></div></article>
+
+      <article class="comp" id="c6"><div class="comp__head"><span class="comp__no">06</span><div class="comp__title"><h3>范围折线图 <em>Range</em></h3><p>切换范围，线条平滑变形，面积同步。</p></div><span class="comp__src">Ep.06</span></div>
+        <div class="stage stage--linen"><div class="chart-panel line-panel"><div class="chart-head"><span class="chart-no">06</span><b>Tally</b><span class="chart-eng">Insights</span><span class="chart-icon"></span></div><div class="line-top"><div><span class="chart-label">DAILY STEPS</span><b id="lineValue">8.8K</b></div><div class="seg-mini" id="lineView"><button type="button" data-view="1W">1W</button><button type="button" data-view="1M">1M</button><button class="is-on" type="button" data-view="1Y">1Y</button></div></div><svg class="line-svg" viewBox="0 0 300 120" aria-label="步数范围折线图"><defs><linearGradient id="lineArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9a7d6" stop-opacity=".36"/><stop offset="1" stop-color="#c9a7d6" stop-opacity="0"/></linearGradient></defs><g stroke="rgba(255,255,255,.09)" stroke-width="1"><line x1="6" y1="26" x2="294" y2="26"/><line x1="6" y1="54" x2="294" y2="54"/><line x1="6" y1="82" x2="294" y2="82"/><line x1="6" y1="104" x2="294" y2="104"/></g><path id="lineAreaPath" fill="url(#lineArea)" d=""/><path id="linePath" fill="none" stroke="#c9a7d6" stroke-width="2" stroke-linecap="round" d=""/><circle id="lineDot" r="3.5" fill="#e9e4d8" stroke="#c9a7d6" stroke-width="2" cx="294" cy="40"/></svg><div class="line-axis" id="lineAxis"><span>JAN</span><span>APR</span><span>JUL</span><span>OCT</span></div><p class="line-caption">切换 1W / 1M / 1Y · 线条与面积一起变形</p></div></div>
+        <div class="comp__foot"><span class="comp__hint">切换三个范围，盯住线条与面积的过渡</span><button class="prompt-btn" data-prompt="5">提示词</button></div></article>
+
+      <article class="comp" id="c7"><div class="comp__head"><span class="comp__no">07</span><div class="comp__title"><h3>目标线 <em>Goal</em></h3><p>拖动目标线，过线的柱子实时亮起。</p></div><span class="comp__src">Ep.06</span></div>
+        <div class="stage stage--shell"><div class="chart-panel goal-panel"><div class="chart-head"><span class="chart-no">07</span><b>Tally</b><span class="chart-eng">Insights</span><span class="chart-icon"></span></div><div class="goal-top"><div><span class="chart-label">GOAL LINE</span><div class="goal-days"><span id="goalDays">3</span><small> / 7</small></div></div><span class="goal-badge">GOAL <b id="goalValue">7.0K</b></span></div><div class="goal-plot" id="goalPlot"><div class="goal-bars"><div class="goal-bar" style="--h:60%"><i></i><span>M</span></div><div class="goal-bar" style="--h:69%"><i></i><span>T</span></div><div class="goal-bar" style="--h:53%"><i></i><span>W</span></div><div class="goal-bar" style="--h:87%"><i></i><span>T</span></div><div class="goal-bar" style="--h:79%"><i></i><span>F</span></div><div class="goal-bar" style="--h:91%"><i></i><span>S</span></div><div class="goal-bar" style="--h:62%"><i></i><span>S</span></div><div class="goal-line" id="goalLine"><span class="goal-handle"></span></div></div></div><p class="bars-caption">上下拖动虚线，顶部实时显示达标天数。</p></div></div>
+        <div class="comp__foot"><span class="comp__hint">拖动虚线或右侧圆点，改变目标</span><button class="prompt-btn" data-prompt="6">提示词</button></div></article>
+
+      <article class="comp" id="c8"><div class="comp__head"><span class="comp__no">08</span><div class="comp__title"><h3>分段占比条 <em>Stacked</em></h3><p>一整条分占比，放哪都不占地方。</p></div><span class="comp__src">Ep.06</span></div>
+        <div class="stage stage--pine"><div class="chart-panel stacked-panel"><div class="chart-head"><span class="chart-no">08</span><b>Tally</b><span class="chart-eng">Insights</span><span class="chart-icon"></span></div><div class="stack-head"><div><span class="chart-label">STACKED SHARE</span><b>9H 40M</b></div><span class="chart-label">TODAY</span></div><div class="stack-wrap"><div class="stack-tip" id="stackTip">Meetings 22%</div><div class="stack-bar" id="stackBar"><button class="stack-seg" type="button" data-name="Focus" data-pct="38" style="flex-basis:38%;background:#e0b13f" aria-label="专注 38%"></button><button class="stack-seg" type="button" data-name="Meetings" data-pct="22" style="flex-basis:22%;background:#b8c2b1" aria-label="会议 22%"></button><button class="stack-seg" type="button" data-name="Learning" data-pct="16" style="flex-basis:16%;background:#a19578" aria-label="学习 16%"></button><button class="stack-seg" type="button" data-name="Rest" data-pct="24" style="flex-basis:24%;background:#e6e1d6" aria-label="休息 24%"></button></div></div><div class="stack-legend" id="stackLegend"><button type="button" data-name="Focus"><i style="background:#e0b13f"></i><span>Focus</span><b>38%</b></button><button type="button" data-name="Meetings"><i style="background:#b8c2b1"></i><span>Meetings</span><b>22%</b></button><button type="button" data-name="Learning"><i style="background:#a19578"></i><span>Learning</span><b>16%</b></button><button type="button" data-name="Rest"><i style="background:#e6e1d6"></i><span>Rest</span><b>24%</b></button></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点任意一段，看它抽出并显示占比</span><button class="prompt-btn" data-prompt="7">提示词</button></div></article>
+
+      <article class="comp" id="c9"><div class="comp__head"><span class="comp__no">09</span><div class="comp__title"><h3>环形占比图 <em>Share</em></h3><p>各段依次画出，点击外移并换中心字。</p></div><span class="comp__src">Ep.06</span></div>
+        <div class="stage stage--dark"><div class="chart-panel share-panel"><div class="chart-head"><span class="chart-no">09</span><b>Tally</b><span class="chart-eng">Insights</span><span class="chart-icon"></span></div><span class="chart-label">SHARE RING</span><div class="share-body"><div class="share-donut"><svg class="share-svg" viewBox="0 0 120 120" id="shareSvg" aria-label="分类占比环形图"><circle cx="60" cy="60" r="44" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="16"/><circle class="share-seg" data-name="Video" data-pct="42" cx="60" cy="60" r="44" stroke="#b98a8a"/><circle class="share-seg" data-name="Reading" data-pct="26" cx="60" cy="60" r="44" stroke="#b9c5ae"/><circle class="share-seg" data-name="Games" data-pct="18" cx="60" cy="60" r="44" stroke="#a89b76"/><circle class="share-seg" data-name="Music" data-pct="14" cx="60" cy="60" r="44" stroke="#8a8a84"/></svg><div class="share-center"><b id="sharePct">26%</b><span id="shareName">Reading</span></div></div><div class="share-legend" id="shareLegend"><button type="button" data-name="Video"><i style="background:#b98a8a"></i><span>Video</span><b>42%</b></button><button class="is-on" type="button" data-name="Reading"><i style="background:#b9c5ae"></i><span>Reading</span><b>26%</b></button><button type="button" data-name="Games"><i style="background:#a89b76"></i><span>Games</span><b>18%</b></button><button type="button" data-name="Music"><i style="background:#8a8a84"></i><span>Music</span><b>14%</b></button></div></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点圆环或图例，看分段外移与中心换字</span><button class="prompt-btn" data-prompt="8">提示词</button></div></article>
+
+      <article class="comp" id="c10"><div class="comp__head"><span class="comp__no">10</span><div class="comp__title"><h3>气泡图 <em>Bubble</em></h3><p>圆的大小就是数量，点一个放大居中。</p></div><span class="comp__src">Ep.06</span></div>
+        <div class="stage stage--sage"><div class="chart-panel bubble-panel"><div class="chart-head"><span class="chart-no">10</span><b>Tally</b><span class="chart-eng">Insights</span><span class="chart-icon"></span></div><div class="bubble-head"><span class="chart-label">BUBBLE CHART</span><span class="bubble-hint" id="bubbleHint">大小即数量 · 点击居中</span></div><div class="bubble-area" id="bubbleArea"><button class="bubble bubble-1" type="button" data-name="Yoga" data-value="64"><b>Yoga</b><small>64 MIN</small></button><button class="bubble bubble-2" type="button" data-name="Walk" data-value="42"><b>Walk</b><small>42 MIN</small></button><button class="bubble bubble-3" type="button" data-name="Run" data-value="28"><b>Run</b><small>28 MIN</small></button><button class="bubble bubble-4" type="button" data-name="Gym" data-value="20"><b>Gym</b></button><button class="bubble bubble-5" type="button" data-name="Bike" data-value="26"><b>Bike</b></button><button class="bubble bubble-6" type="button" data-name="Swim" data-value="18"><b>Swim</b></button></div></div></div>
+        <div class="comp__foot"><span class="comp__hint">点任意气泡，看它居中、其余被推开</span><button class="prompt-btn" data-prompt="9">提示词</button></div></article>
+    </div>
+  </section>
+</main>
+<section class="next"><div class="wrap next__inner"><div><p>Episode 06 complete</p><h3>回到专题库，<em>继续挑</em></h3></div><a href="library.html">返回专题库 <span aria-hidden="true">↗</span></a></div></section>
+<footer class="footer"><div class="wrap"><div class="footer__grid"><p class="footer__title">数据不只被看见，<br>还会<em>回答</em>。</p><div class="footer__meta"><span>内容来源：抖音 @叨叨AI「交互/设计/动效」第 6 集（10 个图表交互控件，2026-09-17）。</span><a href="https://www.douyin.com/video/7686337733195482235" target="_blank" rel="noopener noreferrer">查看原片 ↗</a><span>页面中的演示为按原意重新实现的交互样例；提示词逐条取自原片提示词卡。</span></div></div><div class="footer__base"><span>Touch Library · Episode 06</span><span>Made with restraint · 2026</span></div></div></footer>
+<dialog class="prompt-dialog" id="promptDialog"><div class="dialog-top"><span id="dialogSource">EP.06 / 01</span><button class="dialog-close" type="button" id="dialogClose" aria-label="关闭">×</button></div><h3 id="dialogTitle">活动圆环 <em>Rings</em></h3><p id="dialogText"></p><div class="dialog-foot"><span>取自原片提示词卡</span><button class="dialog-copy" type="button" id="dialogCopy"><svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg><span>复制提示词</span></button></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const prompts = [
+    { title: '活动圆环', en: 'Rings', text: '做一组同心活动圆环，进入时从零画到当前值，中心数字同步增长，超出部分叠加深色。' },
+    { title: '打卡热力格', en: 'Heatmap', text: '做一个打卡热力格，按次数分五档深浅，点击某一天弹出当天详情。' },
+    { title: '仪表盘', en: 'Gauge', text: '做一个半圆仪表盘，刻度分三段颜色，指针进入时扫到当前值，带轻微回弹。' },
+    { title: '柱状图', en: 'Bars', text: '做一个柱状图，切换周和月时柱高平滑过渡，按住某根时其余变暗并显示数值。' },
+    { title: '专注分段图', en: 'Focus', text: '做一个专注分段图，按阶段区分高度和颜色，横向滑动时顶部显示当前时刻和阶段。' },
+    { title: '范围折线图', en: 'Range', text: '做一个折线图，顶部切换一周、一月、一年，线条平滑变形到新数据，面积渐变同步过渡。' },
+    { title: '目标线', en: 'Goal', text: '做一个带可拖动目标线的柱状图，拖动时过线的柱子高亮，顶部实时显示达标天数。' },
+    { title: '分段占比条', en: 'Stacked', text: '做一条分段占比条，段间留细缝，点击某段时抽出并显示名称和百分比。' },
+    { title: '环形占比图', en: 'Share', text: '做一个环形占比图，各段依次顺时针画出，点击某段外移高亮，中心显示该段名称和百分比。' },
+    { title: '气泡图', en: 'Bubble', text: '做一个气泡图，圆的大小表示数量，点击某个气泡放大居中，其余气泡被推开。' }
+  ];
+  const toast = $('#toast');
+  let toastTimer;
+  const showToast = message => {
+    toast.textContent = message;
+    toast.classList.add('is-open');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-open'), 1800);
+  };
+  const copyText = async text => {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch (err) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand('copy'); ta.remove(); return ok;
+      } catch (err2) { return false; }
+    }
+  };
+  const dialog = $('#promptDialog');
+  let activePrompt = 0;
+  const openPrompt = index => {
+    activePrompt = Number(index);
+    const item = prompts[activePrompt];
+    $('#dialogTitle').innerHTML = `${item.title} <em>${item.en}</em>`;
+    $('#dialogText').textContent = item.text;
+    $('#dialogSource').textContent = `EP.06 / ${String(activePrompt + 1).padStart(2, '0')}`;
+    dialog.showModal();
+    document.body.classList.add('is-locked');
+  };
+  const closeDialog = () => { dialog.close(); document.body.classList.remove('is-locked'); };
+  $$('.prompt-btn').forEach(btn => btn.addEventListener('click', () => openPrompt(btn.dataset.prompt)));
+  $('#dialogClose').addEventListener('click', closeDialog);
+  dialog.addEventListener('close', () => document.body.classList.remove('is-locked'));
+  dialog.addEventListener('click', e => {
+    const rect = dialog.getBoundingClientRect();
+    if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) closeDialog();
+  });
+  $('#dialogCopy').addEventListener('click', async () => {
+    const ok = await copyText(prompts[activePrompt].text);
+    showToast(ok ? '提示词已复制' : '复制失败，请检查浏览器权限');
+  });
+  $('#copyAll').addEventListener('click', async () => {
+    const text = prompts.map((item, i) => `${String(i + 1).padStart(2, '0')}. ${item.title}\n${item.text}`).join('\n\n');
+    const ok = await copyText(text);
+    showToast(ok ? '10 条提示词已全部复制' : '复制失败，请检查浏览器权限');
+  });
+  const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
+  const grab = (el, id) => { try { el.setPointerCapture(id); } catch (err) {} };
+
+  /* 1 rings */
+  const ringA = $('#ringA');
+  if (ringA) {
+    const ringB = $('#ringB');
+    const ringC = $('#ringC');
+    const ringOver = $('#ringOver');
+    const count = $('#ringCount');
+    const cA = 2 * Math.PI * 50, cB = 2 * Math.PI * 37, cC = 2 * Math.PI * 24;
+    const rings = [ringA, ringB, ringC];
+    const targets = [['a', 1], ['b', .78], ['c', .58]];
+    let countRaf = 0;
+    const animateCount = () => {
+      cancelAnimationFrame(countRaf);
+      const start = performance.now();
+      const tick = now => {
+        const t = clamp((now - start) / 1100, 0, 1);
+        const ease = 1 - Math.pow(1 - t, 3);
+        count.textContent = Math.round(620 * ease);
+        if (t < 1) countRaf = requestAnimationFrame(tick);
+      };
+      countRaf = requestAnimationFrame(tick);
+    };
+    const draw = () => {
+      rings.forEach(ring => { ring.style.transition = 'none'; ring.style.strokeDasharray = `${ring === ringA ? cA : ring === ringB ? cB : cC} ${ring === ringA ? cA : ring === ringB ? cB : cC}`; });
+      ringB.style.strokeDashoffset = String(cB);
+      ringC.style.strokeDashoffset = String(cC);
+      ringA.style.strokeDashoffset = String(cA);
+      ringOver.style.transition = 'none';
+      ringOver.style.strokeDasharray = `${cA * .24} ${cA}`;
+      ringOver.style.strokeDashoffset = String(cA * .24);
+      count.textContent = '0';
+      void ringA.getBoundingClientRect();
+      requestAnimationFrame(() => {
+        ringA.style.transition = 'stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1)';
+        ringB.style.transition = 'stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1) .08s';
+        ringC.style.transition = 'stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1) .16s';
+        ringA.style.strokeDashoffset = '0';
+        ringB.style.strokeDashoffset = String(cB * (1 - .78));
+        ringC.style.strokeDashoffset = String(cC * (1 - .58));
+        ringOver.style.transition = 'stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1) .18s';
+        ringOver.style.strokeDashoffset = '0';
+        animateCount();
+      });
+    };
+    draw();
+    $('#ringsReplay').addEventListener('click', draw);
+    $$('.rings-legend button').forEach(btn => {
+      const ring = btn.dataset.ring === 'a' ? ringA : btn.dataset.ring === 'b' ? ringB : ringC;
+      const on = () => { ring.classList.add('is-emphasis'); if (btn.dataset.ring === 'a') ringOver.classList.add('is-emphasis'); };
+      const off = () => { ring.classList.remove('is-emphasis'); ringOver.classList.remove('is-emphasis'); };
+      btn.addEventListener('pointerenter', on);
+      btn.addEventListener('pointerleave', off);
+      btn.addEventListener('focus', on);
+      btn.addEventListener('blur', off);
+    });
+  }
+
+  /* 2 heatmap */
+  const heatGrid = $('#heatGrid');
+  if (heatGrid) {
+    const detail = $('#heatDetail');
+    const dateOut = $('#heatDate');
+    const sessionsOut = $('#heatSessions');
+    const start = new Date(2026, 5, 1);
+    const monthNames = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    for (let i = 0; i < 182; i++) {
+      const date = new Date(start.getTime() + i * 86400000);
+      const raw = (i * 13 + 5) % 11;
+      const level = raw < 3 ? 0 : raw < 5 ? 1 : raw < 7 ? 2 : raw < 9 ? 3 : 4;
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'heat-cell';
+      cell.dataset.level = String(level);
+      const label = `${monthNames[date.getMonth()]} ${date.getDate()}`;
+      cell.setAttribute('aria-label', `${label}，${level} 次记录`);
+      cell.addEventListener('click', () => {
+        $$('.heat-cell', heatGrid).forEach(item => item.classList.remove('is-on'));
+        cell.classList.add('is-on');
+        dateOut.textContent = label.toUpperCase();
+        sessionsOut.textContent = String(level);
+        detail.classList.add('is-open');
+      });
+      heatGrid.appendChild(cell);
+    }
+  }
+
+  /* 3 gauge */
+  const gaugeNeedle = $('#gaugeNeedle');
+  if (gaugeNeedle) {
+    const gaugeScore = $('#gaugeScore');
+    const value = 64;
+    const angle = -90 + 180 * value / 100;
+    let countRaf = 0;
+    const replay = () => {
+      gaugeNeedle.style.transform = 'rotate(-90deg)';
+      gaugeNeedle.getAnimations().forEach(a => a.cancel());
+      gaugeNeedle.animate([
+        { transform: 'rotate(-90deg)' },
+        { transform: `rotate(${angle + 6}deg)`, offset: .74 },
+        { transform: `rotate(${angle}deg)` }
+      ], { duration: 900, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      cancelAnimationFrame(countRaf);
+      const start = performance.now();
+      const tick = now => {
+        const t = clamp((now - start) / 850, 0, 1);
+        const ease = 1 - Math.pow(1 - t, 3);
+        gaugeScore.textContent = Math.round(value * ease);
+        if (t < 1) countRaf = requestAnimationFrame(tick);
+      };
+      countRaf = requestAnimationFrame(tick);
+    };
+    replay();
+    $('#gaugeReplay').addEventListener('click', replay);
+  }
+
+  /* 4 bars */
+  const barsPlot = $('#barsPlot');
+  if (barsPlot) {
+    const bars = $$('.bar', barsPlot);
+    const tip = $('#barTip');
+    const view = $('#barsView');
+    const avg = $('#barAvg');
+    let mode = 'week';
+    let held = null;
+    const setMode = next => {
+      mode = next;
+      $$('button', view).forEach(btn => btn.classList.toggle('is-on', btn.dataset.view === next));
+      bars.forEach(bar => {
+        const value = Number(bar.dataset[next]);
+        const height = next === 'week' ? value : value;
+        bar.querySelector('i').style.setProperty('--h', `${height}%`);
+        bar.setAttribute('aria-label', `${bar.dataset.label} ${value} 分钟`);
+      });
+      const values = bars.map(bar => Number(bar.dataset[next]));
+      avg.textContent = `${Math.round(values.reduce((a, b) => a + b, 0) / values.length)} MIN`;
+      hideTip();
+    };
+    const hideTip = () => {
+      tip.classList.remove('is-on');
+      barsPlot.classList.remove('is-held');
+      bars.forEach(bar => bar.classList.remove('is-held'));
+      held = null;
+    };
+    const showTip = bar => {
+      if (held === bar) return;
+      held = bar;
+      barsPlot.classList.add('is-held');
+      bars.forEach(item => item.classList.toggle('is-held', item === bar));
+      const value = Number(bar.dataset[mode]);
+      tip.textContent = `${value} MIN`;
+      const plotRect = barsPlot.getBoundingClientRect();
+      const barRect = bar.getBoundingClientRect();
+      const inner = bar.querySelector('i').getBoundingClientRect();
+      tip.style.left = `${barRect.left - plotRect.left + barRect.width / 2}px`;
+      tip.style.top = `${inner.top - plotRect.top - 4}px`;
+      tip.classList.add('is-on');
+    };
+    bars.forEach(bar => {
+      bar.addEventListener('pointerdown', e => { e.preventDefault(); showTip(bar); });
+      bar.addEventListener('pointerenter', e => { if (e.buttons === 1) showTip(bar); });
+      bar.addEventListener('focus', () => showTip(bar));
+      bar.addEventListener('blur', hideTip);
+    });
+    barsPlot.addEventListener('pointerup', hideTip);
+    barsPlot.addEventListener('pointerleave', hideTip);
+    $$('button', view).forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.view)));
+    setMode('week');
+  }
+
+  /* 5 focus blocks */
+  const focusPlot = $('#focusPlot');
+  if (focusPlot) {
+    const blocksEl = $('#focusBlocks');
+    const timeOut = $('#focusTime');
+    const phaseOut = $('#focusPhase');
+    const playhead = $('#focusPlayhead');
+    const blocks = [
+      { s: 9.0, e: 9.8, l: 'break' },
+      { s: 9.9, e: 11.2, l: 'normal' },
+      { s: 11.2, e: 12.4, l: 'deep' },
+      { s: 12.4, e: 13.0, l: 'break' },
+      { s: 13.0, e: 14.2, l: 'normal' },
+      { s: 14.4, e: 15.4, l: 'deep' },
+      { s: 15.6, e: 16.4, l: 'normal' },
+      { s: 16.5, e: 17.0, l: 'break' }
+    ];
+    const styleFor = level => level === 'deep' ? { bottom: 8, height: 38 } : level === 'normal' ? { bottom: 45, height: 30 } : { bottom: 82, height: 22 };
+    blocks.forEach(block => {
+      const el = document.createElement('div');
+      el.className = 'fblock';
+      el.dataset.level = block.l;
+      el.style.left = `${(block.s - 9) / 8 * 100}%`;
+      el.style.width = `${(block.e - block.s) / 8 * 100}%`;
+      const st = styleFor(block.l);
+      el.style.bottom = `${st.bottom}px`;
+      el.style.height = `${st.height}px`;
+      blocksEl.appendChild(el);
+      block.el = el;
+    });
+    const setTime = time => {
+      time = clamp(time, 9, 17);
+      const h = Math.floor(time);
+      const m = Math.round((time - h) * 60);
+      timeOut.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+      const active = blocks.find(block => time >= block.s && time <= block.e);
+      const phase = active ? active.l.toUpperCase() : 'BREAK';
+      phaseOut.textContent = phase;
+      blocks.forEach(block => block.el.classList.toggle('is-active', active === block));
+      playhead.style.left = `${(time - 9) / 8 * 100}%`;
+      const level = active ? active.l : 'break';
+      const st = styleFor(level);
+      playhead.style.setProperty('--dot', `${st.bottom + st.height / 2}px`);
+      if (active) playhead.querySelector('i').style.background = level === 'deep' ? '#c4c764' : level === 'normal' ? '#aab99f' : '#6f746c';
+    };
+    let dragging = false;
+    const updateFromEvent = e => {
+      const rect = focusPlot.getBoundingClientRect();
+      setTime(9 + clamp((e.clientX - rect.left) / rect.width, 0, 1) * 8);
+    };
+    focusPlot.addEventListener('pointerdown', e => {
+      dragging = true;
+      grab(focusPlot, e.pointerId);
+      updateFromEvent(e);
+    });
+    focusPlot.addEventListener('pointermove', e => { if (dragging) updateFromEvent(e); });
+    const end = () => { dragging = false; };
+    focusPlot.addEventListener('pointerup', end);
+    focusPlot.addEventListener('pointercancel', end);
+    setTime(16.33);
+  }
+
+  /* 6 range line */
+  const linePath = $('#linePath');
+  if (linePath) {
+    const areaPath = $('#lineAreaPath');
+    const dot = $('#lineDot');
+    const lineValue = $('#lineValue');
+    const lineAxis = $('#lineAxis');
+    const view = $('#lineView');
+    const sets = {
+      '1W': { value: '9.2K', labels: ['MON','','WED','','FRI','','SUN',''], pts: [.28,.48,.36,.58,.46,.74,.62,.62] },
+      '1M': { value: '8.4K', labels: ['W1','','W2','','W3','','W4',''], pts: [.34,.46,.4,.54,.48,.6,.56,.66] },
+      '1Y': { value: '8.8K', labels: ['JAN','','APR','','JUL','','OCT',''], pts: [.1,.12,.2,.34,.48,.62,.7,.78] }
+    };
+    let current = '1Y';
+    let values = sets['1Y'].pts.slice();
+    const geo = vals => vals.map((v, i) => ({ x: 6 + i * (288 / (vals.length - 1)), y: 104 - v * 80 }));
+    const smooth = pts => {
+      let d = `M ${pts[0].x} ${pts[0].y}`;
+      for (let i = 1; i < pts.length; i++) {
+        const mid = { x: (pts[i - 1].x + pts[i].x) / 2, y: (pts[i - 1].y + pts[i].y) / 2 };
+        d += ` Q ${pts[i - 1].x} ${pts[i - 1].y} ${mid.x} ${mid.y}`;
+      }
+      const last = pts[pts.length - 1];
+      d += ` L ${last.x} ${last.y}`;
+      return d;
+    };
+    const paint = vals => {
+      const pts = geo(vals);
+      linePath.setAttribute('d', smooth(pts));
+      const last = pts[pts.length - 1];
+      areaPath.setAttribute('d', `${smooth(pts)} L ${last.x} 104 L ${pts[0].x} 104 Z`);
+      dot.setAttribute('cx', last.x);
+      dot.setAttribute('cy', last.y);
+    };
+    const setAxis = labels => {
+      lineAxis.innerHTML = labels.map(label => `<span>${label}</span>`).join('');
+    };
+    const setView = key => {
+      current = key;
+      $$('button', view).forEach(btn => btn.classList.toggle('is-on', btn.dataset.view === key));
+      const target = sets[key].pts.slice();
+      setAxis(sets[key].labels);
+      lineValue.textContent = sets[key].value;
+      const from = values.slice();
+      const start = performance.now();
+      const tick = now => {
+        const t = clamp((now - start) / 480, 0, 1);
+        const ease = 1 - Math.pow(1 - t, 3);
+        const next = from.map((v, i) => v + (target[i] - v) * ease);
+        paint(next);
+        if (t < 1) requestAnimationFrame(tick);
+        else values = target;
+      };
+      requestAnimationFrame(tick);
+      showToast(`已切换到 ${key}`);
+    };
+    $$('button', view).forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
+    setAxis(sets['1Y'].labels);
+    paint(values);
+  }
+
+  /* 7 goal */
+  const goalLine = $('#goalLine');
+  if (goalLine) {
+    const goalPlot = $('#goalPlot');
+    const goalDays = $('#goalDays');
+    const goalValue = $('#goalValue');
+    const bars = $$('.goal-bar', goalPlot);
+    const barValues = [5.4, 6.2, 4.8, 7.8, 7.1, 8.2, 5.6];
+    let goal = 7;
+    const paintGoal = g => {
+      goal = clamp(g, 0, 9);
+      goalLine.style.bottom = `${(goal / 9) * 100}%`;
+      goalValue.textContent = `${goal.toFixed(1)}K`;
+      const hits = barValues.filter(v => v >= goal).length;
+      goalDays.textContent = String(hits);
+      bars.forEach((bar, i) => bar.classList.toggle('is-hit', barValues[i] >= goal));
+    };
+    const updateFromY = clientY => {
+      const rect = $('.goal-bars', goalPlot).getBoundingClientRect();
+      paintGoal((rect.bottom - clientY) / rect.height * 9);
+    };
+    goalLine.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      grab(goalLine, e.pointerId);
+      const move = ev => updateFromY(ev.clientY);
+      const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); };
+      document.addEventListener('pointermove', move);
+      document.addEventListener('pointerup', up, { once: true });
+    });
+    goalPlot.addEventListener('click', e => {
+      if (e.target.closest('.goal-line')) return;
+      updateFromY(e.clientY);
+    });
+    paintGoal(7);
+  }
+
+  /* 8 stacked */
+  const stackBar = $('#stackBar');
+  if (stackBar) {
+    const segs = $$('.stack-seg', stackBar);
+    const tip = $('#stackTip');
+    const legend = $$('#stackLegend button');
+    const select = name => {
+      segs.forEach(seg => seg.classList.toggle('is-out', seg.dataset.name === name));
+      stackBar.classList.add('has-out');
+      legend.forEach(btn => btn.classList.toggle('is-on', btn.dataset.name === name));
+      const seg = segs.find(item => item.dataset.name === name);
+      tip.textContent = `${name} ${seg.dataset.pct}%`;
+      tip.style.left = `${seg.offsetLeft + seg.offsetWidth / 2}px`;
+      tip.classList.add('is-on');
+    };
+    segs.forEach(seg => seg.addEventListener('click', () => select(seg.dataset.name)));
+    legend.forEach(btn => btn.addEventListener('click', () => select(btn.dataset.name)));
+    select('Meetings');
+  }
+
+  /* 9 share ring */
+  const shareSvg = $('#shareSvg');
+  if (shareSvg) {
+    const segs = $$('.share-seg', shareSvg);
+    const legend = $$('#shareLegend button');
+    const sharePct = $('#sharePct');
+    const shareName = $('#shareName');
+    const C = 2 * Math.PI * 44;
+    let offset = 0;
+    segs.forEach((seg, i) => {
+      const pct = Number(seg.dataset.pct);
+      seg.style.strokeDashoffset = String(-offset / 100 * C);
+      seg.style.strokeDasharray = `0 ${C}`;
+      setTimeout(() => {
+        seg.style.strokeDasharray = `${pct / 100 * C} ${C}`;
+      }, 120 + i * 130);
+      offset += pct;
+      seg.style.pointerEvents = 'stroke';
+    });
+    const select = name => {
+      let active = null;
+      segs.forEach(seg => {
+        const on = seg.dataset.name === name;
+        seg.classList.toggle('is-active', on);
+        seg.style.transform = '';
+        if (on) active = seg;
+      });
+      legend.forEach(btn => btn.classList.toggle('is-on', btn.dataset.name === name));
+      if (!active) return;
+      let startPct = 0;
+      segs.forEach(seg => {
+        if (seg === active) return;
+        if (!active.classList.contains('is-active')) return;
+        startPct += Number(seg.dataset.pct);
+      });
+      // compute the offset by walking data in order
+      let p = 0;
+      for (const seg of segs) {
+        if (seg === active) break;
+        p += Number(seg.dataset.pct);
+      }
+      const midAngle = ((p + Number(active.dataset.pct) / 2) / 100) * Math.PI * 2;
+      active.style.transform = `translate(${Math.cos(midAngle) * 6}px, ${Math.sin(midAngle) * 6}px)`;
+      sharePct.textContent = `${active.dataset.pct}%`;
+      shareName.textContent = active.dataset.name;
+    };
+    segs.forEach(seg => {
+      seg.setAttribute('tabindex', '0');
+      seg.addEventListener('click', () => select(seg.dataset.name));
+      seg.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(seg.dataset.name); } });
+    });
+    legend.forEach(btn => btn.addEventListener('click', () => select(btn.dataset.name)));
+    setTimeout(() => select('Reading'), 720);
+  }
+
+  /* 10 bubble */
+  const bubbleArea = $('#bubbleArea');
+  if (bubbleArea) {
+    const bubbles = $$('.bubble', bubbleArea);
+    const hint = $('#bubbleHint');
+    let current = null;
+    const reset = () => {
+      bubbles.forEach(bubble => {
+        bubble.style.transform = '';
+        bubble.style.opacity = '';
+        bubble.classList.remove('is-focus');
+      });
+      hint.textContent = '大小即数量 · 点击居中';
+      current = null;
+    };
+    bubbles.forEach(bubble => bubble.addEventListener('click', () => {
+      if (current === bubble) { reset(); return; }
+      bubbles.forEach(item => {
+        item.style.transform = '';
+        item.style.opacity = '';
+        item.classList.remove('is-focus');
+      });
+      current = bubble;
+      const area = bubbleArea.getBoundingClientRect();
+      const rect = bubble.getBoundingClientRect();
+      const dx = area.width / 2 - (rect.left - area.left + rect.width / 2);
+      const dy = area.height / 2 - (rect.top - area.top + rect.height / 2);
+      bubble.classList.add('is-focus');
+      bubble.style.transform = `translate(${dx}px, ${dy}px) scale(1.28)`;
+      bubble.style.opacity = '1';
+      bubbles.forEach(item => {
+        if (item === bubble) return;
+        const ir = item.getBoundingClientRect();
+        const ix = ir.left - area.left + ir.width / 2 - area.width / 2;
+        const iy = ir.top - area.top + ir.height / 2 - area.height / 2;
+        const len = Math.max(Math.hypot(ix, iy), 1);
+        item.style.transform = `translate(${(ix / len) * 12}px, ${(iy / len) * 10}px) scale(.88)`;
+        item.style.opacity = '.58';
+      });
+      hint.textContent = `${bubble.dataset.name} · ${bubble.dataset.value} MIN · 居中`;
+    }));
+    bubbleArea.addEventListener('click', e => { if (e.target === bubbleArea) reset(); });
+  }
+})();
+</script>
+</body>
+</html>

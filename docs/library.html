@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="touch 交互资料库：整理 App、小程序与 Dashboard 的组件反馈、布局、菜单、排版、弹出交互、组件合集、后台排版、按钮交互和交互细节，附可直接交给 AI 的提示词。">
+<title>Touch Library · 交互资料库</title>
+<style>
+:root{
+  --bg:#f5f3ee;--paper:#fbfaf7;--ink:#171614;--ink-soft:#403c36;--muted:#6d675e;--faint:#8f887c;
+  --line:rgba(23,22,20,.13);--line-soft:rgba(23,22,20,.075);--accent:#4d6b5c;--clay:#ad875d;
+  --sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","STSong",serif;
+  --mono:"SFMono-Regular",ui-monospace,Consolas,"Liberation Mono",monospace;
+  --ease:cubic-bezier(.22,.8,.24,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:#d7e4de;color:#14241f}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+h1,h2,h3,h4,p,ul{margin:0}
+ul{padding:0;list-style:none}
+svg{display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{width:min(1180px,calc(100% - 56px));margin-inline:auto}
+.mono{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,243,238,.83);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--line-soft)}
+.topbar__in{height:66px;display:flex;align-items:center;gap:24px}
+.brand{display:flex;align-items:center;gap:11px;flex:none}
+.brand__mark{width:29px;height:29px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:14px;line-height:1}
+.brand__name{font-size:13px;font-weight:600;letter-spacing:.02em}
+.brand__name span{color:var(--muted);font-weight:400}
+.top-label{margin-left:12px;padding-left:18px;border-left:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
+.nav-link{margin-left:auto;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--muted);font-size:11.5px;white-space:nowrap;transition:border-color .25s,color .25s}
+.nav-link:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}
+.nav-link svg{width:11px;height:11px}
+.hero{padding:78px 0 0;overflow:hidden}
+.hero__top{display:flex;justify-content:space-between;gap:24px;color:var(--muted)}
+.hero__top span:last-child{text-align:right}
+.hero h1{margin-top:36px;font-size:clamp(56px,9.6vw,128px);line-height:.94;letter-spacing:-.065em;font-weight:600}
+.hero h1 em{display:block;font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.045em;color:var(--accent);white-space:nowrap}
+.hero__lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(34px,8vw,110px);align-items:end;margin-top:42px;padding-bottom:48px}
+.hero__lead{font-size:clamp(17px,2vw,24px);line-height:1.55;letter-spacing:-.015em;max-width:24em;color:var(--ink-soft)}
+.hero__lead span{color:var(--muted)}
+.hero__aside{padding-bottom:5px;color:var(--muted);font-size:12.5px;line-height:1.85}
+.hero__aside strong{display:block;color:var(--ink);font-weight:500;font-size:12px;margin-bottom:8px}
+.hero__meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.hero__meta div{padding:18px 0 21px;border-right:1px solid var(--line-soft)}
+.hero__meta div:last-child{border-right:0}
+.hero__meta div:not(:first-child){padding-left:clamp(14px,2.4vw,30px)}
+.hero__meta b{display:block;font-family:var(--serif);font-size:27px;line-height:1.1;font-weight:400;letter-spacing:-.02em}
+.hero__meta span{display:block;margin-top:5px;font-size:11px;color:var(--muted)}
+.collection{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.collection--featured{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{position:relative;display:flex;flex-direction:column;min-height:258px;padding:25px;border:1px solid var(--line);border-radius:20px;background:rgba(251,250,247,.55);overflow:hidden;transition:border-color .25s,background .25s,transform .3s var(--ease)}
+.card--link:hover{border-color:rgba(23,22,20,.3);background:var(--paper);transform:translateY(-2px)}
+.card--featured{background:#eef0e6;border-color:rgba(77,107,92,.18)}
+.card--featured:hover{background:#e9ecdd;border-color:rgba(77,107,92,.35)}
+.card--clay{background:#f0e7db;border-color:rgba(173,135,93,.16)}
+.card--blue{background:#e6ecea;border-color:rgba(63,95,107,.15)}
+.card--coral{background:#f1e6e1;border-color:rgba(166,93,70,.16)}
+.card--coral:hover{background:#eee0da;border-color:rgba(166,93,70,.34)}
+.card--olive{background:#ecebda;border-color:rgba(95,107,58,.16)}
+.card--olive:hover{background:#e8e7d3;border-color:rgba(95,107,58,.34)}
+.card--steel{background:#e2e7e5;border-color:rgba(56,90,99,.15)}
+.card--steel:hover{background:#dce3e0;border-color:rgba(56,90,99,.34)}
+.card--violet{background:#e9e6f2;border-color:rgba(91,85,160,.16)}
+.card--violet:hover{background:#e4e0ef;border-color:rgba(91,85,160,.34)}
+.card--rose{background:#f0e3e5;border-color:rgba(141,79,91,.16)}
+.card--rose:hover{background:#ecdcdf;border-color:rgba(141,79,91,.34)}
+.card--graphite{background:#e6e6e0;border-color:rgba(51,77,75,.16)}
+.card--graphite:hover{background:#e0e1da;border-color:rgba(51,77,75,.34)}
+.card--archive{background:#e7e6df;border-color:rgba(75,95,104,.16)}
+.card--archive:hover{background:#e1e1d8;border-color:rgba(75,95,104,.34)}
+.card--note{min-height:218px;background:transparent;border-style:dashed;justify-content:space-between}
+.card__top{display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--faint)}
+.card__no{font-family:var(--mono);font-size:9px;letter-spacing:.12em}
+.card__state{border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-family:var(--mono);font-size:7px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.card h2{font-size:clamp(24px,3vw,35px);line-height:1.12;letter-spacing:-.045em;font-weight:600;margin-top:28px;max-width:12em}
+.card h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--muted);letter-spacing:-.025em}
+.card p{margin-top:12px;font-size:12.5px;line-height:1.8;color:var(--muted);max-width:32em;flex:1}
+.card__foot{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:22px;padding-top:13px;border-top:1px solid rgba(23,22,20,.09)}
+.card__tags{display:flex;flex-wrap:wrap;gap:4px}
+.card__tags span{font-family:var(--mono);font-size:7px;letter-spacing:.03em;color:#8d8376;border:1px solid rgba(23,22,20,.1);border-radius:99px;padding:4px 7px}
+.card__arrow{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--ink-soft);white-space:nowrap}
+.card__arrow svg{width:11px;height:11px;transition:transform .25s var(--ease)}
+.card--link:hover .card__arrow svg{transform:translate(2px,-2px)}
+.card--upcoming{min-height:218px;opacity:.74}
+.card--upcoming h2{font-size:23px;margin-top:26px}
+.card--upcoming .card__foot{border-top-color:rgba(23,22,20,.06)}
+.note{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin:32px 0 0;padding-top:20px;border-top:1px solid var(--line);flex-wrap:wrap}
+.note p{font-size:11.5px;line-height:1.8;color:var(--muted);max-width:42em}
+.note span{font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
+.footer{border-top:1px solid var(--line);padding:52px 0 40px;margin-top:72px}
+.footer__grid{display:flex;justify-content:space-between;gap:36px;flex-wrap:wrap}
+.footer__title{font-family:var(--serif);font-size:clamp(23px,3vw,32px);line-height:1.25;letter-spacing:-.025em}
+.footer__title em{font-style:italic}
+.footer__meta{display:grid;gap:10px;font-size:11px;color:var(--muted);max-width:390px}
+.footer__meta a{width:fit-content;border-bottom:1px solid var(--line);padding-bottom:2px;transition:color .2s,border-color .2s}
+.footer__meta a:hover{color:var(--ink);border-color:var(--ink)}
+.footer__base{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:34px;padding-top:15px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in-view{opacity:1;transform:none}
+@media (max-width:900px){
+  .hero__lower{grid-template-columns:1fr;gap:26px}
+  .collection,.collection--featured{grid-template-columns:1fr}
+  .card{min-height:auto}
+}
+@media (max-width:760px){
+  .wrap{width:calc(100% - 36px)}
+  .topbar__in{height:58px;gap:10px}
+  .brand__name{display:none}
+  .top-label{display:none}
+  .nav-link{padding:6px 10px;font-size:10px}
+  .hero{padding-top:50px}
+  .hero__top{font-size:8px;letter-spacing:.08em}
+  .hero h1{font-size:clamp(44px,13.8vw,68px)}
+  .hero__lower{margin-top:30px;padding-bottom:36px}
+  .hero__lead{font-size:16.5px}
+  .hero__meta{grid-template-columns:1fr 1fr}
+  .hero__meta div{padding:15px 0}
+  .hero__meta div:nth-child(2){border-right:0}
+  .hero__meta div:nth-child(3){border-top:1px solid var(--line-soft)}
+  .hero__meta div:nth-child(4){border-top:1px solid var(--line-soft)}
+  .hero__meta div:not(:first-child){padding-left:0}
+  .hero__meta div:nth-child(even){padding-left:14px}
+  .hero__meta b{font-size:23px}
+  .card{padding:20px;border-radius:16px}
+  .card h2{font-size:27px;margin-top:22px}
+  .card--upcoming h2{font-size:22px}
+  .note{margin-top:22px}
+  .footer{padding:38px 0 30px;margin-top:48px}
+  .footer__grid{flex-direction:column;gap:22px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<a class="sr-only" href="#library">跳到资料库</a>
+<header class="topbar">
+  <div class="wrap topbar__in">
+    <a class="brand" href="selected-10.html" aria-label="点触 · 返回精选">
+      <span class="brand__mark">t</span>
+      <span class="brand__name">点触 <span>/ touch</span></span>
+    </a>
+    <span class="top-label">Interactive Library · Index</span>
+    <a class="nav-link" href="selected-10.html">
+      <span>返回精选 10</span>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>
+    </a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero__top mono">
+        <span>Touch Library / Index</span>
+        <span>Collected · 17 live · Ordered by episode</span>
+      </div>
+      <h1>把交互，<em>收进一间屋子</em></h1>
+      <div class="hero__lower">
+        <p class="hero__lead">从「点下去那一下」到菜单、版面、浮层、<br>组件、后台排版、按钮与细节。<br><span>第 1—6 集的组件、选择器、手势、互动、<br>动效与图表，也已经各自成篇。</span></p>
+        <aside class="hero__aside">
+          <strong>已经收齐</strong>
+          十七个专题按集数顺序排列，并保持同一套阅读与复制方式：第 1—6 集的六种交互、第 12 集的反馈组件与第 16 集的布局交互，加上 Dashboard 菜单、排版、浮层、组件合集、后台排版、按钮、交互细节与高级交互。精选 10 条从全库重新挑出，不再另起一套。
+        </aside>
+      </div>
+      <div class="hero__meta">
+        <div><b>17</b><span>已上线专题</span></div>
+        <div><b>144</b><span>已收录交互</span></div>
+        <div><b>00</b><span>待收录专题</span></div>
+        <div><b>100%</b><span>提示词可复制</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="library">
+        <div class="collection collection--featured">
+<a class="card card--link card--featured reveal" href="selected-10.html">
+        <div class="card__top"><span class="card__no">SELECTED / 10</span><span class="card__state">Live</span></div>
+        <h2>常用交互<br><em>精选 10</em></h2>
+        <p>从 18 集、144 个交互里重新挑出的十个日常动作：下拉、吸底操作栏、输入纠错、导航、返回、拖拽、卡片堆叠、圆环与不压暗面板。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 1—18</span><span>10 prompts</span><span>Curated</span></div>
+          <span class="card__arrow">打开精选 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <aside class="card card--note reveal">
+        <div class="card__top"><span class="card__no">INDEX / 01—18</span><span class="card__state">Ordered</span></div>
+        <h2>按集数<br><em>排下来</em></h2>
+        <p>16 个专题从第 1 集一路排到第 18 集。跨集专题按最早一集排列，后台排版特别篇放在最后。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>01 → 18</span><span>16 topics</span><span>Ordered</span></div>
+          <span class="card__arrow">按集数浏览</span>
+        </div>
+      </aside>
+    </div>
+
+    <div class="collection">
+      <a class="card card--link card--olive reveal" href="episode-01-components.html">
+        <div class="card__top"><span class="card__no">EP. 01 / 10</span><span class="card__state">Live</span></div>
+        <h2>组件基础<br><em>Components</em></h2>
+        <p>折叠、分段、滑动确认、翻转卡片、操作卡、筛选胶囊、进度卡、底部操作栏、智能输入与顶部标签。第 1 集的 10 个基础组件样片。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 01</span><span>10 samples</span><span>Components</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--blue reveal" href="episode-02-selectors.html">
+        <div class="card__top"><span class="card__no">EP. 02 / 10</span><span class="card__state">Live</span></div>
+        <h2>选择器<br><em>Selectors</em></h2>
+        <p>单选、分组、本地搜索、远程搜索、多选、树形、日期区间、可新建、拆分按钮与三列导航。第 2 集的 10 个选择器样片。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 02</span><span>10 samples</span><span>Forms</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--clay reveal" href="episode-03-gestures.html">
+        <div class="card__top"><span class="card__no">EP. 03 / 07</span><span class="card__state">Live</span></div>
+        <h2>手势<br><em>Gestures</em></h2>
+        <p>滑到一半返回、按住可取消、文字翻牌、横竖轴锁定、卡片截停、落点预判与到头回弹。第 3 集的 7 个手势样片。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 03</span><span>7 samples</span><span>Gestures</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--coral reveal" href="episode-04-details.html">
+        <div class="card__top"><span class="card__no">EP. 04 / 09</span><span class="card__state">Live</span></div>
+        <h2>按下之后<br><em>Interactions</em></h2>
+        <p>主题切换、拖拽排序、批量勾选、滑杆吸附、文本展开、步骤条、开关联动、卡片堆叠与标签让位。第 4 集的 9 个样片。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 04</span><span>9 samples</span><span>Micro-details</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--violet reveal" href="episode-05-motion.html">
+        <div class="card__top"><span class="card__no">EP. 05 / 08</span><span class="card__state">Live</span></div>
+        <h2>动效<br><em>Motion</em></h2>
+        <p>磁吸、液态形变、3D 视差、滚动聚焦、流体 Tab、图片展开、手势驱动转场与物理碰撞。第 5 集的 8 个动效样片。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 05</span><span>8 samples</span><span>Motion</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--steel reveal" href="episode-06-charts.html">
+        <div class="card__top"><span class="card__no">EP. 06 / 10</span><span class="card__state">Live</span></div>
+        <h2>图表控件<br><em>Charts</em></h2>
+        <p>活动圆环、打卡热力格、仪表盘、柱状图、专注分段、范围折线、目标线、占比条、环形图与气泡图。第 6 集的 10 个图表样片。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 06</span><span>10 samples</span><span>Charts</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--olive reveal" href="component-collection.html">
+        <div class="card__top"><span class="card__no">EP. 07 / 20</span><span class="card__state">Live</span></div>
+        <h2>组件合集<br><em>Components</em></h2>
+        <p>20 个让组件先有回应的细节：重叠排列、进度底色、筛选标签、输入联想、长按录音、卡片展开、拖动排序……</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 07</span><span>Ep. 09</span><span>Ep. 11</span><span>20 prompts</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--graphite reveal" href="advanced-motion.html">
+        <div class="card__top"><span class="card__no">EP. 08 / 08</span><span class="card__state">Live</span></div>
+        <h2>高级交互<br><em>Advanced moves</em></h2>
+        <p>8 个把手势、滚动和重排做进页面的高级动作：捏合改密度、甩动托影、吸附对齐、弧线重排、自动反色与聚焦模式。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 8</span><span>8 prompts</span><span>Gestures</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--coral reveal" href="popover-interactions.html">
+        <div class="card__top"><span class="card__no">EP. 10 / 08</span><span class="card__state">Live</span></div>
+        <h2>弹出交互<br><em>Popovers</em></h2>
+        <p>8 个知道何时退场的浮层：按钮菜单、卡片详情、确认弹窗、气泡提示、侧边抽屉、结算清单、分类展开与日期日历。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 10</span><span>8 prompts</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--rose reveal" href="episode-12-feedback.html">
+        <div class="card__top"><span class="card__no">EP. 12 / 08</span><span class="card__state">Live</span></div>
+        <h2>反馈组件<br><em>Feedback</em></h2>
+        <p>计时小条、分步弹窗、深色模式、底部导航展开、滚动收起按钮、复制反馈、表单报错与下拉选择。第 12 集的 8 个组件反馈。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 12</span><span>8 samples</span><span>Feedback</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--clay reveal" href="dashboard-menus.html">
+        <div class="card__top"><span class="card__no">EP. 13 / 12</span><span class="card__state">Live</span></div>
+        <h2>Dashboard<br><em>菜单</em></h2>
+        <p>12 种让后台菜单更快被找到的方式：滑动高亮、命令面板、拖动排序、工作区切换、弧形快捷菜单……都共用一块可操作的 Dashboard 实验台。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 13</span><span>Ep. 15</span><span>12 prompts</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--rose reveal" href="interaction-details.html">
+        <div class="card__top"><span class="card__no">EP. 14 / 08</span><span class="card__state">Live</span></div>
+        <h2>交互细节<br><em>Details</em></h2>
+        <p>8 个藏在小动作里的细节：撕线面板、保存进度环、双头范围、轮播点、照片抽屉、时段选择、吸边悬浮球与日期条。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 14</span><span>8 prompts</span><span>Micro-details</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--graphite reveal" href="episode-16-layout.html">
+        <div class="card__top"><span class="card__no">EP. 16 / 06</span><span class="card__state">Live</span></div>
+        <h2>布局交互<br><em>Layout</em></h2>
+        <p>数字卡压住头图、标题随选项换、不压暗的弹出面板、月历补写、底栏嵌主按钮与头图左右滑。第 16 集的 6 个布局交互。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 16</span><span>6 samples</span><span>Layout</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--blue reveal" href="editorial-layout.html">
+        <div class="card__top"><span class="card__no">EP. 17 / 08</span><span class="card__state">Live</span></div>
+        <h2>排版交互<br><em>Editorial</em></h2>
+        <p>8 个让内容互相让位的排版交互：镂空标题、标题嵌图、展开格、错速双列、吸住日期、档案夹、圆泡和拖动分屏。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 17</span><span>8 prompts</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--violet reveal" href="button-interactions.html">
+        <div class="card__top"><span class="card__no">EP. 18 / 08</span><span class="card__state">Live</span></div>
+        <h2>按钮交互<br><em>Button states</em></h2>
+        <p>8 种让普通按钮变精致的状态变化：扩散填充、长按确认、进度条、滑动、磁吸、让位、文案滚动和展开面板。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Ep. 18</span><span>8 prompts</span><span>Micro-states</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+      <a class="card card--link card--steel reveal" href="admin-layout.html">
+        <div class="card__top"><span class="card__no">SPECIAL / 04</span><span class="card__state">Live</span></div>
+        <h2>后台排版<br><em>Admin layouts</em></h2>
+        <p>4 种高级后台排版判断：方格纸玻璃卡、分组侧边栏、一块深色配一个强调色、暗底明度分层。</p>
+        <div class="card__foot">
+          <div class="card__tags"><span>Special</span><span>4 prompts</span><span>Dashboard</span></div>
+          <span class="card__arrow">进入专题 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </div>
+      </a>
+    </div>
+
+    <div class="note">
+      <p>十七个专题里的每条交互与看板都可以直接操作或复制；Ep.01、02、06 的提示词逐条取自原片提示词卡；Ep.12、16 按原片画面整理；其余原片未出卡的专题按动作与标注还原。精选 10 条只做索引，不重复堆样片。</p>
+      <span>One library · Many ways to touch</span>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <p class="footer__title">让每一次<em>触碰</em>，<br>都有回应。</p>
+      <div class="footer__meta">
+        <span>内容来源：抖音 @叨叨AI「交互/设计/动效」系列。已上线专题为第 1—18 集，以及后台排版特别篇。</span>
+        <a href="https://www.douyin.com/user/MS4wLjABAAAAyZGEXNbk6ytvhzzpS_H3EtijOU7jP4tFu5OdbWtUUxCgSjUBo3y086wkzqk7jm5x" target="_blank" rel="noopener noreferrer">查看创作者主页 ↗</a>
+        <span>页面中的演示均为按原意重新实现的交互样例，不是视频截屏；提示词可直接复制到 VibeCoding 工作流。</span>
+      </div>
+    </div>
+    <div class="footer__base">
+      <span>Touch Library · Index</span>
+      <span>Made with restraint · 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const items = Array.from(document.querySelectorAll('.reveal'));
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .08, rootMargin: '0px 0px -5% 0px' });
+    items.forEach(item => observer.observe(item));
+  } else {
+    items.forEach(item => item.classList.add('in-view'));
+  }
+})();
+</script>
+</body>
+</html>

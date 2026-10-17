@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="touch 专题 05：4 种高级后台排版方法，附可直接交给 AI 的提示词与可拆解演示。">
+<title>先定判断，再填内容 · touch 专题 05</title>
+<style>
+:root{
+  --bg:#f5f3ee;--paper:#fbfaf7;--ink:#171614;--ink-soft:#403c36;--muted:#6d675e;--faint:#8f887c;
+  --line:rgba(23,22,20,.13);--line-soft:rgba(23,22,20,.075);
+  --accent:#385a63;--accent-deep:#28464e;--accent-soft:#e5eae7;
+  --sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","STSong",serif;
+  --mono:"SFMono-Regular",ui-monospace,Consolas,"Liberation Mono",monospace;
+  --ease:cubic-bezier(.22,.8,.24,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body.is-locked{overflow:hidden}
+::selection{background:#d5e2de;color:#13252a}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+h1,h2,h3,h4,p,ol,ul{margin:0}
+ol,ul{padding:0;list-style:none}
+svg{display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{width:min(1180px,calc(100% - 56px));margin-inline:auto}
+.mono{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* topbar */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,243,238,.86);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--line-soft)}
+.topbar__in{height:66px;display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:11px;flex:none}
+.brand__mark{width:29px;height:29px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:14px;line-height:1}
+.brand__name{font-size:13px;font-weight:600;letter-spacing:.02em}
+.brand__name span{color:var(--muted);font-weight:400}
+.top-label{padding-left:18px;border-left:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.pill-link,.pill-dark{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 12px;font-size:11.5px;white-space:nowrap;transition:border-color .25s,color .25s,background .25s,transform .25s var(--ease)}
+.pill-link{border:1px solid var(--line);color:var(--muted)}
+.pill-link:hover{color:var(--ink);border-color:rgba(23,22,20,.32)}
+.pill-dark{background:var(--ink);color:var(--paper);border:1px solid var(--ink);padding:8px 15px}
+.pill-dark:hover{background:#000;transform:translateY(-1px)}
+.pill-link svg,.pill-dark svg{width:11px;height:11px;flex:none}
+
+/* hero */
+.hero{padding:78px 0 0;overflow:hidden}
+.hero__top{display:flex;justify-content:space-between;gap:24px;color:var(--muted)}
+.hero__top span:last-child{text-align:right}
+.hero h1{margin-top:34px;font-size:clamp(54px,9.2vw,120px);line-height:.94;letter-spacing:-.065em;font-weight:600}
+.hero h1 em{display:block;font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.05em;color:var(--accent);white-space:nowrap}
+.hero__lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(34px,8vw,110px);align-items:end;margin-top:40px;padding-bottom:42px}
+.hero__lead{font-size:clamp(17px,2vw,24px);line-height:1.55;letter-spacing:-.015em;max-width:25em;color:var(--ink-soft)}
+.hero__lead span{color:var(--muted)}
+.hero__aside{padding-bottom:4px;color:var(--muted);font-size:12.5px;line-height:1.85}
+.hero__aside strong{display:block;color:var(--ink);font-weight:500;font-size:12px;margin-bottom:8px}
+.hero__aside a{display:inline-flex;align-items:center;gap:4px;margin-top:10px;color:var(--ink-soft);border-bottom:1px solid var(--line);padding-bottom:1px;transition:border-color .2s,color .2s}
+.hero__aside a:hover{color:var(--accent);border-color:var(--accent)}
+.hero__meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.hero__meta div{padding:18px 0 21px;border-right:1px solid var(--line-soft)}
+.hero__meta div:last-child{border-right:0}
+.hero__meta div:not(:first-child){padding-left:clamp(14px,2.4vw,30px)}
+.hero__meta b{display:block;font-family:var(--serif);font-size:27px;line-height:1.1;font-weight:400;letter-spacing:-.02em}
+.hero__meta span{display:block;margin-top:5px;font-size:11px;color:var(--muted)}
+
+/* index */
+.chapter-nav{display:flex;align-items:center;gap:17px;flex-wrap:wrap;margin-top:34px;padding:13px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.chapter-nav a{display:inline-flex;align-items:baseline;gap:6px;font-size:11px;color:var(--muted);transition:color .2s}
+.chapter-nav a:hover{color:var(--accent)}
+.chapter-nav a b{font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);font-weight:400}
+.chapter-nav .nav-note{margin-left:auto;display:flex;align-items:center;gap:12px;color:var(--faint);font-size:9px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.nav-copy{border-bottom:1px solid var(--line);padding-bottom:1px;color:var(--ink-soft);transition:border-color .2s,color .2s}
+.nav-copy:hover{color:var(--accent);border-color:var(--accent)}
+
+/* thesis */
+.thesis{padding:74px 0 0}
+.thesis__kicker{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:8px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase}
+.thesis__kicker::before{content:"";width:26px;height:1px;background:var(--accent)}
+.thesis h2{margin-top:26px;font-size:clamp(32px,5.3vw,64px);line-height:1.02;letter-spacing:-.055em;font-weight:600;max-width:15em}
+.thesis h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent);letter-spacing:-.03em}
+.thesis__row{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-top:30px;padding-bottom:38px;border-bottom:1px solid var(--line)}
+.thesis__row p{font-size:14px;line-height:1.9;color:var(--muted);max-width:46em}
+.thesis__index{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
+
+/* study shell */
+.studies{padding-top:10px}
+.study{position:relative;margin-top:24px;padding:24px;border:1px solid var(--line);border-radius:24px;background:var(--paper);transition:border-color .25s,box-shadow .3s}
+.study:hover{border-color:rgba(23,22,20,.24)}
+.study__head{display:flex;align-items:flex-start;gap:16px}
+.study__no{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--accent);padding-top:5px;flex:none}
+.study__heading{min-width:0;flex:1}
+.study__heading h2{font-size:clamp(22px,2.8vw,32px);line-height:1.15;letter-spacing:-.045em;font-weight:600}
+.study__heading h2 em{font-family:var(--serif);font-style:italic;font-weight:400;font-size:.55em;color:var(--muted);letter-spacing:-.02em;margin-left:7px}
+.study__heading p{margin-top:7px;font-size:12px;line-height:1.7;color:var(--muted);max-width:52em}
+.study__controls{flex:none;display:flex;align-items:center;gap:8px;padding-top:2px}
+.toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 10px 6px 8px;font-size:10.5px;color:var(--muted);transition:border-color .2s,color .2s,background .2s}
+.toggle:hover{border-color:rgba(23,22,20,.32);color:var(--ink)}
+.toggle i{width:24px;height:14px;border-radius:99px;background:rgba(23,22,20,.14);position:relative;flex:none;transition:background .2s}
+.toggle i::after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:var(--paper);box-shadow:0 1px 2px rgba(0,0,0,.18);transition:transform .25s var(--ease)}
+.toggle[aria-pressed="true"]{color:var(--ink);border-color:rgba(56,90,99,.3);background:rgba(56,90,99,.055)}
+.toggle[aria-pressed="true"] i{background:var(--accent)}
+.toggle[aria-pressed="true"] i::after{transform:translateX(10px)}
+.study__foot{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line-soft)}
+.study__foot p{font-size:11px;line-height:1.75;color:var(--muted);max-width:62em}
+.study__foot p span{font-family:var(--mono);font-size:7px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;margin-right:7px}
+.prompt-btn{display:inline-flex;align-items:center;gap:6px;flex:none;border:1px solid var(--line);border-radius:999px;padding:5px 10px;font-size:10px;color:var(--ink-soft);transition:background .2s,color .2s,border-color .2s}
+.prompt-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.prompt-btn svg{width:9px;height:9px;flex:none}
+.board-hint{display:none;align-items:center;gap:7px;margin-top:12px;font-family:var(--mono);font-size:7px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.board-hint::before{content:"";width:18px;height:1px;background:var(--accent)}
+.board-scroll{position:relative;margin-top:17px;border-radius:18px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:rgba(23,22,20,.24) transparent;outline:none}
+.board-scroll:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.board-scroll::-webkit-scrollbar{height:6px}
+.board-scroll::-webkit-scrollbar-thumb{background:rgba(23,22,20,.22);border-radius:99px}
+.board-scroll::-webkit-scrollbar-track{background:transparent}
+.board-scroll::after{content:"";position:absolute;top:0;right:0;bottom:6px;width:34px;background:linear-gradient(270deg,rgba(245,243,238,.55),transparent);pointer-events:none;opacity:0;transition:opacity .2s}
+@media (max-width:960px){.board-scroll::after{opacity:1}}
+.board{width:100%;max-width:1060px;min-width:880px;height:540px;margin:0 auto;border-radius:18px;overflow:hidden;position:relative;isolation:isolate}
+.board *{box-sizing:border-box}
+
+/* shared board atoms */
+.b-kicker{font-family:var(--mono);font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.55}
+.b-num{font-variant-numeric:tabular-nums}
+.b-pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:4px 7px;font-size:6.5px;line-height:1;white-space:nowrap}
+
+/* ========== BOARD 01 / GRID & GLASS ========== */
+.board--b1{background-color:#f1eee6;background-image:linear-gradient(rgba(35,33,28,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(35,33,28,.055) 1px,transparent 1px);background-size:44px 44px;color:#25231f;font-size:9px}
+.board--b1.no-grid{background-image:none;background-color:#f4f1e9}
+.b1{height:100%;display:flex;flex-direction:column}
+.b1-top{height:46px;flex:none;display:flex;align-items:center;gap:13px;padding:0 16px;background:rgba(250,248,242,.72);backdrop-filter:blur(12px);border-bottom:1px solid rgba(35,33,28,.08)}
+.b1-brand{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;letter-spacing:-.02em}
+.b1-brand svg{width:14px;height:14px}
+.b1-search{width:220px;height:24px;border-radius:7px;background:rgba(255,255,255,.55);border:1px solid rgba(35,33,28,.09);display:flex;align-items:center;gap:6px;padding:0 8px;font-size:7px;color:#7b7468}
+.b1-search svg{width:9px;height:9px}
+.b1-chip{height:22px;border-radius:6px;border:1px solid rgba(35,33,28,.1);background:rgba(255,255,255,.4);display:flex;align-items:center;gap:5px;padding:0 7px;font-family:var(--mono);font-size:6px;color:#756e62}
+.b1-top-icons{margin-left:auto;display:flex;align-items:center;gap:6px;color:#6e675c}
+.b1-top-icons i{width:20px;height:20px;border-radius:6px;border:1px solid rgba(35,33,28,.1);display:grid;place-items:center;font-style:normal;font-size:8px;background:rgba(255,255,255,.3)}
+.b1-body{flex:1;display:grid;grid-template-columns:38px 1fr;min-height:0}
+.b1-rail{background:rgba(249,247,241,.58);border-right:1px solid rgba(35,33,28,.07);display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:14px}
+.b1-rail button{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;color:#8b8377;transition:background .2s,color .2s}
+.b1-rail button.is-on{background:#25231f;color:#f6f2e8}
+.b1-rail svg{width:11px;height:11px}
+.b1-main{min-width:0;padding:12px 14px 14px;display:grid;grid-template-rows:132px 152px 1fr;gap:10px}
+.b1-row{display:grid;grid-template-columns:1.36fr 1.16fr .88fr;gap:10px;min-height:0}
+.glass{background:rgba(255,255,255,.53);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.72);box-shadow:0 18px 34px -28px rgba(44,39,28,.38);border-radius:12px}
+.b1-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:6.5px;letter-spacing:.08em;text-transform:uppercase;color:rgba(37,35,31,.55)}
+.b1-orders{position:relative;overflow:hidden;border-radius:12px;padding:11px;background:linear-gradient(115deg,#f28542 0,#ef6b2c 60%,#e95e24 100%);color:#321d10;box-shadow:0 18px 34px -26px rgba(174,77,29,.6)}
+.b1-orders .b1-card-head{color:rgba(50,29,16,.58)}
+.b1-orders-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px;align-items:end}
+.b1-metric{border-radius:6px;padding:5px 6px;background:rgba(255,255,255,var(--o,.06));min-width:0}
+.b1-metric b{display:block;font-size:calc(9px + var(--n,0) * 3px);line-height:1;letter-spacing:-.04em;font-weight:500;font-variant-numeric:tabular-nums}
+.b1-metric span{display:block;font-family:var(--mono);font-size:5.5px;letter-spacing:.02em;margin-top:4px;opacity:.6;white-space:nowrap}
+.b1-metric:nth-child(1){--n:0;--o:.05}
+.b1-metric:nth-child(2){--n:1;--o:.1}
+.b1-metric:nth-child(3){--n:2;--o:.16}
+.b1-metric:nth-child(4){--n:5;--o:.24}
+.b1-metric:nth-child(4) b{font-size:30px}
+.b1-orders-foot{margin-top:9px;display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:5.5px;color:rgba(50,29,16,.55)}
+.b1-orders-foot i{width:22px;height:1px;background:rgba(50,29,16,.25);font-style:normal}
+.b1-stock{position:relative;overflow:hidden;padding:11px;color:#25231f}
+.b1-stock::after{content:"";position:absolute;right:-16px;top:0;bottom:0;width:96px;background:linear-gradient(160deg,rgba(47,104,110,.2),rgba(47,104,110,.03));clip-path:polygon(58% 0,100% 0,100% 100%,28% 100%);pointer-events:none}
+.b1-stock-top{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1}
+.b1-stock-top b{display:block;font-size:19px;line-height:1;letter-spacing:-.04em;margin-top:5px;font-weight:500}
+.b1-stock-top small{display:block;font-size:5.5px;color:#8d8679;margin-top:3px}
+.b1-stock-top .b-pill{background:#e95f2b;color:#fff4e8;font-size:6px}
+.b1-stock-list{position:relative;z-index:1;display:grid;gap:3px;margin-top:8px;width:58%}
+.b1-stock-list span{display:flex;align-items:center;gap:4px;font-size:6.5px;color:#6c6559;white-space:nowrap}
+.b1-stock-list i{width:4px;height:4px;border-radius:50%;background:#73a39d;flex:none}
+.b1-stock-list span:nth-child(2) i{background:#c4b9a8}
+.b1-stock-list span:nth-child(3) i{background:#de7b4f}
+.b1-stock-list span:nth-child(4) i{background:#9c948a}
+.b1-recorder{position:relative;overflow:hidden;border-radius:12px;padding:10px;background:linear-gradient(155deg,#1e2624,#18201f 56%,#25302c);color:#e9e4d8;box-shadow:0 18px 34px -26px rgba(18,25,23,.7)}
+.b1-recorder .b1-card-head{color:rgba(233,228,216,.45)}
+.b1-bike{position:relative;height:78px;margin-top:4px;display:grid;place-items:center;color:#c8cfc9;opacity:.85}
+.b1-bike svg{width:108px;height:64px}
+.b1-recorder-foot{position:relative;z-index:1;margin-top:-2px}
+.b1-recorder-foot b{display:block;font-size:8.5px;font-weight:500;color:#f0ebe0}
+.b1-recorder-foot small{display:block;font-family:var(--mono);font-size:5px;color:#9ca79f;margin-top:2px}
+.b1-recorder-stats{display:flex;gap:11px;margin-top:7px}
+.b1-recorder-stats b{font-family:var(--mono);font-size:10px;font-weight:400}
+.b1-recorder-stats span{display:block;font-size:5px;color:#87928b;margin-top:1px}
+.b1-logistics{padding:11px 12px;position:relative;overflow:hidden;color:#25231f}
+.b1-logistics .b1-card-head{position:relative;z-index:2}
+.b1-logistics h4{font-size:8.5px;font-weight:500;margin-top:7px;position:relative;z-index:2}
+.b1-logistics p{font-size:6px;color:#8c8477;margin-top:2px;position:relative;z-index:2}
+.b1-map{position:absolute;inset:0;background-image:radial-gradient(rgba(46,73,70,.4) 1.2px,transparent 1.4px);background-size:9px 9px;mask-image:radial-gradient(ellipse at 58% 52%,#000 15%,transparent 70%);opacity:.7;pointer-events:none}
+.b1-map::after{content:"";position:absolute;left:52%;top:46%;width:170px;height:80px;border:1px dashed rgba(57,97,92,.35);border-radius:50%;transform:rotate(-8deg)}
+.b1-late{position:absolute;left:50%;top:37%;z-index:2;background:rgba(255,255,255,.74);border:1px solid rgba(35,33,28,.1);border-radius:999px;padding:4px 7px;font-family:var(--mono);font-size:5.5px;color:#8a5338;display:flex;align-items:center;gap:4px}
+.b1-late i{width:4px;height:4px;border-radius:50%;background:#d9764a}
+.b1-avatars{position:absolute;left:13px;bottom:11px;display:flex;align-items:center;z-index:2}
+.b1-avatars span{width:17px;height:17px;border-radius:50%;background:var(--c,#b8c7c2);border:2px solid #f3efe6;margin-left:-5px;display:grid;place-items:center;font-size:5px;color:#39352d}
+.b1-avatars span:first-child{margin-left:0}
+.b1-avatars .plus{background:#2b2924;color:#efe9dc;font-size:4.5px}
+.b1-table{padding:10px 12px;overflow:hidden;color:#25231f}
+.b1-table-head{display:grid;grid-template-columns:1.55fr .75fr .85fr .5fr .5fr .6fr;gap:6px;padding-bottom:5px;border-bottom:1px solid rgba(35,33,28,.08);font-family:var(--mono);font-size:5.5px;letter-spacing:.04em;color:#958d80;text-transform:uppercase}
+.b1-table-row{display:grid;grid-template-columns:1.55fr .75fr .85fr .5fr .5fr .6fr;gap:6px;align-items:center;height:28px;border-bottom:1px solid rgba(35,33,28,.055);font-size:6.5px;color:#5f594e}
+.b1-table-row:last-child{border-bottom:0}
+.b1-part{display:flex;align-items:center;gap:6px;min-width:0;color:#2a2822}
+.b1-part i{width:18px;height:18px;border-radius:5px;background:linear-gradient(140deg,#d7d1c4,#a9b5ac);flex:none;position:relative}
+.b1-part i::after{content:"";position:absolute;inset:5px;border:1px solid rgba(35,33,28,.4);transform:rotate(45deg)}
+.b1-part b{display:block;font-weight:500;font-size:6.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b1-part small{display:block;font-family:var(--mono);font-size:4.5px;color:#999184}
+.b1-demand{justify-self:start;font-family:var(--mono);font-size:5.5px;border-radius:999px;padding:3px 6px;background:#f0a183;color:#432014}
+.b1-demand.low{background:#e9e2d5;color:#6f675b}
+.b1-demand.mid{background:#b9cec8;color:#24413e}
+
+/* ========== BOARD 02 / GROUPED RAIL ========== */
+.board--b2{background:#f7f1e5;color:#26231d;font-size:9px}
+.b2{height:100%;display:flex}
+.b2-rail{width:194px;flex:none;display:flex;flex-direction:column;padding:15px 13px 12px;background:#f1eadb;border-right:1px solid #e4dccb;transition:background .3s}
+.b2-brand{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;color:#3d382f}
+.b2-brand i{width:13px;height:13px;border-radius:50%;background:#e8b25b;display:grid;place-items:center;font-style:normal;font-size:5px;color:#3b2a10}
+.rail-groups{flex:1;display:flex;flex-direction:column;gap:19px;margin-top:20px;overflow:hidden;transition:gap .35s var(--ease)}
+.rail-group{display:flex;flex-direction:column;gap:3px;transition:gap .25s}
+.rail-label{font-family:var(--mono);font-size:5.5px;letter-spacing:.12em;color:#a09685;text-transform:uppercase;padding:0 7px 3px;transition:opacity .2s,height .25s}
+.rail-btn{display:flex;align-items:center;gap:7px;height:24px;border-radius:6px;padding:0 7px;font-size:7.5px;color:#645c4f;text-align:left;transition:background .2s,color .2s}
+.rail-btn i{width:5px;height:5px;border-radius:1px;background:#c9bdab;flex:none}
+.rail-btn.is-active{background:#fffbef;color:#2b2720;box-shadow:0 2px 5px rgba(70,58,33,.06)}
+.rail-btn.is-active i{background:#e6ab4f}
+.rail-btn:hover{background:rgba(255,255,255,.5)}
+.b2-rail.is-flat .rail-groups{gap:3px;margin-top:13px}
+.b2-rail.is-flat .rail-label{height:0;opacity:0;padding:0;overflow:hidden}
+.b2-user{margin-top:10px;padding-top:10px;border-top:1px solid #e5ddcd}
+.b2-user-top{display:flex;align-items:center;gap:7px}
+.b2-avatar{width:23px;height:23px;border-radius:50%;background:linear-gradient(140deg,#d8c4a2,#a9b7ac);display:grid;place-items:center;font-size:6px;color:#3b372e}
+.b2-user b{display:block;font-size:7.5px;font-weight:500;color:#3b362d}
+.b2-user small{display:block;font-size:5.5px;color:#9b9283}
+.b2-user .quota{margin-left:auto;font-family:var(--mono);font-size:5px;color:#9b9283}
+.b2-quota-track{height:3px;border-radius:99px;background:#e2d9c8;margin-top:7px;overflow:hidden}
+.b2-quota-track i{display:block;height:100%;width:80%;background:#e8b25b;border-radius:99px}
+.b2-main{flex:1;min-width:0;padding:13px 18px 14px;display:flex;flex-direction:column}
+.b2-top{height:26px;flex:none;display:flex;align-items:center;gap:11px}
+.b2-tabs{display:flex;align-items:center;gap:3px}
+.b2-tab{height:23px;padding:0 9px;border-radius:999px;font-size:7px;color:#7e7566;display:flex;align-items:center}
+.b2-tab.is-on{background:#2b2922;color:#f7f1e5}
+.b2-top-icons{margin-left:auto;display:flex;align-items:center;gap:5px;color:#786f61}
+.b2-top-icons i{width:20px;height:20px;border-radius:50%;border:1px solid #dfd7c7;display:grid;place-items:center;font-style:normal;font-size:7px}
+.b2-hello{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:8px}
+.b2-hello h3{font-size:31px;line-height:1.1;font-weight:300;letter-spacing:-.06em;color:#2c2922}
+.b2-hello p{font-size:6.5px;color:#8d8475;margin-top:3px}
+.b2-stats{display:flex;align-items:flex-end;gap:20px}
+.b2-stats b{display:block;font-size:26px;line-height:1;font-weight:300;letter-spacing:-.04em;color:#39352c;font-variant-numeric:tabular-nums}
+.b2-stats span{display:block;font-size:5.5px;color:#918878;margin-top:4px}
+.b2-propor{display:flex;gap:2px;height:7px;margin-top:10px}
+.b2-propor i{display:block;height:100%;border-radius:99px;background:var(--c,#2b2922)}
+.b2-propor i:nth-child(1){width:72%}
+.b2-propor i:nth-child(2){width:16%;background:#e6b159}
+.b2-propor i:nth-child(3){flex:1;background:#e1d8c7}
+.b2-grid{flex:1;display:grid;grid-template-columns:1.1fr 1fr .86fr 1.08fr;grid-template-rows:151px 1fr;gap:8px;margin-top:11px;min-height:0}
+.b2-card{border-radius:9px;background:#fbf8f0;border:1px solid rgba(84,70,44,.08);overflow:hidden;min-width:0}
+.b2-photo{position:relative;background:linear-gradient(145deg,#c8c0ae 0,#e0d6c3 42%,#8b8f7e 43%,#596153 100%);color:#fff;padding:9px;display:flex;flex-direction:column;justify-content:flex-end}
+.b2-photo::before{content:"";position:absolute;left:14px;right:38px;top:18px;height:42px;border-radius:50% 50% 0 0;background:rgba(255,255,255,.12);transform:rotate(-8deg)}
+.b2-photo small{font-family:var(--mono);font-size:5px;letter-spacing:.09em;opacity:.75}
+.b2-photo b{font-size:10px;line-height:1.2;margin-top:2px;letter-spacing:-.02em}
+.b2-photo i{position:absolute;right:8px;top:8px;width:13px;height:13px;border-radius:50%;border:1px solid rgba(255,255,255,.5);display:grid;place-items:center;font-style:normal;font-size:6px}
+.b2-chart{padding:9px 10px;display:flex;flex-direction:column}
+.b2-cardhead{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.b2-cardhead small{display:block;font-family:var(--mono);font-size:5px;letter-spacing:.08em;color:#9a9182}
+.b2-cardhead b{display:block;font-size:16px;line-height:1;font-weight:400;letter-spacing:-.03em;margin-top:3px;color:#37332a}
+.b2-cardhead span{font-family:var(--mono);font-size:5px;color:#a39a8b}
+.b2-bars{flex:1;display:flex;align-items:flex-end;gap:4px;margin-top:8px}
+.b2-bars i{flex:1;height:var(--h);border-radius:2px 2px 0 0;background:#e8e0cf;position:relative}
+.b2-bars i.hit{background:#e7b15c}
+.b2-bars i::after{content:"";position:absolute;left:50%;bottom:-7px;width:1px;height:3px;background:#cbbfa9}
+.b2-axis{display:flex;gap:4px;margin-top:9px;font-family:var(--mono);font-size:4.5px;color:#a59c8c}
+.b2-axis span{flex:1;text-align:center}
+.b2-timer{padding:9px 10px;display:flex;flex-direction:column}
+.b2-ring{position:relative;width:92px;height:92px;margin:6px auto 0;border-radius:50%;background:repeating-conic-gradient(#d8ad5b 0 1deg,transparent 1deg 6deg);display:grid;place-items:center}
+.b2-ring::before{content:"";position:absolute;inset:7px;border-radius:50%;background:#fbf8f0}
+.b2-ring::after{content:"";position:absolute;inset:15px;border-radius:50%;border:1px solid #eadfc9}
+.b2-ring div{position:relative;z-index:1;text-align:center}
+.b2-ring b{display:block;font-size:16px;font-weight:400;letter-spacing:-.04em;color:#3a352b}
+.b2-ring small{font-size:5px;color:#a09585}
+.b2-prep{grid-column:4;grid-row:1/3;background:#2d2a23;color:#f5efe2;padding:10px;display:flex;flex-direction:column;border-color:#2d2a23}
+.b2-prep .b2-cardhead b{color:#f5efe2}
+.b2-prep .b2-cardhead small{color:#a8a092}
+.b2-prep .b2-cardhead span{color:#aaa193}
+.b2-check{display:grid;gap:5px;margin-top:10px;flex:1}
+.b2-check div{display:flex;align-items:center;gap:6px;font-size:6.5px;color:#d9d1c2}
+.b2-check div i{width:10px;height:10px;border-radius:50%;border:1px solid #706a5e;flex:none;display:grid;place-items:center;font-style:normal;font-size:5px;color:#2d2a23}
+.b2-check div.done i{background:#e7b15c;border-color:#e7b15c}
+.b2-check div.done{color:#f0e9db}
+.b2-prep-btn{margin-top:8px;height:26px;border-radius:6px;background:#e7b15c;color:#2d2415;font-size:6.5px;display:grid;place-items:center;font-weight:500}
+.b2-cal{grid-column:1/4;grid-row:2;padding:9px 10px;min-height:0}
+.b2-cal-days{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:8px}
+.b2-day{text-align:center;font-family:var(--mono);font-size:5px;color:#9f9585}
+.b2-cal-cols{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:4px;height:104px;position:relative;border-top:1px solid #e8e0d1;padding-top:6px}
+.b2-cal-col{border-right:1px solid #eee7da;position:relative}
+.b2-event{position:absolute;left:0;right:5px;min-height:21px;border-radius:4px;background:#f1eadc;padding:3px 4px;font-size:5px;color:#675f51;line-height:1.3;border:1px solid rgba(84,70,44,.06)}
+.b2-event b{display:block;font-weight:500;font-size:5.2px}
+.b2-event.dark{background:#2c2922;color:#f2eadc;border-color:#2c2922}
+.b2-event.gold{background:#e7b15c;color:#392b15;border-color:#e7b15c}
+.b2-event:nth-of-type(1){top:4px}
+.b2-event:nth-of-type(2){top:37px}
+.b2-event:nth-of-type(3){top:66px}
+
+/* ========== BOARD 03 / ONE DARK ONE ACCENT ========== */
+.board--b3{background:#f6f1e7;color:#26231f;font-size:9px;--accent:#df7444;--accent-soft:#f1d7c8;--accent-ink:#3b1e12}
+.board--b3.no-accent{--accent:#b7b1a5;--accent-soft:#ded9cf;--accent-ink:#f6f1e7}
+.b3{height:100%;display:flex}
+.b3-rail{width:180px;flex:none;padding:15px 13px;background:#20221f;color:#e9e2d4;display:flex;flex-direction:column}
+.b3-brand{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:600}
+.b3-brand i{width:14px;height:14px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-style:normal;font-size:5px;color:var(--accent-ink);transition:background .3s,color .3s}
+.b3-nav{display:flex;flex-direction:column;gap:3px;margin-top:22px}
+.b3-nav button{display:flex;align-items:center;gap:8px;height:26px;padding:0 8px;border-radius:6px;font-size:7.5px;color:rgba(233,226,212,.64);text-align:left;transition:background .2s,color .2s}
+.b3-nav button i{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.4;flex:none}
+.b3-nav button.is-active{background:rgba(255,255,255,.07);color:#f3ecdf}
+.b3-nav button.is-active i{background:var(--accent);opacity:1;box-shadow:0 0 0 3px rgba(223,116,68,.14)}
+.b3-promo{margin-top:auto;border-radius:8px;background:var(--accent);color:var(--accent-ink);padding:9px;transition:background .3s,color .3s}
+.b3-promo b{display:block;font-size:7.5px;line-height:1.35;font-weight:500}
+.b3-promo p{font-family:var(--mono);font-size:5px;margin-top:4px;opacity:.68}
+.b3-promo span{display:inline-flex;margin-top:8px;border-radius:99px;background:rgba(35,24,16,.8);color:#f5eee2;padding:4px 6px;font-size:5px}
+.b3-rail-foot{margin-top:10px;display:flex;align-items:center;justify-content:space-between;font-size:6px;color:#8d8a80}
+.b3-main{flex:1;min-width:0;padding:13px 16px 14px;display:flex;flex-direction:column}
+.b3-top{display:flex;align-items:flex-start;gap:11px}
+.b3-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(145deg,#d5c1a0,#9fad9d);flex:none;display:grid;place-items:center;font-size:8px;color:#3e392f}
+.b3-title b{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;letter-spacing:-.02em}
+.b3-title b span{font-family:var(--mono);font-size:5px;border:1px solid #d8d1c3;border-radius:999px;padding:2px 5px;color:#837a6b}
+.b3-title p{font-size:6px;color:#8d8475;margin-top:3px}
+.b3-actions{display:flex;gap:5px;margin-top:7px}
+.b3-actions span{height:20px;border-radius:999px;padding:0 8px;font-size:6px;display:flex;align-items:center;gap:4px;background:#fbf7ee;border:1px solid #e2dacb;color:#5f584c}
+.b3-actions span.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);transition:background .3s,color .3s}
+.b3-weather{margin-left:auto;text-align:right}
+.b3-weather b{display:block;font-size:16px;font-weight:300;letter-spacing:-.04em}
+.b3-weather small{display:block;font-size:5.5px;color:#948b7c;margin-top:1px}
+.b3-icons{display:flex;gap:4px;margin-left:10px}
+.b3-icons i{width:20px;height:20px;border-radius:50%;border:1px solid #dfd7c8;display:grid;place-items:center;font-style:normal;font-size:7px;color:#756d5f}
+.b3-photos{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:11px}
+.b3-pet{border-radius:8px;overflow:hidden;background:#fffaf0;border:1px solid rgba(84,70,44,.08)}
+.b3-pet-art{height:96px;background:var(--art);position:relative}
+.b3-pet-art::after{content:"";position:absolute;left:50%;bottom:10px;width:36px;height:26px;border-radius:50% 50% 42% 42%;background:rgba(255,255,255,.25);transform:translateX(-50%);filter:blur(1px)}
+.b3-pet-body{padding:6px 7px 7px}
+.b3-pet-body b{display:block;font-size:7.5px;font-weight:500;color:#373229}
+.b3-pet-body small{display:block;font-family:var(--mono);font-size:5px;color:#a29888;margin-top:1px}
+.b3-lower{flex:1;display:grid;grid-template-columns:1.65fr .9fr;gap:11px;margin-top:11px;min-height:0}
+.b3-chart{border-radius:9px;background:#fbf7ee;border:1px solid rgba(84,70,44,.08);padding:10px 11px;display:flex;flex-direction:column;min-width:0}
+.b3-chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.b3-chart-head b{display:block;font-size:17px;font-weight:300;letter-spacing:-.04em;color:#3c372d}
+.b3-chart-head small{display:block;font-size:5.5px;color:#968d7e;margin-top:2px}
+.b3-chart-head span{font-family:var(--mono);font-size:5px;color:#9d9384}
+.b3-chart-body{flex:1;display:flex;gap:10px;min-height:0;margin-top:8px}
+.b3-bars{flex:1;display:flex;align-items:flex-end;gap:3px;border-bottom:1px solid #e6ddcd;padding-bottom:2px}
+.b3-bars i{flex:1;height:var(--h);background:#e6ddcc;border-radius:2px 2px 0 0;transition:background .3s}
+.b3-bars i.hit{background:var(--accent)}
+.b3-schedule{width:105px;flex:none;display:flex;flex-direction:column;gap:6px;justify-content:flex-end}
+.b3-schedule div{display:flex;align-items:center;gap:5px;font-size:5.5px;color:#8b8274}
+.b3-schedule div i{display:block;height:4px;border-radius:99px;background:#e2d9c9;flex:1}
+.b3-schedule div.hit i{background:var(--accent)}
+.b3-schedule div span{margin-left:auto;font-family:var(--mono);font-size:4.8px}
+.b3-feed{border-radius:9px;background:#fbf7ee;border:1px solid rgba(84,70,44,.08);padding:10px;display:flex;flex-direction:column;min-width:0}
+.b3-feed-head{display:flex;align-items:flex-start;justify-content:space-between}
+.b3-feed-head b{font-size:8px;font-weight:500}
+.b3-feed-head span{font-family:var(--mono);font-size:5px;color:#a29888}
+.b3-feed-list{display:grid;gap:5px;margin-top:7px}
+.b3-feed-row{display:flex;align-items:center;gap:5px;font-size:6px;color:#5d574b}
+.b3-feed-row i{width:13px;height:13px;border-radius:50%;background:var(--c,#d7c9b4);flex:none}
+.b3-feed-row span{margin-left:auto;font-family:var(--mono);font-size:4.8px;color:#a39887;white-space:nowrap}
+.b3-note{margin-top:auto;border-radius:7px;background:#292823;color:#e9e2d4;padding:7px;font-size:5.5px;line-height:1.5}
+.b3-note b{display:block;font-size:6px;font-weight:500;color:#f0e8da;margin-bottom:2px}
+
+/* ========== BOARD 04 / TONE LAYERS ========== */
+.board--b4{background:#0f1113;color:#e9e8e2;font-size:8px;--card:#1b1e22;--card2:#22262b;--soft:#292d32;--accent:#e2764f}
+.b4{height:100%;display:flex}
+.b4-rail{width:40px;flex:none;border-right:1px solid rgba(255,255,255,.045);display:flex;flex-direction:column;align-items:center;gap:9px;padding-top:14px;color:#7d8287}
+.b4-rail i{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-style:normal;font-size:7px}
+.b4-rail i.is-on{background:rgba(226,118,79,.16);color:#f0b69e}
+.b4-main{flex:1;min-width:0;padding:12px 15px 14px;display:flex;flex-direction:column}
+.b4-head{display:flex;align-items:center;justify-content:space-between;height:26px}
+.b4-head-left{display:flex;align-items:center;gap:8px}
+.b4-head-left b{font-size:10px;font-weight:500;letter-spacing:-.02em}
+.b4-head-left span{font-family:var(--mono);font-size:5px;color:#7f8589}
+.b4-head-right{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:5px;color:#80868a}
+.b4-head-right i{width:19px;height:19px;border-radius:50%;background:linear-gradient(140deg,#4c555b,#2b3135);display:grid;place-items:center;font-style:normal;font-size:6px;color:#d4d6d4}
+.b4-grid{flex:1;display:grid;grid-template-columns:1.03fr 1.1fr 1fr;gap:9px;margin-top:9px;min-height:0}
+.b4-col{display:flex;flex-direction:column;gap:9px;min-height:0}
+.b4-card{background:var(--card);border-radius:9px;padding:11px;transition:background .3s,outline-color .2s;outline:1px solid transparent;min-height:0}
+.board--b4.show-lines .b4-card{outline-color:rgba(255,255,255,.08)}
+.b4-hero{flex:1.25;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.b4-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.b4-pill{display:inline-flex;align-items:center;gap:3px;border-radius:999px;padding:4px 7px;background:rgba(226,118,79,.14);color:#e8a285;font-family:var(--mono);font-size:5px}
+.b4-big{display:flex;align-items:baseline;gap:2px;margin-top:14px}
+.b4-big b{font-size:36px;line-height:.9;font-weight:300;letter-spacing:-.055em;font-variant-numeric:tabular-nums}
+.b4-big small{font-family:var(--mono);font-size:6px;color:#888e92;letter-spacing:0}
+.b4-sub{font-size:5.5px;color:#8e9498;margin-top:5px}
+.b4-strip{display:flex;gap:2px;margin-top:12px}
+.b4-strip i{flex:1;height:14px;border-radius:2px;background:var(--soft)}
+.b4-strip i.hit{background:var(--accent)}
+.b4-week{margin-top:auto;padding-top:9px;border-top:1px solid rgba(255,255,255,.05)}
+.b4-week-head{display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:4.8px;letter-spacing:.07em;color:#7d8387;text-transform:uppercase}
+.b4-week-head span:last-child{color:#d99a80}
+.b4-week-bars{display:flex;align-items:flex-end;gap:5px;height:45px;margin-top:6px}
+.b4-week-bars i{flex:1;height:var(--h);border-radius:2px 2px 0 0;background:var(--soft)}
+.b4-week-bars i.hit{background:var(--accent)}
+.b4-week-axis{display:flex;gap:5px;margin-top:4px;font-family:var(--mono);font-size:4.5px;color:#6f7579;text-align:center}
+.b4-week-axis span{flex:1}
+.b4-split{display:grid;grid-template-columns:1fr 1fr;gap:9px;flex:.8}
+.b4-small b{display:block;font-size:19px;line-height:1;font-weight:300;letter-spacing:-.04em;color:#f1f0ea}
+.b4-small b span{font-family:var(--mono);font-size:5px;color:#858b8f;margin-left:2px}
+.b4-small small{display:block;font-family:var(--mono);font-size:5px;letter-spacing:.06em;color:#7f8589;margin-top:4px;text-transform:uppercase}
+.b4-small p{font-size:5.5px;color:#8c9296;margin-top:5px}
+.b4-cal{flex:2.35;display:flex;flex-direction:column;padding:9px 11px 8px}
+.b4-cal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.b4-cal-head b{font-size:7.5px;font-weight:500}
+.b4-cal-head small{display:block;font-family:var(--mono);font-size:4.8px;color:#7d8387;margin-top:2px}
+.b4-cal-head span{font-family:var(--mono);font-size:5px;color:#92989c}
+.b4-dotgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.b4-day{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:4.8px;color:#a1a7aa;background:#25292e;position:relative}
+.b4-day.hit{background:var(--accent);color:#2c150c}
+.b4-day.ring{border:1px solid rgba(226,118,79,.55);color:#e7a087;background:transparent}
+.b4-day.empty{background:repeating-linear-gradient(135deg,#24282d 0 2px,#1a1d21 2px 4px);color:#5c6266}
+.b4-day.today{box-shadow:0 0 0 2px rgba(255,255,255,.14)}
+.b4-cal-legend{display:flex;align-items:center;gap:9px;margin-top:7px;font-family:var(--mono);font-size:4.5px;color:#7d8387}
+.b4-cal-legend span{display:flex;align-items:center;gap:3px}
+.b4-cal-legend i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:block}
+.b4-cal-legend i.ring{background:transparent;border:1px solid rgba(226,118,79,.55)}
+.b4-cal-legend i.empty{background:repeating-linear-gradient(135deg,#3a3e43 0 1px,#24282d 1px 3px)}
+.b4-cal-foot{margin-top:auto;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.b4-cal-foot b{display:block;font-size:16px;line-height:1;font-weight:300;letter-spacing:-.04em;margin-top:3px}
+.b4-cal-foot b small{font-family:var(--mono);font-size:4.5px;color:#7d8387;margin-left:2px}
+.b4-cal-bars{display:flex;align-items:flex-end;gap:3px;height:28px;width:100px}
+.b4-cal-bars i{flex:1;border-radius:2px 2px 0 0;background:var(--soft);height:var(--h)}
+.b4-cal-bars i.hit{background:var(--accent)}
+.b4-session{flex:1;display:flex;flex-direction:column}
+.b4-session-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:6px}
+.b4-session-row b{font-size:24px;line-height:.95;font-weight:300;letter-spacing:-.05em}
+.b4-session-row span{font-family:var(--mono);font-size:5px;color:#858b8f}
+.b4-mini{display:flex;align-items:flex-end;gap:3px;height:35px;margin-top:auto}
+.b4-mini i{flex:1;border-radius:2px 2px 0 0;background:var(--soft);height:var(--h)}
+.b4-mini i.hit{background:var(--accent)}
+.b4-score{flex:1.15;display:flex;flex-direction:column;overflow:hidden}
+.b4-score-top{display:flex;align-items:flex-start;justify-content:space-between}
+.b4-score b.big{display:block;font-size:30px;line-height:1;font-weight:300;letter-spacing:-.05em;margin-top:8px}
+.b4-score b.big em{font-style:normal;font-size:7px;color:#d8896b;margin-left:4px;letter-spacing:0}
+.b4-score small{display:block;font-size:5px;color:#858b8f;margin-top:4px}
+.b4-score-track{height:6px;border-radius:99px;background:linear-gradient(90deg,#3a2f2c,#7e4635 55%,#e2764f);margin-top:9px;position:relative}
+.b4-score-track i{position:absolute;right:26%;top:-2px;width:2px;height:10px;background:#f1ece5}
+.b4-score-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:4.5px;color:#6f7579;margin-top:4px}
+.b4-changes{flex:1.85;display:flex;flex-direction:column;overflow:hidden}
+.b4-changes-head{display:flex;align-items:center;justify-content:space-between;gap:6px;font-family:var(--mono);font-size:5px;color:#858b8f;text-transform:uppercase;letter-spacing:.06em}
+.b4-change{display:flex;align-items:center;gap:5px;height:24px;border-top:1px solid rgba(255,255,255,.045);font-size:5.5px;color:#aeb3b4}
+.b4-change span{font-family:var(--mono);font-size:4.5px;color:#747a7e;flex:none;width:26px}
+.b4-change b{font-weight:400;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b4-change i{font-style:normal;border-radius:999px;padding:2px 4px;font-family:var(--mono);font-size:4.2px;background:#312c2a;color:#d6a08b;flex:none}
+.b4-change i.teal{background:#25302f;color:#8fb7ac}
+.b4-change i.gold{background:#302d24;color:#cfb17b}
+.b4-changes-foot{margin-top:auto;padding-top:6px;border-top:1px solid rgba(255,255,255,.05);font-family:var(--mono);font-size:4.8px;color:#8c9296;text-align:right}
+
+/* tone controls */
+.tone-control{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:.04em}
+.tone-control input[type="range"]{width:78px;accent-color:var(--accent);height:14px;margin:0;cursor:pointer}
+.tone-control output{min-width:10px;text-align:right;color:var(--ink-soft)}
+
+/* prompt modal + toast (defined above) */
+.prompt-modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:22px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.prompt-modal.is-open{opacity:1;visibility:visible}
+.prompt-backdrop{position:absolute;inset:0;background:rgba(18,17,15,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.prompt-dialog{position:relative;width:min(540px,100%);background:var(--paper);border:1px solid rgba(23,22,20,.18);border-radius:19px;padding:24px;box-shadow:0 32px 60px -24px rgba(23,22,20,.45);transform:translateY(12px);transition:transform .3s var(--ease)}
+.prompt-modal.is-open .prompt-dialog{transform:none}
+.prompt-dialog__top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.prompt-dialog__top span{font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.prompt-close{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:16px;color:var(--muted);transition:border-color .2s,color .2s}
+.prompt-close:hover{border-color:var(--ink);color:var(--ink)}
+.prompt-dialog h3{font-size:25px;line-height:1.15;letter-spacing:-.04em;margin-top:18px}
+.prompt-dialog h3 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--muted);font-size:15px;margin-left:6px}
+.prompt-dialog__text{margin-top:14px;padding:14px 16px;border-radius:11px;background:var(--accent-soft);border:1px solid rgba(56,90,99,.14);font-size:13px;line-height:1.75;color:var(--ink-soft)}
+.prompt-dialog__foot{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;flex-wrap:wrap}
+.prompt-dialog__foot span{font-family:var(--mono);font-size:8px;letter-spacing:.06em;color:var(--faint)}
+.copy-prompt{display:inline-flex;align-items:center;gap:7px;border-radius:999px;background:var(--ink);color:var(--paper);padding:9px 14px;font-size:11px;transition:background .2s,transform .2s var(--ease)}
+.copy-prompt:hover{background:#000;transform:translateY(-1px)}
+.copy-prompt svg{width:11px;height:11px}
+.toast{position:fixed;left:50%;bottom:30px;z-index:120;transform:translate(-50%,12px);background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 15px;font-size:11.5px;opacity:0;visibility:hidden;transition:opacity .25s,transform .3s var(--ease),visibility .25s;box-shadow:0 14px 28px -14px rgba(0,0,0,.5);pointer-events:none}
+.toast.is-open{opacity:1;visibility:visible;transform:translate(-50%,0)}
+
+/* next + footer */
+.next{border-top:1px solid var(--line);padding:34px 0;margin-top:56px}
+.next__inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.next p{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}
+.next h3{margin-top:9px;font-size:clamp(20px,2.6vw,28px);line-height:1.25;letter-spacing:-.035em;font-weight:600}
+.next h3 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+.next a{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:9px 13px;font-size:11px;color:var(--muted);transition:border-color .2s,color .2s,background .2s}
+.next a:hover{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.footer{border-top:1px solid var(--line);padding:52px 0 38px;margin-top:0}
+.footer__grid{display:flex;justify-content:space-between;gap:36px;flex-wrap:wrap}
+.footer__title{font-family:var(--serif);font-size:clamp(23px,3vw,32px);line-height:1.25;letter-spacing:-.025em}
+.footer__title em{font-style:italic}
+.footer__meta{display:grid;gap:10px;font-size:11px;color:var(--muted);max-width:430px}
+.footer__meta a{width:fit-content;border-bottom:1px solid var(--line);padding-bottom:2px;transition:color .2s,border-color .2s}
+.footer__meta a:hover{color:var(--ink);border-color:var(--ink)}
+.footer__base{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:34px;padding-top:15px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in-view{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .hero__lower{grid-template-columns:1fr;gap:26px}
+  .board-hint{display:flex}
+}
+@media (max-width:760px){
+  .wrap{width:calc(100% - 36px)}
+  .topbar__in{height:58px;gap:10px}
+  .brand__name{display:none}
+  .top-label{display:none}
+  .pill-link{padding:6px 10px;font-size:10px}
+  .pill-dark{padding:7px 11px;font-size:10px}
+  .pill-dark svg{display:none}
+  .hero{padding-top:50px}
+  .hero__top{font-size:8px;letter-spacing:.08em}
+  .hero h1{font-size:clamp(44px,13vw,64px)}
+  .hero h1 em{white-space:normal}
+  .hero__lower{margin-top:28px;padding-bottom:34px}
+  .hero__lead{font-size:16.5px}
+  .hero__meta{grid-template-columns:1fr 1fr}
+  .hero__meta div{padding:15px 0}
+  .hero__meta div:nth-child(2){border-right:0}
+  .hero__meta div:nth-child(3){border-top:1px solid var(--line-soft)}
+  .hero__meta div:nth-child(4){border-top:1px solid var(--line-soft)}
+  .hero__meta div:not(:first-child){padding-left:0}
+  .hero__meta div:nth-child(even){padding-left:14px}
+  .hero__meta b{font-size:23px}
+  .chapter-nav{gap:12px;margin-top:22px}
+  .chapter-nav a{font-size:10px}
+  .chapter-nav .nav-note{width:100%;margin-left:0;justify-content:space-between}
+  .thesis{padding-top:48px}
+  .thesis h2{font-size:32px;line-height:1.1}
+  .thesis__row{display:block;margin-top:22px;padding-bottom:28px}
+  .thesis__row p{font-size:12.5px}
+  .thesis__index{display:block;margin-top:14px}
+  .studies{padding-top:4px}
+  .study{margin-top:14px;padding:16px;border-radius:18px}
+  .study__head{display:grid;grid-template-columns:24px 1fr;gap:8px}
+  .study__heading h2{font-size:22px}
+  .study__heading h2 em{display:block;margin:2px 0 0;font-size:12px}
+  .study__heading p{font-size:11px}
+  .study__controls{grid-column:2;padding-top:8px}
+  .study__foot{display:block}
+  .study__foot p{font-size:10.5px}
+  .prompt-btn{margin-top:10px}
+  .board-scroll{margin-top:12px;border-radius:14px}
+  .board{border-radius:14px}
+  .prompt-dialog{padding:20px}
+  .prompt-dialog h3{font-size:22px}
+  .prompt-dialog__text{font-size:12px}
+  .next,.footer{padding:32px 0}
+  .footer__grid{flex-direction:column;gap:22px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<a class="sr-only" href="#studies">跳到排版研究</a>
+<header class="topbar">
+  <div class="wrap topbar__in">
+    <a class="brand" href="library.html" aria-label="点触 · 返回专题库">
+      <span class="brand__mark">t</span>
+      <span class="brand__name">点触 <span>/ touch</span></span>
+    </a>
+    <span class="top-label">Library 05 · Admin Layout Studies</span>
+    <div class="top-actions">
+      <a class="pill-link" href="library.html">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>
+        <span>专题库</span>
+      </a>
+      <button class="pill-dark" type="button" data-copy-all>
+        <span>复制 4 条</span>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero__top mono">
+        <span>Touch Library / Topic 05</span>
+        <span>04 Studies · 01 Episode</span>
+      </div>
+      <h1>先定判断，<em>再填内容。</em></h1>
+      <div class="hero__lower">
+        <p class="hero__lead">4 种高级后台排版方式。<br><span>同样是 Dashboard，差别往往不在组件多复杂，<br>而在底色、层级和强调色，谁先站队。</span></p>
+        <aside class="hero__aside">
+          <strong>关于这个专题</strong>
+          整理自抖音 @叨叨AI「交互/设计/动效」后台排版特别篇。四种方法各配一句可直接用的提示词，并用一个开关，把底层判断拆给你看。
+          <br><a href="#studies">进入排版研究 ↓</a>
+        </aside>
+      </div>
+      <div class="hero__meta">
+        <div><b>04</b><span>排版方法</span></div>
+        <div><b>01</b><span>原视频来源</span></div>
+        <div><b>04</b><span>可复制提示词</span></div>
+        <div><b>100%</b><span>可拆解演示</span></div>
+      </div>
+      <nav class="chapter-nav" aria-label="专题章节">
+        <a href="#layout-1"><b>01</b> 方格纸玻璃卡</a>
+        <a href="#layout-2"><b>02</b> 分组侧边栏</a>
+        <a href="#layout-3"><b>03</b> 一块深色一个强调色</a>
+        <a href="#layout-4"><b>04</b> 暗底明度分层</a>
+        <span class="nav-note"><span>四个判断，四种底色</span><button class="nav-copy" type="button" data-copy-all>复制全部 4 条 ↗</button></span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="wrap thesis">
+    <div class="thesis__kicker">The premise / 先定一个视觉判断</div>
+    <h2>后台显得乱，<br><em>通常不是组件太多。</em></h2>
+    <div class="thesis__row">
+      <p>而是底色、层级和强调色没有先站队。先决定页面是浅是深、谁浮在上面、哪一个颜色有资格说话，再往里填内容。下面四种，拆开看都不复杂，难的是忍住不要全都用上。</p>
+      <span class="thesis__index">04 studies · 04 prompts · 0 decoration</span>
+    </div>
+  </section>
+
+  <section class="wrap studies" id="studies">
+    <article class="study reveal" id="layout-1">
+      <div class="study__head">
+        <span class="study__no">01</span>
+        <div class="study__heading">
+          <h2>方格纸玻璃卡 <em>Grid &amp; glass</em></h2>
+          <p>44 像素方格铺满、不留外框；卡片做成半透明白玻璃浮在上面，顶部指标按数值排成递增的阶梯色块。</p>
+        </div>
+        <div class="study__controls">
+          <button class="toggle" type="button" id="gridToggle" aria-pressed="true"><i></i><span>44px 方格</span></button>
+        </div>
+      </div>
+      <div class="board-hint">横向滑动查看完整看板</div>
+      <div class="board-scroll" tabindex="0" role="region" aria-label="方格纸玻璃卡看板，可横向滚动">
+        <div class="board board--b1" id="board1">
+          <div class="b1">
+            <div class="b1-top">
+              <div class="b1-brand">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="8" cy="8" r="2.4"/><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.6 3.6l1.4 1.4M11 11l1.4 1.4M12.4 3.6 11 5M5 11l-1.4 1.4"/></svg>
+                Parts
+              </div>
+              <div class="b1-search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="7" cy="7" r="4.2"/><path d="m10.2 10.2 3 3"/></svg>
+                Warehouse / Taichung DC · Frames
+              </div>
+              <span class="b1-chip">▦ This month</span>
+              <div class="b1-top-icons"><i>⌕</i><i>✦</i><i>K</i></div>
+            </div>
+            <div class="b1-body">
+              <div class="b1-rail">
+                <button class="is-on" type="button" aria-label="Overview"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></button>
+                <button type="button" aria-label="Inventory"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2.5 5.2 8 2.4l5.5 2.8v5.6L8 13.6l-5.5-2.8V5.2Z"/><path d="M2.5 5.2 8 8l5.5-2.8M8 8v5.6"/></svg></button>
+                <button type="button" aria-label="Documents"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3.2 2.5h6l3.6 3.6v7.4H3.2V2.5Z"/><path d="M9 2.7v3.6h3.6M5.4 8h5M5.4 10.4h4"/></svg></button>
+                <button type="button" aria-label="Charts"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2.5 13.5h11M4.5 11V7.5M8 11V3.5M11.5 11V6"/></svg></button>
+                <button type="button" aria-label="People"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.2" r="2.2"/><path d="M3.5 13a4.5 4.5 0 0 1 9 0"/></svg></button>
+                <button type="button" aria-label="Settings"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v1.6M8 12.6v1.6M1.8 8h1.6M12.6 8h1.6M3.6 3.6l1.1 1.1M11.3 11.3l1.1 1.1M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1"/></svg></button>
+              </div>
+              <div class="b1-main">
+                <div class="b1-row">
+                  <div class="b1-orders">
+                    <div class="b1-card-head"><span>Orders</span><span>↗</span></div>
+                    <div class="b1-orders-grid">
+                      <div class="b1-metric"><b>1</b><span>Late</span></div>
+                      <div class="b1-metric"><b>3</b><span>Returns</span></div>
+                      <div class="b1-metric"><b>14</b><span>To ship</span></div>
+                      <div class="b1-metric"><b>94</b><span>Total orders</span></div>
+                    </div>
+                    <div class="b1-orders-foot"><i></i>Stepped metrics · 44px grid</div>
+                  </div>
+                  <div class="b1-stock glass">
+                    <div class="b1-stock-top">
+                      <div><span class="b-kicker">Stock</span><b>732</b><small>SKUs on hand</small></div>
+                      <span class="b-pill">732</span>
+                    </div>
+                    <div class="b1-stock-list"><span><i></i>In stock</span><span><i></i>Out of stock</span><span><i></i>Low stock</span><span><i></i>Slow-moving</span></div>
+                  </div>
+                  <div class="b1-recorder">
+                    <div class="b1-card-head"><span>Recorders</span><span>···</span></div>
+                    <div class="b1-bike">
+                      <svg viewBox="0 0 120 70" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                        <circle cx="25" cy="48" r="16"/><circle cx="95" cy="48" r="16"/>
+                        <path d="M25 48 41 25h25l-9 23H25ZM66 25l12 23M54 25h22M48 48h18M41 25l-7-9M86 36l-9-11M78 25h12"/>
+                        <path d="M88 25h11M95 25l-3 8"/>
+                      </svg>
+                    </div>
+                    <div class="b1-recorder-foot"><b>Helix Crankset 170</b><small>Frameset · On hand 13</small></div>
+                    <div class="b1-recorder-stats"><div><b>7</b><span>Comps</span></div><div><b>2</b><span>Need</span></div><div><b>3</b><span>Inbuild</span></div></div>
+                  </div>
+                </div>
+                <div class="b1-logistics glass">
+                  <div class="b1-card-head"><span>Logistics</span><span>Live</span></div>
+                  <h4>A frame container is running late</h4>
+                  <p>Taichung → Rotterdam · ETA 6h 40m</p>
+                  <div class="b1-map"></div>
+                  <div class="b1-late"><i></i>3 days late</div>
+                  <div class="b1-avatars"><span>M</span><span>L</span><span>A</span><span>S</span><span class="plus">+32</span></div>
+                </div>
+                <div class="b1-table glass">
+                  <div class="b1-table-head"><span>Part</span><span>Maker</span><span>Category</span><span>On hand</span><span>Turnover</span><span>Demand</span></div>
+                  <div class="b1-table-row"><span class="b1-part"><i></i><span><b>Helix Crankset 170</b><small>SKU-0084003</small></span></span><span>Venta</span><span>Drivetrain</span><span>612</span><span>13</span><span class="b1-demand">High</span></div>
+                  <div class="b1-table-row"><span class="b1-part"><i></i><span><b>Martin Road Frame 54</b><small>SKU-0084004</small></span></span><span>Corso</span><span>Frames</span><span>1120</span><span>103</span><span class="b1-demand low">Low</span></div>
+                  <div class="b1-table-row"><span class="b1-part"><i></i><span><b>Strata Disc Rotor 160</b><small>SKU-0084005</small></span></span><span>Venta</span><span>Brakes</span><span>118</span><span>46</span><span class="b1-demand mid">Mid</span></div>
+                  <div class="b1-table-row"><span class="b1-part"><i></i><span><b>Pivot Shift Lever R</b><small>SKU-0084006</small></span></span><span>Corso</span><span>Drivetrain</span><span>244</span><span>7</span><span class="b1-demand low">Low</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="study__foot">
+        <p><span>Why it works</span>方格负责秩序，玻璃负责层级。卡片不靠描边，而是靠透光、模糊和投影浮起来；指标数字本身就是装饰。</p>
+        <button class="prompt-btn" type="button" data-prompt="l1"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg>AI 提示词</button>
+      </div>
+    </article>
+
+    <article class="study reveal" id="layout-2">
+      <div class="study__head">
+        <span class="study__no">02</span>
+        <div class="study__heading">
+          <h2>分组侧边栏 <em>Grouped rail</em></h2>
+          <p>侧边栏按组划分，组间留大段空白；组名用 10 像素大写灰字，主区首行用超大细体文字，配三个并排大数字。</p>
+        </div>
+        <div class="study__controls">
+          <button class="toggle" type="button" id="railToggle" aria-pressed="true"><i></i><span>分组侧栏</span></button>
+        </div>
+      </div>
+      <div class="board-hint">横向滑动查看完整看板</div>
+      <div class="board-scroll" tabindex="0" role="region" aria-label="分组侧边栏看板，可横向滚动">
+        <div class="board board--b2" id="board2">
+          <div class="b2">
+            <aside class="b2-rail" id="rail2">
+              <div class="b2-brand"><i>C</i>Cohort</div>
+              <div class="rail-groups">
+                <div class="rail-group">
+                  <span class="rail-label">This day</span>
+                  <button class="rail-btn is-active" type="button"><i></i>总览</button>
+                  <button class="rail-btn" type="button"><i></i>课表</button>
+                  <button class="rail-btn" type="button"><i></i>班级</button>
+                </div>
+                <div class="rail-group">
+                  <span class="rail-label">Students</span>
+                  <button class="rail-btn" type="button"><i></i>在读学员</button>
+                  <button class="rail-btn" type="button"><i></i>分级测试</button>
+                  <button class="rail-btn" type="button"><i></i>家长沟通</button>
+                </div>
+                <div class="rail-group">
+                  <span class="rail-label">School</span>
+                  <button class="rail-btn" type="button"><i></i>教师排班</button>
+                  <button class="rail-btn" type="button"><i></i>教室</button>
+                  <button class="rail-btn" type="button"><i></i>出勤报表</button>
+                  <button class="rail-btn" type="button"><i></i>设置</button>
+                </div>
+              </div>
+              <div class="b2-user">
+                <div class="b2-user-top"><span class="b2-avatar">许</span><span><b>许嘉宁</b><small>教务主任</small></span><span class="quota">128 / 160</span></div>
+                <div class="b2-quota-track"><i></i></div>
+              </div>
+            </aside>
+            <div class="b2-main">
+              <div class="b2-top">
+                <div class="b2-tabs"><span class="b2-tab is-on">总览</span><span class="b2-tab">课表</span><span class="b2-tab">学员</span><span class="b2-tab">教师</span><span class="b2-tab">家长</span><span class="b2-tab">问卷</span></div>
+                <div class="b2-top-icons"><i>⌕</i><i>◔</i></div>
+              </div>
+              <div class="b2-hello">
+                <div><h3>早上好，嘉宁</h3><p>今天有 3 个待办 · 2 节课 · 1 场家长会</p></div>
+                <div class="b2-stats"><div><b>312</b><span>在读学员</span></div><div><b>42</b><span>本周课次</span></div><div><b>18</b><span>新课</span></div></div>
+              </div>
+              <div class="b2-propor"><i></i><i></i><i></i></div>
+              <div class="b2-grid">
+                <div class="b2-card b2-photo"><i>↗</i><small>READING CLUB</small><b>阅读写作班</b></div>
+                <div class="b2-card b2-chart">
+                  <div class="b2-cardhead"><div><small>ATTENDANCE</small><b>94.2%</b></div><span>本周 ↗</span></div>
+                  <div class="b2-bars"><i style="--h:48%"></i><i style="--h:66%"></i><i style="--h:57%"></i><i style="--h:78%"></i><i class="hit" style="--h:94%"></i><i style="--h:70%"></i><i style="--h:62%"></i></div>
+                  <div class="b2-axis"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+                </div>
+                <div class="b2-card b2-timer">
+                  <div class="b2-cardhead"><div><small>CLASS TIMER</small><b>课堂计时</b></div><span>下一节</span></div>
+                  <div class="b2-ring"><div><b>32:17</b><small>阅读写作 · 204</small></div></div>
+                </div>
+                <div class="b2-prep">
+                  <div class="b2-cardhead"><div><small>PREP LIST</small><b>开学准备</b></div><span>5 / 8</span></div>
+                  <div class="b2-check">
+                    <div class="done"><i>✓</i>教材归档完成</div>
+                    <div class="done"><i>✓</i>教室设备检查</div>
+                    <div class="done"><i>✓</i>教师排班确认</div>
+                    <div class="done"><i>✓</i>新生名单同步</div>
+                    <div class="done"><i>✓</i>家长会通知发出</div>
+                    <div><i></i>教室布置</div>
+                    <div><i></i>作业本采购</div>
+                    <div><i></i>签到码生成</div>
+                  </div>
+                  <div class="b2-prep-btn">进入点名</div>
+                </div>
+                <div class="b2-card b2-cal">
+                  <div class="b2-cardhead"><div><small>SEPTEMBER · WEEK 3</small><b>九月 · 第 3 周</b></div><span>14 — 19</span></div>
+                  <div class="b2-cal-days"><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span></div>
+                  <div class="b2-cal-cols">
+                    <div class="b2-cal-col"><div class="b2-event dark"><b>阅读写作</b>09:00 · 204</div><div class="b2-event"><b>写作 A 组</b>11:30</div></div>
+                    <div class="b2-cal-col"><div class="b2-event"><b>写作 A 组</b>09:00</div></div>
+                    <div class="b2-cal-col"><div class="b2-event gold"><b>分级测试</b>09:00 · 204</div><div class="b2-event"><b>作业反馈</b>15:30</div></div>
+                    <div class="b2-cal-col"><div class="b2-event"><b>数学思维</b>10:30</div></div>
+                    <div class="b2-cal-col"><div class="b2-event dark"><b>阅读写作</b>09:00</div><div class="b2-event"><b>家长沟通</b>16:00</div></div>
+                    <div class="b2-cal-col"><div class="b2-event"><b>周测复习</b>09:30</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="study__foot">
+        <p><span>Why it works</span>分组不是加分隔线，而是用留白把关系说清楚。组名很小、间距很大，主区才敢用超大细体字压住整页。</p>
+        <button class="prompt-btn" type="button" data-prompt="l2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg>AI 提示词</button>
+      </div>
+    </article>
+
+    <article class="study reveal" id="layout-3">
+      <div class="study__head">
+        <span class="study__no">03</span>
+        <div class="study__heading">
+          <h2>一块深色，一个强调色 <em>One dark, one accent</em></h2>
+          <p>整页浅色，只给侧边栏一块深色重底；全页只用一个强调色，只标当前项、主按钮和图表命中值。</p>
+        </div>
+        <div class="study__controls">
+          <button class="toggle" type="button" id="accentToggle" aria-pressed="true"><i></i><span>强调色 ON</span></button>
+        </div>
+      </div>
+      <div class="board-hint">横向滑动查看完整看板</div>
+      <div class="board-scroll" tabindex="0" role="region" aria-label="单强调色看板，可横向滚动">
+        <div class="board board--b3" id="board3">
+          <div class="b3">
+            <aside class="b3-rail">
+              <div class="b3-brand"><i>H</i>Hearth</div>
+              <nav class="b3-nav">
+                <button class="is-active" type="button"><i></i>前台看板</button>
+                <button type="button"><i></i>查看预约</button>
+                <button type="button"><i></i>清洁记录</button>
+                <button type="button"><i></i>今日照片</button>
+                <button type="button"><i></i>入住登记</button>
+              </nav>
+              <div class="b3-promo"><b>周六草地开放日</b><p>上午 10:00 — 下午 4:00</p><span>查看日程 ↗</span></div>
+              <div class="b3-rail-foot"><span>设置</span><span>退出</span></div>
+            </aside>
+            <div class="b3-main">
+              <div class="b3-top">
+                <span class="b3-avatar">草</span>
+                <div class="b3-title">
+                  <b>草地房 · 3号 <span>● 草坪 · 在店</span></b>
+                  <p>今日 3 位访客 · 2 场活动</p>
+                  <div class="b3-actions"><span class="primary">开始看家 ↗</span><span>带一位新主人</span></div>
+                </div>
+                <div class="b3-weather"><b>24.5°</b><small>晴 · 微风</small></div>
+                <div class="b3-icons"><i>⌕</i><i>◔</i><i>K</i></div>
+              </div>
+              <div class="b3-photos">
+                <div class="b3-pet"><div class="b3-pet-art" style="--art:linear-gradient(145deg,#e2c07e,#c49a62 50%,#8c7358)"></div><div class="b3-pet-body"><b>布丁</b><small>柯基 · 3岁</small></div></div>
+                <div class="b3-pet"><div class="b3-pet-art" style="--art:linear-gradient(145deg,#b6c8cf,#d9cbb7 52%,#8c7d6a)"></div><div class="b3-pet-body"><b>可乐</b><small>边牧 · 2岁</small></div></div>
+                <div class="b3-pet"><div class="b3-pet-art" style="--art:linear-gradient(145deg,#8fa9b3,#d3b98d 55%,#67564b)"></div><div class="b3-pet-body"><b>年糕</b><small>缅因 · 4岁</small></div></div>
+                <div class="b3-pet"><div class="b3-pet-art" style="--art:linear-gradient(145deg,#e6d7bb,#c7ab8d 54%,#7b6858)"></div><div class="b3-pet-body"><b>包子</b><small>比熊 · 1岁</small></div></div>
+                <div class="b3-pet"><div class="b3-pet-art" style="--art:linear-gradient(145deg,#e8c99b,#c99b70 52%,#8a6c57)"></div><div class="b3-pet-body"><b>奶盖</b><small>橘猫 · 2岁</small></div></div>
+              </div>
+              <div class="b3-lower">
+                <div class="b3-chart">
+                  <div class="b3-chart-head"><div><b>3.2 <span style="font-size:8px">km</span> 今天走了</b><small>比昨天多 1.6 km · 约 42 分钟</small></div><span>WALK LOG</span></div>
+                  <div class="b3-chart-body">
+                    <div class="b3-bars"><i style="--h:18%"></i><i style="--h:23%"></i><i style="--h:14%"></i><i style="--h:31%"></i><i style="--h:22%"></i><i style="--h:17%"></i><i style="--h:12%"></i><i style="--h:35%"></i><i class="hit" style="--h:55%"></i><i style="--h:28%"></i><i style="--h:19%"></i><i style="--h:24%"></i><i style="--h:15%"></i><i style="--h:30%"></i><i style="--h:21%"></i><i style="--h:14%"></i><i class="hit" style="--h:61%"></i><i class="hit" style="--h:48%"></i><i style="--h:32%"></i><i style="--h:20%"></i><i style="--h:16%"></i><i style="--h:26%"></i><i style="--h:13%"></i><i style="--h:18%"></i></div>
+                    <div class="b3-schedule">
+                      <div class="hit"><span>早餐</span><i></i><span>08:10</span></div>
+                      <div><span>午餐</span><i></i><span>12:20</span></div>
+                      <div><span>加餐</span><i></i><span>15:10</span></div>
+                      <div><span>晚餐</span><i></i><span>18:30</span></div>
+                    </div>
+                  </div>
+                </div>
+                <aside class="b3-feed">
+                  <div class="b3-feed-head"><b>今日动态</b><span>17 位</span></div>
+                  <div class="b3-feed-list">
+                    <div class="b3-feed-row"><i style="--c:#d8b07e"></i>布丁<span>草地 · 10分钟</span></div>
+                    <div class="b3-feed-row"><i style="--c:#9fb8b3"></i>可乐<span>接飞盘 · 3次</span></div>
+                    <div class="b3-feed-row"><i style="--c:#c3a98f"></i>年糕<span>晒太阳 · 20分钟</span></div>
+                    <div class="b3-feed-row"><i style="--c:#d9c4a7"></i>包子<span>散步 · 1.2km</span></div>
+                    <div class="b3-feed-row"><i style="--c:#caa77f"></i>奶盖<span>梳毛 · 已完成</span></div>
+                  </div>
+                  <div class="b3-note"><b>管家笔记</b>15:30 给年糕喂药 · 半片</div>
+                </aside>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="study__foot">
+        <p><span>Why it works</span>深色只占一块，强调色只做一件事：告诉你现在在哪、下一步点什么。把强调色关掉，页面的层级应该仍然成立。</p>
+        <button class="prompt-btn" type="button" data-prompt="l3"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg>AI 提示词</button>
+      </div>
+    </article>
+
+    <article class="study reveal" id="layout-4">
+      <div class="study__head">
+        <span class="study__no">04</span>
+        <div class="study__heading">
+          <h2>暗底明度分层 <em>Tone layers</em></h2>
+          <p>整页深色，卡片比背景亮一档，分层不描边；主读数用超大数字配小号单位，日期区用圆点阵列加彩色徽章。</p>
+        </div>
+        <div class="study__controls">
+          <div class="tone-control"><span>层级</span><input id="toneRange" type="range" min="0" max="10" value="5" aria-label="暗底明度层级"><output id="toneValue">5</output></div>
+          <button class="toggle" type="button" id="lineToggle" aria-pressed="false"><i></i><span>边界线</span></button>
+        </div>
+      </div>
+      <div class="board-hint">横向滑动查看完整看板</div>
+      <div class="board-scroll" tabindex="0" role="region" aria-label="暗底明度分层看板，可横向滚动">
+        <div class="board board--b4" id="board4">
+          <div class="b4">
+            <div class="b4-rail">
+              <i class="is-on">⌂</i><i>▤</i><i>▦</i><i>◫</i><i>◔</i><i>⚙</i>
+            </div>
+            <div class="b4-main">
+              <div class="b4-head">
+                <div class="b4-head-left"><b>训练总览</b><span>本月完成 · 11月</span></div>
+                <div class="b4-head-right"><span>2026 / 11</span><span>本周 ↗</span><i>K</i></div>
+              </div>
+              <div class="b4-grid">
+                <div class="b4-col">
+                  <div class="b4-card b4-hero">
+                    <div class="b4-hero-top"><span class="b-kicker">Monthly volume</span><span class="b4-pill">↘ 33.3%</span></div>
+                    <div class="b4-big"><b>26</b><small>小时</small><b>40</b><small>分</small></div>
+                    <div class="b4-sub">上月 44小时 10分 · 本月目标 7小时 · 28.3%</div>
+                    <div class="b4-strip"><i></i><i></i><i></i><i></i><i></i><i class="hit"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <div class="b4-week">
+                      <div class="b4-week-head"><span>Weekly volume</span><span>+12%</span></div>
+                      <div class="b4-week-bars"><i style="--h:38%"></i><i style="--h:62%"></i><i style="--h:47%"></i><i style="--h:78%"></i><i class="hit" style="--h:92%"></i><i style="--h:56%"></i><i style="--h:33%"></i></div>
+                      <div class="b4-week-axis"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+                    </div>
+                  </div>
+                  <div class="b4-split">
+                    <div class="b4-card b4-small"><b>42<span>条</span></b><small>完成线路</small><p>比上月多 5 条</p></div>
+                    <div class="b4-card b4-small"><b>811<span>分</span></b><small>攀爬评级</small><p>优秀 · 前 18%</p></div>
+                  </div>
+                </div>
+                <div class="b4-col">
+                  <div class="b4-card b4-cal">
+                    <div class="b4-cal-head"><div><b>十一月 2026</b><small>过去 · 今天 · 未来</small></div><span>9 / 30</span></div>
+                    <div class="b4-dotgrid">
+                      <span class="b4-day">1</span><span class="b4-day hit">2</span><span class="b4-day">3</span><span class="b4-day ring">4</span><span class="b4-day">5</span><span class="b4-day hit">6</span><span class="b4-day">7</span>
+                      <span class="b4-day">8</span><span class="b4-day hit">9</span><span class="b4-day">10</span><span class="b4-day ring">11</span><span class="b4-day hit">12</span><span class="b4-day">13</span><span class="b4-day">14</span>
+                      <span class="b4-day">15</span><span class="b4-day hit">16</span><span class="b4-day">17</span><span class="b4-day">18</span><span class="b4-day hit">19</span><span class="b4-day">20</span><span class="b4-day empty"></span>
+                      <span class="b4-day today">22</span><span class="b4-day ring">23</span><span class="b4-day">24</span><span class="b4-day hit">25</span><span class="b4-day">26</span><span class="b4-day empty"></span><span class="b4-day empty"></span>
+                      <span class="b4-day">29</span><span class="b4-day">30</span><span class="b4-day empty"></span><span class="b4-day empty"></span><span class="b4-day empty"></span><span class="b4-day empty"></span><span class="b4-day empty"></span>
+                    </div>
+                    <div class="b4-cal-legend"><span><i></i>训练日</span><span><i class="ring"></i>计划</span><span><i class="empty"></i>休息</span><span style="margin-left:auto;color:#a1a7aa">本周 17.5h</span></div>
+                  </div>
+                  <div class="b4-card b4-session">
+                    <div class="b4-cal-head"><div><b>下一次训练</b><small>周四 · 18:30 · 204 教室</small></div><span>报名 9</span></div>
+                    <div class="b4-session-row"><b>17<span style="font-size:8px">:</span>15</b><span>预计时长</span></div>
+                    <div class="b4-mini"><i style="--h:35%"></i><i class="hit" style="--h:60%"></i><i style="--h:45%"></i><i style="--h:28%"></i><i class="hit" style="--h:75%"></i><i style="--h:40%"></i><i style="--h:52%"></i><i style="--h:32%"></i><i style="--h:68%"></i><i style="--h:48%"></i></div>
+                  </div>
+                </div>
+                <div class="b4-col">
+                  <div class="b4-card b4-score">
+                    <div class="b4-score-top"><div><span class="b-kicker">Overall trend</span><b class="big">811 <em>优秀 · +4分</em></b><small>较上月提升 4 分 · 超过 82% 的成员</small></div><span class="b4-pill">HISTORY</span></div>
+                    <div class="b4-score-track"><i></i></div>
+                    <div class="b4-score-labels"><span>4.0</span><span>5.0</span><span>6.0</span><span>7.0</span><span>8.0</span><span>9.0</span><span>10.0</span></div>
+                  </div>
+                  <div class="b4-card b4-changes">
+                    <div class="b4-changes-head"><span>有什么变化</span><span>3天前更新</span></div>
+                    <div class="b4-change"><span>11.14</span><b>连续 6 天出勤，刷新连续记录</b><i>+4</i></div>
+                    <div class="b4-change"><span>11.12</span><b>难度与时长同时上升，进入下一阶段</b><i>+6</i></div>
+                    <div class="b4-change"><span>11.10</span><b>心率区间更稳定，恢复速度变快</b><i class="teal">+3</i></div>
+                    <div class="b4-change"><span>11.08</span><b>抱石完成率 78%，V4 以上通过 6/8</b><i>+5</i></div>
+                    <div class="b4-change"><span>11.06</span><b>本月目标完成 28.3%，进度正常</b><i class="gold">+2</i></div>
+                    <div class="b4-change"><span>11.02</span><b>「白线 V3」重复攀爬 4 次未完成</b><i class="teal">+1</i></div>
+                    <div class="b4-change"><span>10.30</span><b>完成 12 条线路，达到本月最高</b><i>+3</i></div>
+                    <div class="b4-change"><span>10.28</span><b>休息日，主动恢复 40 分钟</b><i class="gold">0</i></div>
+                    <div class="b4-change"><span>10.25</span><b>新线路 V4 完成，难度突破</b><i>+5</i></div>
+                    <div class="b4-changes-foot">查看全部 12 条变化 ↗</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="study__foot">
+        <p><span>Why it works</span>深色页面不靠描边分层，而靠明度差。卡片只比背景亮一档，数字负责重量，圆点和徽章负责节奏；空位也用斜纹保持秩序。</p>
+        <button class="prompt-btn" type="button" data-prompt="l4"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg>AI 提示词</button>
+      </div>
+    </article>
+  </section>
+</main>
+
+<section class="next">
+  <div class="wrap next__inner">
+    <div><p>Touch Library / Series complete</p><h3>十个专题，<em>系列收齐</em>。</h3></div>
+    <a href="library.html">浏览 01—06 专题 <span aria-hidden="true">↗</span></a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <p class="footer__title">先有判断，<br>再谈<em>设计感</em>。</p>
+      <div class="footer__meta">
+        <span>内容来源：抖音 @叨叨AI「交互/设计/动效」后台排版特别篇（4 种高级审美后台排版设计，2026-09-22）。</span>
+        <a href="https://www.douyin.com/user/MS4wLjABAAAAyZGEXNbk6ytvhzzpS_H3EtijOU7jP4tFu5OdbWtUUxCgSjUBo3y086wkzqk7jm5x" target="_blank" rel="noopener noreferrer">查看创作者主页 ↗</a>
+        <span>页面中的看板均为按原意重新实现的排版样例，不是视频截屏；提示词按画面与章节要点整理。</span>
+      </div>
+    </div>
+    <div class="footer__base">
+      <span>Touch Library · Topic 05</span>
+      <span>Made with restraint · 2026</span>
+    </div>
+  </div>
+</footer>
+
+<div class="prompt-modal" id="promptModal" aria-hidden="true">
+  <button class="prompt-backdrop" type="button" data-prompt-close aria-label="关闭提示词"></button>
+  <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="promptTitle">
+    <div class="prompt-dialog__top">
+      <span id="promptSource">EP.08 / 01</span>
+      <button class="prompt-close" type="button" data-prompt-close aria-label="关闭提示词">×</button>
+    </div>
+    <h3 id="promptTitle">方格纸玻璃卡 <em>Grid &amp; glass</em></h3>
+    <p class="prompt-dialog__text" id="promptText"></p>
+    <div class="prompt-dialog__foot">
+      <span>可直接丢进 VibeCoding 工作流</span>
+      <button class="copy-prompt" type="button" id="copyPrompt">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5.2" y="5.2" width="7.6" height="7.6" rx="1.6"/><path d="M10.8 5.2V3.8A1.6 1.6 0 0 0 9.2 2.2H3.8A1.6 1.6 0 0 0 2.2 3.8v5.4a1.6 1.6 0 0 0 1.6 1.6h1.4"/></svg>
+        <span>复制这句提示词</span>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const prompts = {
+    l1: { title: '方格纸玻璃卡', en: 'Grid & glass', text: '页面底色用44像素方格纸铺满不留外框，卡片做成半透明白玻璃浮在上面，顶部指标按数值排成递增的阶梯色块' },
+    l2: { title: '分组侧边栏', en: 'Grouped rail', text: '侧边栏按组划分，组间留大段空白，组名用10像素大写灰字，栏底固定放头像和用量条，主区首行用超大的细体文字，配三个并排大数字，占比用一条横贯的分段比例条' },
+    l3: { title: '一块深色，一个强调色', en: 'One dark, one accent', text: '整页用浅色只给侧边栏一块深色重底，全页只用一个强调色，只标当前项、主按钮和图表命中值，侧栏底部放一张强调色卡片收口' },
+    l4: { title: '暗底明度分层', en: 'Tone layers', text: '做一个深色后台，卡片用比背景亮一档的灰分层不描边，主读数用超大数字配小号单位，日期区用圆点阵列加彩色徽章，空位走斜纹' }
+  };
+  const order = ['l1', 'l2', 'l3', 'l4'];
+
+  /* copy + toast */
+  const toast = $('#toast');
+  let toastTimer;
+  function showToast(message) {
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add('is-open');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-open'), 2000);
+  }
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (err) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        ta.remove();
+        return ok;
+      } catch (err2) {
+        return false;
+      }
+    }
+  }
+  async function copyById(id) {
+    const ok = await copyText(prompts[id].text);
+    showToast(ok ? '提示词已复制' : '复制失败，请检查浏览器权限');
+    return ok;
+  }
+  $$('[data-copy-all]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = order.map((id, i) => `${String(i + 1).padStart(2, '0')}. ${prompts[id].title}\n${prompts[id].text}`).join('\n\n');
+      const ok = await copyText(text);
+      showToast(ok ? '4 条提示词已全部复制' : '复制失败，请检查浏览器权限');
+    });
+  });
+
+  /* prompt modal */
+  const modal = $('#promptModal');
+  const modalSource = $('#promptSource');
+  const modalTitle = $('#promptTitle');
+  const modalText = $('#promptText');
+  const copyPromptBtn = $('#copyPrompt');
+  let activePromptId = 'l1';
+  let lastPromptTrigger = null;
+  let modalOpen = false;
+  function openPrompt(id, trigger) {
+    const item = prompts[id];
+    if (!item || !modal) return;
+    activePromptId = id;
+    modalSource.textContent = `SPECIAL / ${String(order.indexOf(id) + 1).padStart(2, '0')}`;
+    modalTitle.innerHTML = `${item.title} <em>${item.en}</em>`;
+    modalText.textContent = item.text;
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('is-open');
+    document.body.classList.add('is-locked');
+    modalOpen = true;
+    lastPromptTrigger = trigger || null;
+    setTimeout(() => copyPromptBtn.focus({ preventScroll: true }), reduced ? 20 : 180);
+  }
+  function closePrompt() {
+    if (!modalOpen || !modal) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('is-locked');
+    modalOpen = false;
+    if (lastPromptTrigger) lastPromptTrigger.focus({ preventScroll: true });
+    lastPromptTrigger = null;
+  }
+  $$('.prompt-btn').forEach(btn => btn.addEventListener('click', () => openPrompt(btn.dataset.prompt, btn)));
+  $$('[data-prompt-close]', modal).forEach(btn => btn.addEventListener('click', closePrompt));
+  copyPromptBtn.addEventListener('click', () => copyById(activePromptId));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && modalOpen) closePrompt();
+    if (!modalOpen || event.key !== 'Tab') return;
+    const focusables = $$('button, [href], input, [tabindex]:not([tabindex="-1"])', modal).filter(el => !el.disabled && el.offsetParent !== null);
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  });
+
+  /* helpers for toggles */
+  function setToggle(btn, on, onText, offText) {
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', String(on));
+    const label = btn.querySelector('span');
+    if (label) label.textContent = on ? onText : offText;
+  }
+
+  /* 01 grid */
+  const board1 = $('#board1');
+  const gridToggle = $('#gridToggle');
+  if (board1 && gridToggle) {
+    let on = true;
+    gridToggle.addEventListener('click', () => {
+      on = !on;
+      board1.classList.toggle('no-grid', !on);
+      setToggle(gridToggle, on, '44px 方格', '纯色底');
+    });
+    gridToggle.setAttribute('aria-label', '切换44像素方格背景');
+  }
+
+  /* 02 rail grouping */
+  const rail2 = $('#rail2');
+  const railToggle = $('#railToggle');
+  if (rail2 && railToggle) {
+    let on = true;
+    railToggle.addEventListener('click', () => {
+      on = !on;
+      rail2.classList.toggle('is-flat', !on);
+      setToggle(railToggle, on, '分组侧栏', '平铺侧栏');
+    });
+    $$('.rail-btn', rail2).forEach(btn => btn.addEventListener('click', () => {
+      $$('.rail-btn', rail2).forEach(item => item.classList.toggle('is-active', item === btn));
+    }));
+  }
+
+  /* 03 accent */
+  const board3 = $('#board3');
+  const accentToggle = $('#accentToggle');
+  if (board3 && accentToggle) {
+    let on = true;
+    accentToggle.addEventListener('click', () => {
+      on = !on;
+      board3.classList.toggle('no-accent', !on);
+      setToggle(accentToggle, on, '强调色 ON', '强调色 OFF');
+    });
+    $$('.b3-nav button', board3).forEach(btn => btn.addEventListener('click', () => {
+      $$('.b3-nav button', board3).forEach(item => item.classList.toggle('is-active', item === btn));
+    }));
+  }
+
+  /* 04 tone layers + lines */
+  const board4 = $('#board4');
+  const toneRange = $('#toneRange');
+  const toneValue = $('#toneValue');
+  const lineToggle = $('#lineToggle');
+  if (board4) {
+    const applyTone = value => {
+      const v = Number(value);
+      board4.style.setProperty('--card', `hsl(215 8% ${12 + v * 1.2}%)`);
+      board4.style.setProperty('--soft', `hsl(215 7% ${17 + v * 1.4}%)`);
+      board4.style.setProperty('--card2', `hsl(215 8% ${16 + v * 1.25}%)`);
+      if (toneValue) toneValue.textContent = String(v);
+    };
+    applyTone(toneRange ? toneRange.value : 5);
+    if (toneRange) toneRange.addEventListener('input', () => applyTone(toneRange.value));
+    if (lineToggle) {
+      let on = false;
+      lineToggle.addEventListener('click', () => {
+        on = !on;
+        board4.classList.toggle('show-lines', on);
+        setToggle(lineToggle, on, '边界线', '无边界');
+      });
+    }
+  }
+
+  /* reveal */
+  const reveals = $$('.reveal');
+  if ('IntersectionObserver' in window && !reduced) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .05, rootMargin: '0px 0px -4% 0px' });
+    reveals.forEach(item => observer.observe(item));
+  } else {
+    reveals.forEach(item => item.classList.add('in-view'));
+  }
+})();
+</script>
+</body>
+</html>
